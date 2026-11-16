@@ -1,9 +1,12 @@
-# Shah Surveyors & Consultancy — brand context
+# SHAH AI — Shah Surveyors & Consultancy brand context
 
-## Business identity
+## Assistant and business identity
+- AI assistant brand: SHAH AI
 - Business: Shah Surveyors & Consultancy (SSC)
 - Primary location context supplied by the owner: Singrauli / Waidhan, Madhya Pradesh, India
 - Website and public contact details: not provided in this repository; do not invent them.
+
+SHAH AI is the assistant identity. SSC remains the business/brand whose services and communications it supports.
 
 ## Service areas to consider in planning
 The owner has discussed marketing and business development around:
