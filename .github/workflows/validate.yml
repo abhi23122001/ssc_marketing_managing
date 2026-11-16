@@ -1,4 +1,4 @@
-name: Validate SSC Hermes workspace
+name: Validate SHAH AI workspace
 
 on:
   push:
@@ -18,14 +18,15 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Validate required project files
+      - name: Validate SHAH AI project files
         shell: bash
         run: |
           set -euo pipefail
           test -s README.md
           test -s AGENTS.md
           test -s .gitmodules
-          test -s .hermes/skills/ssc-marketing-manager/SKILL.md
+          test -s config/SOUL.md
+          test -s .hermes/skills/shah-ai/SKILL.md
           test -s brand/ssc-brand-profile.md
           test -s docs/SETUP-WINDOWS.md
           test -f vendor/hermes-agent/README.md
@@ -35,4 +36,4 @@ jobs:
             echo "Hermes submodule is not initialized" >&2
             exit 1
           fi
-          echo "SSC project files and Hermes source submodule are present."
+          echo "SHAH AI workspace and Hermes source submodule are present."
