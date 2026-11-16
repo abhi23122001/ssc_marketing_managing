@@ -1,0 +1,38 @@
+name: Validate SSC Hermes workspace
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout workspace and Hermes submodule
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Validate required project files
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s README.md
+          test -s AGENTS.md
+          test -s .gitmodules
+          test -s .hermes/skills/ssc-marketing-manager/SKILL.md
+          test -s brand/ssc-brand-profile.md
+          test -s docs/SETUP-WINDOWS.md
+          test -f vendor/hermes-agent/README.md
+          test -f vendor/hermes-agent/LICENSE
+          grep -q 'path = vendor/hermes-agent' .gitmodules
+          if git submodule status vendor/hermes-agent | grep -q '^-'; then
+            echo "Hermes submodule is not initialized" >&2
+            exit 1
+          fi
+          echo "SSC project files and Hermes source submodule are present."

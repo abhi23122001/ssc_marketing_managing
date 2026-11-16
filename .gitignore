@@ -1,0 +1,33 @@
+# Local secrets and private configuration
+.env
+.env.*
+!.env.example
+**/config.local.yaml
+**/secrets/
+**/*.pem
+**/*.key
+**/*credentials*.json
+**/*token*.json
+
+# Hermes runtime state (do not commit local sessions/config)
+.hermes/config.yaml
+.hermes/sessions/
+.hermes/logs/
+.hermes/cache/
+.hermes/state/
+.hermes/downloads/
+
+# Local generated content and exports
+outputs/
+generated/
+private-client-data/
+*.sqlite
+*.sqlite3
+*.db
+*.log
+
+# Common local tooling
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
