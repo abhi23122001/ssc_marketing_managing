@@ -1,0 +1,885 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Owner Dashboard — Shah Surveyors & Consultancy (SSC, INFRA, OTHER)</title>
+<style>
+
+  :root{
+    --bg:#0f172a; --panel:#111c38; --panel-2:#1a2744; --line:#263555;
+    --text:#e6edf6; --muted:#94a3b8; --good:#22c55e; --warn:#f59e0b;
+    --bad:#ef4444; --accent:#38bdf8; --ai:#818cf8;
+    --topbar-h:62px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0}
+  body{
+    font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+    background:var(--bg);color:var(--text);font-size:14px;
+  }
+  header.top{
+    height:var(--topbar-h);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 18px;border-bottom:1px solid var(--line);flex-wrap:wrap;gap:10px;
+    background:var(--bg);
+  }
+  header.top h1{font-size:16px;margin:0;letter-spacing:.3px}
+  header.top .sub{color:var(--muted);font-size:12px}
+  .wshop{display:inline-flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:13px}
+  .wshop button{padding:4px 8px;border-radius:7px;border:0;background:transparent;color:var(--muted);cursor:pointer}
+  .wshop button.active{background:var(--accent);color:#06101f;font-weight:600}
+
+  .layout{
+    display:flex;min-height:calc(100vh - var(--topbar-h));
+    overflow:hidden;
+  }
+  .sidebar{
+    width:230px;flex-shrink:0;
+    background:var(--panel);border-right:1px solid var(--line);
+    display:flex;flex-direction:column;
+  }
+  .sidebar h3{
+    font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);
+    padding:14px 16px 8px;
+  }
+  .sidebar .nav{flex:1;overflow-y:auto;padding:8px 10px}
+  .sidebar .nav .item{
+    display:flex;align-items:center;gap:10px;
+    padding:9px 12px;border-radius:8px;color:var(--text);
+    cursor:pointer;font-size:13px;text-align:left;transition:.15s;
+  }
+  .sidebar .nav .item:hover{background:rgba(56,189,248,.08)}
+  .sidebar .nav .item.active{background:var(--accent);color:#06101f}
+  .sidebar .nav .item .ico{width:18px;height:18px;flex-shrink:0}
+
+  .main{
+    flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);
+    min-width:0;
+  }
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:10px 18px;border-bottom:1px solid var(--line);flex-wrap:wrap;gap:10px;
+  }
+  .topbar .spacer{flex:1}
+
+  .cards{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:14px;padding:16px 18px;flex:1;overflow:auto;
+  }
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;
+  }
+  .card h2{
+    font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:0 0 12px;
+  }
+  .summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+  .summary .c{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+  .summary .c .v{font-size:24px;font-weight:700;color:var(--text)}
+  .summary .c .l{font-size:12px;color:var(--muted)}
+  .summary .c.ok .v{color:var(--good)}
+  .summary .c.bad .v{color:var(--bad)}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media (max-width:760px){.grid2{grid-template-columns:1fr}}
+  @media (max-width:480px){.cards{grid-template-columns:1fr}}
+  @media (max-width:760px){
+    .sidebar{display:none}
+    .layout{min-height:100vh}
+    header.top{padding:8px 12px}
+  }
+
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);color:var(--muted)}
+  th{color:var(--text);font-weight:600}
+  tr:hover td{color:var(--text)}
+  .pill{display:inline-flex;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:600}
+  .pill.ok{background:#14281f;color:var(--good)}
+  .pill.pending{background:#2a1d0a;color:var(--warn)}
+  .pill.rejected{background:#3a1d1d;color:var(--bad)}
+  .pill.withdrawn{background:#202020;color:#9ca3af}
+
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chips .c{
+    padding:8px 14px;border-radius:999px;font-size:13px;background:var(--panel);
+    border:1px solid var(--line);color:var(--text);cursor:pointer;
+  }
+  .chips .c.active{background:var(--accent);color:#06101f;border-color:var(--accent)}
+
+  .kv{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);flex-wrap:wrap;gap:6px}
+  .kv:last-child{border-bottom:0}
+  .badge{display:inline-flex;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:600}
+  .badge.ok{background:#14281f;color:var(--good)}
+  .badge.pen{background:#2a1d0a;color:var(--warn)}
+  .badge.no{background:#3a1d1d;color:var(--bad)}
+
+  .chat{
+    bottom:0;left:0;right:0;display:flex;flex-direction:column;
+    background:var(--panel);border-top:1px solid var(--line);
+  }
+  .chat .in{padding:12px}
+  .chat .in input{
+    flex:1;background:#0b1120;border:1px solid var(--line);color:var(--text);
+    padding:10px 12px;border-radius:8px;font-size:14px;resize:none;
+  }
+  .chat .in button{
+    background:var(--accent);color:#06101f;border:0;padding:10px 14px;border-radius:8px;
+    cursor:pointer;font-weight:600;font-size:13px;
+  }
+  .chat .resp{
+    max-height:220px;overflow:auto;background:#0b1120;border:1px solid var(--line);
+    border-radius:10px;padding:12px;font-size:13px;color:var(--text);white-space:pre-wrap;
+  }
+  .chat .placeholder{color:var(--muted);font-style:italic;padding:6px 0}
+
+  .muted{color:var(--muted)}
+  .empty{font-size:13px;color:var(--muted);padding:12px 0}
+  footer{padding:10px 18px;font-size:12px;color:var(--muted);border-top:1px solid var(--line)}
+
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <h1>SHAH Group AI OS</h1>
+    <div class="sub">Owner Dashboard — Shah Surveyors & Consultancy</div>
+  </div>
+  <div class="wshop" id="ws-wshop">
+    <span style="color:var(--muted);font-size:12px">Workspace:</span>
+    <button data-ws="SSC">SSC</button>
+    <button data-ws="INFRA">INFRA</button>
+    <button data-ws="OTHER">OTHER</button>
+  </div>
+  <div class="auth" id="auth-area">
+    <div id="user-label"><span id="role-badge">—</span> <span id="user-meta"></span></div>
+    <button id="logout-btn" class="muted" style="padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel)">Logout</button>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <h3>Menu</h3>
+    <nav class="nav" id="nav">
+      <div class="item" data-sec="overview"><span class="ico">&#128202;</span>Overview</div>
+      <div class="item" data-sec="workspaces"><span class="ico">&#128187;</span>Business Workspaces</div>
+      <div class="item" data-sec="projects"><span class="ico">&#128205;</span>Projects</div>
+      <div class="item" data-sec="finance"><span class="ico">&#128197;</span>Finance Overview</div>
+      <div class="item" data-sec="employees"><span class="ico">&#128105;</span>Employees</div>
+      <div class="item" data-sec="marketing"><span class="ico">&#128240;</span>Marketing</div>
+      <div class="item" data-sec="crm"><span class="ico">&#128236;</span>CRM / Leads</div>
+      <div class="item" data-sec="ai"><span class="ico">&#128248;</span>AI Assistant</div>
+      <div class="item" data-sec="approvals"><span class="ico">&#10003;</span>Approvals</div>
+      <div class="item" data-sec="settings"><span class="ico">&#9881;</span>Settings</div>
+    </nav>
+  </aside>
+
+  <main class="main" id="main">
+    <section id="sec-overview" class="card">
+      <h2>Overview — <span id="ws-over-now">SSC</span></h2>
+      <div class="summary" id="summary-cards"></div>
+      <div class="grid2" style="margin-top:14px">
+        <div class="card">
+          <h2>Recent activity</h2>
+          <div id="recent-activities"></div>
+        </div>
+        <div class="card">
+          <h2>Pending approvals</h2>
+          <div id="pending-approvals"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-workspaces" class="card" style="display:none">
+      <h2>Business workspaces</h2>
+      <div class="chips" id="ws-chips"></div>
+      <div class="card" style="margin-top:12px">
+        <h2>Data isolation</h2>
+        <div id="isolation-note"></div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <h2>Accessible workspaces</h2>
+        <div id="ws-list"></div>
+      </div>
+    </section>
+
+    <section id="sec-projects" class="card" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h2>Active Survey & Infrastructure Sites — <span id="ws-proj-now">SSC</span></h2>
+      </div>
+      <div id="project-sites" style="margin-bottom:16px"></div>
+      <h3 style="margin-top:16px;margin-bottom:8px">Survey Deliverables & Reports</h3>
+      <div id="project-deliverables" style="margin-bottom:16px"></div>
+      <h3 style="margin-top:16px;margin-bottom:8px">Workspace Resources</h3>
+      <div id="project-list"></div>
+    </section>
+
+    <section id="sec-finance" class="card" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h2>Finance & Accounting — <span id="ws-fin-now">SSC</span></h2>
+      </div>
+      <div id="finance-summary" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px"></div>
+      <div class="grid2">
+        <div class="card">
+          <h3>Expense Claims Register</h3>
+          <div id="finance-claims"></div>
+        </div>
+        <div class="card">
+          <h3>Registered Expense Vendors</h3>
+          <div id="finance-vendors"></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <h3>Pending Approvals Queue</h3>
+        <div id="finance-list"></div>
+      </div>
+    </section>
+
+    <section id="sec-employees" class="card" style="display:none">
+      <h2>Employees</h2>
+      <div id="employee-list"></div>
+    </section>
+
+    <section id="sec-marketing" class="card" style="display:none">
+      <h2>Marketing modules</h2>
+      <div id="marketing-list"></div>
+    </section>
+
+    <section id="sec-crm" class="card" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h2>CRM & Lead Management Pipeline</h2>
+        <div>
+          <button id="btn-sync-csv" style="padding:6px 14px;background:var(--accent);color:#06101f;border:0;border-radius:6px;font-weight:600;cursor:pointer">Sync Leads from CSV</button>
+        </div>
+      </div>
+      <div id="crm-stats" style="margin-bottom:16px"></div>
+      <div class="card" style="margin-bottom:16px">
+        <h3>Leads & Enquiries</h3>
+        <div id="crm-list" style="overflow-x:auto"></div>
+      </div>
+      <div class="card">
+        <h3>Converted Client Accounts</h3>
+        <div id="crm-clients"></div>
+      </div>
+    </section>
+
+    <section id="sec-ai" class="card" style="display:none">
+      <h2>AI Assistant — <span id="ws-ai-now">SSC</span></h2>
+      <div class="chat" id="chat">
+        <div class="in">
+          <input id="ai-input" placeholder="Ask the local brain a question…">
+          <button id="ai-send">Send</button>
+        </div>
+        <div class="resp" id="ai-resp"><div class="placeholder">Type a question above. The local brain answers from project context only.</div></div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <h2>Task status</h2>
+        <div id="ai-status"></div>
+      </div>
+    </section>
+
+    <section id="sec-approvals" class="card" style="display:none">
+      <h2>Approvals</h2>
+      <div class="grid2">
+        <div class="card">
+          <h3>Pending approvals</h3>
+          <div id="pending-approvals2"></div>
+        </div>
+        <div class="card">
+          <h3>All approvals</h3>
+          <div id="all-approvals"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-settings" class="card" style="display:none">
+      <h2>Settings</h2>
+      <div class="grid2">
+        <div class="card">
+          <h3>Configuration</h3>
+          <pre id="cfg-json" style="background:#0b1120;color:var(--text);padding:12px;border-radius:8px;font-size:11px;overflow:auto"></pre>
+        </div>
+        <div class="card">
+          <h3>Roles & users</h3>
+          <div id="settings-roles"></div>
+          <div id="users-manage" style="margin-top:12px"></div>
+          <div id="user-form" style="display:none;margin-top:12px;background:#0b1120;border:1px solid var(--line);border-radius:8px;padding:12px">
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <input id="uf-username" placeholder="Username" style="flex:1;min-width:140px">
+              <input id="uf-password" type="password" placeholder="Password" style="flex:1;min-width:140px">
+              <input id="uf-name" placeholder="Full name" style="flex:1;min-width:140px">
+              <select id="uf-role" style="flex:1;min-width:140px"></select>
+              <select id="uf-workspace" style="flex:1;min-width:140px"></select>
+              <button id="uf-submit" style="padding:6px 14px;border-radius:6px;border:0;background:var(--accent);color:#06101f;font-weight:600">Save</button>
+              <button id="uf-cancel" style="padding:6px 12px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--text)">Cancel</button>
+            </div>
+            <div id="uf-msg" style="min-height:20px;margin-top:8px;color:var(--muted)"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>SHAH Group AI OS — local testing build. Demo values are DEMO.</footer>
+<script>
+const state = { token: localStorage.getItem("sgai_token")||"", ws:"SSC", role:null, perms:new Set(), user:null };
+
+const $ = sel => typeof sel === "string" ? (sel.startsWith("#") ? document.getElementById(sel.slice(1)) : (sel.startsWith(".") || sel.includes(" ")) ? document.querySelector(sel) : document.getElementById(sel)) : sel;
+const esc = s => String(s??"").replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;" }[c]));
+
+async function api(path, opts={}){
+  const r = await fetch(path, { headers:{"Authorization":"Bearer "+state.token,...((opts.headers)||{})}, ...opts });
+  const j = await r.json().catch(()=>({}));
+  if(!r.ok){
+    throw new Error(j.error || "request failed ("+r.status+")");
+  }
+  return j;
+}
+
+async function auth(){
+  try{
+    const j = await api("/api/auth/me");
+    state.role = j.user.role;
+    state.workspace = j.user.workspace_id || "SSC";
+    const per = await api("/api/permissions");
+    state.perms = new Set(per.perms);
+    if($("#role-badge")) $("#role-badge").textContent = state.role || "—";
+    if($("#user-meta")) $("#user-meta").textContent = j.user.username + " (" + j.user.role + ")";
+    const authArea = $("#auth-area");
+    if(authArea) {
+      authArea.innerHTML = `<div class="sub" id="user-label">Logged in as <strong>${esc(j.user.username)}</strong> (<strong>${esc(j.user.role)}</strong>)</div><button id="logout-btn" class="muted" style="padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel)">Logout</button>`;
+      $("#logout-btn").onclick = () => location.reload();
+    }
+  }catch(e){
+    state.role=null; state.perms=new Set();
+    const authArea = $("#auth-area");
+    if(authArea) {
+      authArea.innerHTML = `<div class="sub">Not authenticated</div><input id="token" placeholder="Session token" autocomplete="off"><button id="login-btn">Login</button>`;
+      $("#login-btn").onclick = async () => {
+        const r = await fetch("/api/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:"owner",password:"demo-owner-pass-0001"})});
+        const j = await r.json();
+        if(r.ok){ state.token=j.token; localStorage.setItem("sgai_token",j.token); $("#token").value=""; await auth(); }
+        else alert("Login failed: "+j.error);
+      };
+    }
+  }
+}
+
+const SEC_PERM = {
+  overview:["report:list","workspace:list"],
+  workspaces:["workspace:list"],
+  projects:["resource:read","workspace:list","workspace:read"],
+  finance:["approval:list"],
+  employees:["report:list"],
+  marketing:["report:list"],
+  crm:["resource:list"],
+  ai:["ai:brain:query"],
+  approvals:["approval:list"],
+  settings:["workspace:manage"],
+};
+
+function visible(sec){
+  if(state.role === "Owner") return true;
+  const perms = state.perms;
+  const req = (SEC_PERM[sec]||[]).map(x=>x.replace(/^[+-]/,""));
+  return req.some(p => perms.has(p));
+}
+
+function bindNav(){
+  document.querySelectorAll(".sidebar .item").forEach(el=>{
+    el.addEventListener("click", function(e){
+      e.stopPropagation();
+      document.querySelectorAll(".sidebar .item").forEach(ch=>ch.classList.remove("active"));
+      el.classList.add("active");
+      showSection(el.dataset.sec);
+    });
+  });
+}
+
+function showSection(sec){
+  document.querySelectorAll(".main .card").forEach(c=>c.style.display="none");
+  const el = $("#sec-"+sec);
+  const show = !!(el && visible(sec));
+  if(el) el.style.display = show ? "block" : "none";
+  document.querySelectorAll("#nav .item").forEach(i=>{
+    i.classList.toggle("active", i.dataset.sec===sec && visible(sec));
+  });
+}
+
+function switchWorkspace(ws){
+  state.ws = ws;
+  document.querySelectorAll("#ws-wshop button").forEach(b=>{
+    b.classList.toggle("active", b.dataset.ws===ws);
+  });
+  if($("#ws-over-now")) $("#ws-over-now").textContent = ws;
+  if($("#ws-proj-now")) $("#ws-proj-now").textContent = ws;
+  if($("#ws-fin-now")) $("#ws-fin-now").textContent = ws;
+  if($("#ws-ai-now")) $("#ws-ai-now").textContent = ws;
+  if($("#ws-chips")) $("#ws-chips").innerHTML = "";
+  refreshAll();
+}
+
+const wsWshop = $("#ws-wshop");
+if(wsWshop){
+  wsWshop.addEventListener("click", e=>{
+    const b = e.target.closest("button[data-ws]");
+    if(b) switchWorkspace(b.dataset.ws);
+  });
+}
+
+async function refreshAll(){
+  try{
+    const o = await api("/api/dashboard/overview");
+    renderOverview(o);
+    renderProjects();
+    renderFinance();
+    renderEmployees();
+    renderMarketing();
+    renderCrm();
+    renderApprovals();
+    renderSettings();
+    renderRecent(o);
+  }catch(e){}
+}
+
+async function renderOverview(o){
+  if($("#ws-over-now")) $("#ws-over-now").textContent = state.ws;
+  const s = $("#summary-cards");
+  const pending = (o.pending_approvals||0);
+  const audit = (o.recent_audit||[]);
+  if(s){
+    s.innerHTML = `
+      <div class="c ${pending?"bad":"good"}"><div class="v">${pending}</div><div class="l">Pending approvals</div></div>
+      <div class="c"><div class="v">${audit.length}</div><div class="l">Recent audit entries</div></div>
+      <div class="c"><div class="v">${o.demo_seed?"DEMO":"—"}</div><div class="l">Demo seed active</div></div>
+      <div class="c"><div class="v">${state.ws}</div><div class="l">Active workspace</div></div>
+    `;
+  }
+  const ra = $("#recent-activities");
+  if(ra){
+    ra.innerHTML = (o.recent_audit||[]).slice(0,20).map(a=>{
+      const d = (a.details||a.target||"");
+      return `<div class="kv"><span>${esc(a.action)} <span class="muted">→ ${esc(a.target||"")}</span></span><span class="muted">${new Date(a.created_at||"").toLocaleString()}</span></div>`;
+    }).join("") || `<div class="empty">No audit entries yet.</div>`;
+  }
+  const pa = $("#pending-approvals");
+  if(pa){
+    const appList = Array.isArray(o.pending_approvals) ? o.pending_approvals : [];
+    if(appList.length > 0){
+      pa.innerHTML = appList.map(a=>`<div class="kv"><span>${esc(a.title)}</span><span class="pill pending">pending</span></div>`).join("");
+    } else if(typeof o.pending_approvals === "number" && o.pending_approvals > 0){
+      pa.innerHTML = `<div class="kv"><span>Pending approval items</span><span class="pill pending">${o.pending_approvals}</span></div>`;
+    } else {
+      pa.innerHTML = `<div class="empty">No pending approvals.</div>`;
+    }
+  }
+}
+
+async function renderProjects(){
+  try{
+    const j = await api("/api/dashboard/projects");
+    const sites = j.sites || [];
+    const delivs = j.deliverables || [];
+    if($("#project-sites")){
+      $("#project-sites").innerHTML = sites.map(s=>`
+        <div class="kv" style="padding:10px 12px;margin-bottom:6px;background:#0b1120;border-radius:6px;align-items:center">
+          <div>
+            <strong>${esc(s.code)}</strong> — ${esc(s.name)}
+            <div style="font-size:11px;color:var(--muted);margin-top:2px">${esc(s.address||"Field Location")} | Geofence: ${esc(s.geofence_radius_m||100)}m</div>
+          </div>
+          <span class="pill ok">Active Site</span>
+        </div>
+      `).join("") || `<div class="empty">No active sites.</div>`;
+    }
+    if($("#project-deliverables")){
+      $("#project-deliverables").innerHTML = delivs.map(d=>`
+        <div class="kv" style="padding:6px 12px;margin-bottom:4px">
+          <span><strong>${esc(d.site_code)}</strong>: ${esc(d.name)}</span>
+          <span class="pill ${d.status==='Ready'||d.status==='Completed'?'ok':'pending'}">${esc(d.status)}</span>
+        </div>
+      `).join("") || `<div class="empty">No deliverables.</div>`;
+    }
+    $("#project-list").innerHTML = (j.resources||[]).map(r=>`<div class="kv"><span>${esc(r.key||r.name||r.id)}</span><span>${esc(r.workspace_code||r.workspace_id)}</span></div>`).join("") || `<div class="empty">No resources found.</div>`;
+  }catch(e){ $("#project-list").innerHTML = `<div class="empty">Failed to load: ${esc(e.message||"error")}</div>`; }
+}
+
+async function renderFinance(){
+  try{
+    const j = await api("/api/dashboard/finance");
+    const s = j.summary || {};
+    if($("#finance-summary")){
+      $("#finance-summary").innerHTML = `
+        <div class="card" style="padding:12px;background:#0b1120">
+          <div style="font-size:11px;color:var(--muted)">Total Claims</div>
+          <div style="font-size:18px;font-weight:700;color:var(--accent);margin-top:4px">INR ${(s.total_claims_inr||0).toLocaleString('en-IN', {minimumFractionDigits:2})}</div>
+        </div>
+        <div class="card" style="padding:12px;background:#0b1120">
+          <div style="font-size:11px;color:var(--muted)">Pending Approvals</div>
+          <div style="font-size:18px;font-weight:700;color:#f59e0b;margin-top:4px">${s.pending_approvals_count||0}</div>
+        </div>
+        <div class="card" style="padding:12px;background:#0b1120">
+          <div style="font-size:11px;color:var(--muted)">Active Vendors</div>
+          <div style="font-size:18px;font-weight:700;color:#10b981;margin-top:4px">${s.vendor_count||0}</div>
+        </div>
+      `;
+    }
+    if($("#finance-claims")){
+      $("#finance-claims").innerHTML = (j.claims||[]).map(c=>`
+        <div class="kv" style="padding:6px 10px;margin-bottom:4px">
+          <div>
+            <strong>INR ${Number(c.amount||0).toLocaleString('en-IN', {minimumFractionDigits:2})}</strong>
+            <span style="font-size:11px;color:var(--muted);margin-left:6px">${esc(c.category||'expense')} (${esc(c.project_id||'general')})</span>
+          </div>
+          <span class="pill ${c.status==='approved'?'ok':'pending'}">${esc(c.status||'submitted')}</span>
+        </div>
+      `).join("") || `<div class="empty">No expense claims.</div>`;
+    }
+    if($("#finance-vendors")){
+      $("#finance-vendors").innerHTML = (j.vendors||[]).map(v=>`
+        <div class="kv" style="padding:6px 10px;margin-bottom:4px">
+          <div><strong>${esc(v.name)}</strong> <span style="font-size:11px;color:var(--muted)">(${esc(v.category)})</span></div>
+          <span style="font-size:11px;color:var(--muted)">${esc(v.contact||'Authorized')}</span>
+        </div>
+      `).join("") || `<div class="empty">No vendors registered.</div>`;
+    }
+    $("#finance-list").innerHTML = (j.approvals||[]).map(a=>`<div class="kv"><span>${esc(a.title)}</span><span class="pill pending">${esc(a.status||"pending")}</span></div>`).join("") || `<div class="empty">No pending approvals.</div>`;
+  }catch(e){ $("#finance-list").innerHTML = `<div class="empty">Failed to load.</div>`; }
+}
+
+async function renderEmployees(){
+  try{
+    const j = await api("/api/dashboard/employees");
+    $("#employee-list").innerHTML = j.users.map(u=>`<div class="kv"><span>${esc(u.username)}</span><span>${esc(u.role||"—")}</span></div>`).join("") || `<div class="empty">No employees found.</div>`;
+  }catch(e){ $("#employee-list").innerHTML = `<div class="empty">Failed to load.</div>`; }
+}
+
+async function renderMarketing(){
+  try{
+    const j = await api("/api/dashboard/marketing");
+    $("#marketing-list").innerHTML = j.marketing_modules.map(m=>`<div class="kv"><span>${esc(m.code)} — ${esc(m.name)}</span><span class="pill ok">${esc(m.status)}</span></div>`).join("") || `<div class="empty">No marketing modules.</div>`;
+  }catch(e){ $("#marketing-list").innerHTML = `<div class="empty">Failed to load.</div>`; }
+}
+
+async function renderCrm(){
+  try{
+    const j = await api("/api/dashboard/crm");
+    const st = j.stats || {};
+    if($("#crm-stats")){
+      $("#crm-stats").innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:12px">
+          <div class="card" style="padding:10px;background:#0b1120">
+            <div style="font-size:11px;color:var(--muted)">Total Leads</div>
+            <div style="font-size:18px;font-weight:700;color:var(--accent)">${st.total_leads||0}</div>
+          </div>
+          <div class="card" style="padding:10px;background:#0b1120">
+            <div style="font-size:11px;color:var(--muted)">New / Enquiries</div>
+            <div style="font-size:18px;font-weight:700;color:#f59e0b">${st.new_leads||0}</div>
+          </div>
+          <div class="card" style="padding:10px;background:#0b1120">
+            <div style="font-size:11px;color:var(--muted)">Qualified Leads</div>
+            <div style="font-size:18px;font-weight:700;color:#3b82f6">${st.qualified_leads||0}</div>
+          </div>
+          <div class="card" style="padding:10px;background:#0b1120">
+            <div style="font-size:11px;color:var(--muted)">Converted Clients</div>
+            <div style="font-size:18px;font-weight:700;color:#10b981">${st.clients_count||0}</div>
+          </div>
+        </div>
+      `;
+    }
+    const leads = j.leads || [];
+    if($("#crm-list")){
+      $("#crm-list").innerHTML = leads.map(l=>{
+        const isConverted = l.conversion_status === 'converted' || l.lead_status === 'won';
+        const pColor = l.lead_priority === 'high' ? 'style="color:#ef4444;font-weight:600"' : '';
+        return `
+          <div class="kv" style="padding:10px 12px;margin-bottom:6px;background:#0b1120;border-radius:6px;align-items:center">
+            <div style="flex:1">
+              <strong>${esc(l.company||l.lead_name)}</strong>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px">
+                Interest: <em>${esc(l.service_interest||l.platform||'General')}</em> | Loc: ${esc(l.location||'—')} | Phone: ${esc(l.phone||'—')}
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:11px;text-transform:uppercase" ${pColor}>${esc(l.lead_priority||'med')}</span>
+              <span class="pill ${isConverted?'ok':'pending'}">${esc(l.lead_status||'new')}</span>
+              ${!isConverted ? `<button class="btn-convert" data-id="${l.id}" style="padding:4px 10px;background:var(--accent);color:#06101f;border:0;border-radius:4px;font-weight:600;font-size:11px;cursor:pointer">Convert</button>` : `<span class="pill ok" style="font-size:10px">Client Ready</span>`}
+            </div>
+          </div>
+        `;
+      }).join("") || `<div class="empty">No leads found.</div>`;
+
+      document.querySelectorAll(".btn-convert").forEach(btn=>{
+        btn.onclick = async (e)=>{
+          const lid = e.target.getAttribute("data-id");
+          e.target.disabled = true;
+          e.target.textContent = "Converting...";
+          try {
+            const res = await api(`/api/leads/${lid}/convert`, {method: "POST", body: JSON.stringify({create_site: true})});
+            alert(`Lead converted successfully to Client ${res.client ? res.client.company_name : ''}!`);
+            await renderCrm();
+          } catch(err) {
+            alert("Conversion failed: " + err.message);
+            e.target.disabled = false;
+            e.target.textContent = "Convert";
+          }
+        };
+      });
+    }
+
+    if($("#crm-clients")){
+      const clients = j.clients || [];
+      $("#crm-clients").innerHTML = clients.map(c=>`
+        <div class="kv" style="padding:6px 12px;margin-bottom:4px">
+          <div><strong>${esc(c.company_name)}</strong> <span style="font-size:11px;color:var(--muted)">(${esc(c.client_workspace_id)})</span></div>
+          <span class="pill ok">${esc(c.service_package||'Client')}</span>
+        </div>
+      `).join("") || `<div class="empty">No client accounts yet.</div>`;
+    }
+
+    const syncBtn = $("#btn-sync-csv");
+    if(syncBtn && !syncBtn._bound){
+      syncBtn._bound = true;
+      syncBtn.onclick = async ()=>{
+        syncBtn.disabled = true;
+        syncBtn.textContent = "Syncing...";
+        try {
+          const res = await api("/api/leads/sync-csv", {method: "POST", body: "{}"});
+          alert(`Sync complete! Imported: ${res.imported}, Total leads: ${res.total_leads}`);
+          await renderCrm();
+        } catch(err) {
+          alert("Sync failed: " + err.message);
+        } finally {
+          syncBtn.disabled = false;
+          syncBtn.textContent = "Sync Leads from CSV";
+        }
+      };
+    }
+  }catch(e){ $("#crm-list").innerHTML = `<div class="empty">Failed to load CRM data: ${esc(e.message||'error')}</div>`; }
+}
+
+async function renderApprovals(){
+  try{
+    const j = await api("/api/approvals");
+    const all = j.approvals || [];
+    const pend = all.filter(a=>a.status==="pending");
+    $("#pending-approvals2").innerHTML = pend.map(a=>`
+      <div class="kv" style="padding:10px 12px;margin-bottom:6px;background:#0b1120;border-radius:6px;align-items:center">
+        <div style="flex:1">
+          <strong>${esc(a.title)}</strong>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">${esc(a.description||'')}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="pill pending">${esc(a.status)}</span>
+          <button class="btn-appr-ok" data-id="${a.id}" style="padding:4px 10px;background:#10b981;color:#fff;border:0;border-radius:4px;cursor:pointer;font-weight:600;font-size:11px">Approve</button>
+          <button class="btn-appr-no" data-id="${a.id}" style="padding:4px 10px;background:#ef4444;color:#fff;border:0;border-radius:4px;cursor:pointer;font-weight:600;font-size:11px">Reject</button>
+        </div>
+      </div>
+    `).join("") || `<div class="empty">No pending approvals.</div>`;
+
+    document.querySelectorAll(".btn-appr-ok").forEach(b=>{
+      b.onclick = async (e)=>{
+        const id = e.target.getAttribute("data-id");
+        b.disabled = true;
+        try {
+          await api(`/api/approvals/${id}/transition`, {method:"POST", body:JSON.stringify({status:"approved", note:"Approved via dashboard"})});
+          await renderApprovals();
+        } catch(err) { alert("Approval failed: " + err.message); b.disabled = false; }
+      };
+    });
+
+    document.querySelectorAll(".btn-appr-no").forEach(b=>{
+      b.onclick = async (e)=>{
+        const id = e.target.getAttribute("data-id");
+        b.disabled = true;
+        try {
+          await api(`/api/approvals/${id}/transition`, {method:"POST", body:JSON.stringify({status:"rejected", note:"Rejected via dashboard"})});
+          await renderApprovals();
+        } catch(err) { alert("Reject failed: " + err.message); b.disabled = false; }
+      };
+    });
+
+    $("#all-approvals").innerHTML = all.map(a=>`<div class="kv"><span>${esc(a.title)}</span><span class="pill ${a.status}">${esc(a.status)}</span></div>`).join("") || `<div class="empty">No approvals.</div>`;
+  }catch(e){ $("#pending-approvals2").innerHTML = `<div class="empty">Failed to load.</div>`; $("#all-approvals").innerHTML = `<div class="empty">Failed to load.</div>`; }
+}
+
+async function renderSettings(){
+  try{
+    const j = await api("/api/system");
+    $("#cfg-json").textContent = JSON.stringify(j, null, 2);
+    try{
+      const j2 = await api("/api/dashboard/settings");
+      $("#settings-roles").innerHTML = (j2.roles||[]).map(r=>`<div class="kv"><span>${esc(r)}</span></div>`).join("") || `<div class="empty">No roles.</div>`;
+    }catch(e2){ $("#settings-roles").innerHTML = `<div class="muted">settings unavailable</div>`; }
+  }catch(e){
+    $("#cfg-json").textContent = "System: " + (e.message||"n/a");
+    $("#settings-roles").innerHTML = `<div class="muted">settings unavailable</div>`;
+  }
+  await renderUserManagement();
+}
+
+async function renderUserManagement(){
+  const box = $("#users-manage");
+  if(!box) return;
+  try{
+    const j = await api("/api/users");
+    const users = (j.users||[]).sort((a,b)=>a.id-b.id);
+    let rows = "";
+    for(const u of users) {
+      const isAct = Boolean(u.active);
+      rows += "<tr>" +
+        "<td style='padding:6px 8px;border-bottom:1px solid var(--line);color:#e6edf6'>" + esc(u.username) + "</td>" +
+        "<td style='padding:6px 8px;border-bottom:1px solid var(--line);color:#e6edf6'>" + esc(u.name) + "</td>" +
+        "<td style='padding:6px 8px;border-bottom:1px solid var(--line);color:#e6edf6'>" + esc(u.role) + "</td>" +
+        "<td style='padding:6px 8px;border-bottom:1px solid var(--line);color:#e6edf6'>" + esc(u.workspace_id || "?") + "</td>" +
+        "<td style='padding:6px 8px;border-bottom:1px solid var(--line)'><span class='pill " + (isAct ? 'ok' : 'bad') + "'>" + (isAct ? 'active' : 'inactive') + "</span></td>" +
+        "<td style='padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;display:flex;gap:6px'>" +
+          "<button class='act btn-edit' data-id='" + u.id + "'>Edit</button>" +
+          "<button class='act btn-toggle' data-id='" + u.id + "' data-active='" + (isAct ? "1" : "0") + "'>" + (isAct ? "Deactivate" : "Activate") + "</button>" +
+        "</td>" +
+      "</tr>";
+    }
+    box.innerHTML = "<div style='display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px'>" +
+      "<h4 style='margin:0;font-size:13px;color:var(--muted)'>Manage users (Owner/Manager only)</h4>" +
+      "<button id='cm-add' style='padding:4px 10px;border-radius:5px;border:1px solid var(--accent);background:var(--accent);color:#06101f;font-size:11px'>+ Add user</button>" +
+    "</div>" +
+    "<table style='width:100%;border-collapse:collapse;font-size:12px'>" +
+      "<thead><tr style='background:#1a2744;color:#e6edf6'>" +
+        "<th style='padding:6px 8px;text-align:left;border-bottom:1px solid var(--line)'>Username</th>" +
+        "<th style='padding:6px 8px;text-align:left;border-bottom:1px solid var(--line)'>Name</th>" +
+        "<th style='padding:6px 8px;text-align:left;border-bottom:1px solid var(--line)'>Role</th>" +
+        "<th style='padding:6px 8px;text-align:left;border-bottom:1px solid var(--line)'>Workspace</th>" +
+        "<th style='padding:6px 8px;text-align:left;border-bottom:1px solid var(--line)'>Status</th>" +
+        "<th style='padding:6px 8px;text-align:left;border-bottom:1px solid var(--line)'>Actions</th>" +
+      "</tr></thead>" +
+      "<tbody>" + (rows || "<tr><td colspan='6' style='padding:8px;color:var(--muted)'>No users found.</td></tr>") + "</tbody>" +
+    "</table>" +
+    "<div class='muted' style='font-size:11px;margin-top:6px'>Owner/Manager only.</div>";
+
+    box.querySelectorAll(".btn-edit").forEach(b=>{
+      b.onclick = ()=>{
+        const id = b.dataset.id;
+        const u = users.find(x=>String(x.id)===String(id));
+        if(!u) return;
+        const modal = $("#user-form");
+        modal.dataset.editId = String(u.id);
+        modal.style.display = "block";
+        $("#uf-msg").textContent = "Editing user #" + u.id + " (leave password blank to keep unchanged)";
+        $("#uf-username").value = u.username||"";
+        $("#uf-password").value = "";
+        $("#uf-name").value = u.name||"";
+        $("#uf-role").value = u.role||"";
+        $("#uf-workspace").value = u.workspace_id||"";
+      };
+    });
+
+    box.querySelectorAll(".btn-toggle").forEach(b=>{
+      b.onclick = async ()=>{
+        const id = b.dataset.id;
+        const isAct = b.dataset.active === "1";
+        const action = isAct ? "deactivate" : "activate";
+        if(!confirm((isAct ? "Deactivate" : "Activate") + " this user?")) return;
+        try{
+          await api("/api/users/"+id+"/"+action, {method:"POST"});
+          await renderUserManagement();
+        }catch(e){ alert("Action failed: "+e.message); }
+      };
+    });
+
+    $("#cm-add").onclick = ()=>{
+      const modal = $("#user-form");
+      delete modal.dataset.editId;
+      modal.style.display = "block";
+      $("#uf-msg").textContent = "";
+      $("#uf-username").value = "";
+      $("#uf-password").value = "";
+      $("#uf-name").value = "";
+      setTimeout(()=>$("#uf-username").focus(), 50);
+    };
+
+    $("#uf-cancel").onclick = ()=>{
+      const modal = $("#user-form");
+      delete modal.dataset.editId;
+      modal.style.display = "none";
+    };
+
+    $("#uf-submit").onclick = async ()=>{
+      const modal = $("#user-form");
+      const editId = modal.dataset.editId;
+      const msg = $("#uf-msg");
+      msg.textContent = "Saving?";
+      try{
+        const body = {
+          username: $("#uf-username").value.trim(),
+          password: $("#uf-password").value,
+          name: $("#uf-name").value.trim(),
+          role: $("#uf-role").value.trim(),
+          workspace_id: $("#uf-workspace").value.trim(),
+        };
+        if(editId){
+          if(!body.username||!body.name||!body.role||!body.workspace_id) throw new Error("Username, name, role, workspace required");
+          if(!body.password) delete body.password;
+          await api("/api/users/"+editId, {method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+          msg.textContent = "User updated.";
+        } else {
+          if(!body.username||!body.password||!body.name||!body.role||!body.workspace_id) throw new Error("All fields required");
+          await api("/api/users", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+          msg.textContent = "User created.";
+        }
+        delete modal.dataset.editId;
+        modal.style.display = "none";
+        await renderUserManagement();
+      }catch(e){ msg.textContent = "Error: "+e.message; }
+    };
+  }catch(e){
+    box.innerHTML = "<div class='empty'>User management unavailable: " + esc(e.message) + "</div>";
+  }
+}
+async function renderRecent(o){
+  const box = $("#recent-activities");
+  const rows = (o.recent_audit||[]).slice(0,20).map(a=>{
+    const d = (a.details||a.target||"");
+    return `<div class="kv"><span>${esc(a.action)} <span class="muted">→ ${esc(a.target||"")}</span></span><span class="muted">${new Date(a.created_at||"").toLocaleString()}</span></div>`;
+  }).join("");
+  box.innerHTML = rows || `<div class="empty">No audit entries yet.</div>`;
+}
+
+async function askAI(q){
+  const box = $("#ai-resp");
+  box.textContent = "Thinking…";
+  try{
+    const r = await fetch("/api/ai-brain", { headers:{"Authorization":"Bearer "+state.token}, method:"GET" });
+    const j = await r.json().catch(()=>({}));
+    let body = j.brain || {};
+    body.agents = [];
+    try{
+      const agentsRes = await fetch("/api/ai-brain/agents", { headers:{"Authorization":"Bearer "+state.token} });
+      const a2 = await agentsRes.json().catch(()=>({}));
+      body.agents = a2.agents || [];
+      body.workspace = state.ws;
+      body.role = state.role;
+    }catch(e){ body.agents = []; }
+    box.textContent = JSON.stringify(body, null, 2);
+  }catch(e){
+    box.textContent = "Brain error: " + e.message;
+  }
+}
+
+const aiSend = $("#ai-send");
+const aiInput = $("#ai-input");
+if(aiSend && aiInput){
+  aiSend.onclick = () => askAI(aiInput.value);
+  aiInput.addEventListener("keydown", e=>{ if(e.key==="Enter") askAI(aiInput.value); });
+}
+
+(function(){
+  auth().then(() => {
+    bindNav();
+    switchWorkspace(state.ws || "SSC");
+  }).catch(function(e) { console.error('Init failed:', e.stack || e); });
+})();
+</script>
+</body>
+</html>

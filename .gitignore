@@ -23,11 +23,36 @@ generated/
 private-client-data/
 *.sqlite
 *.sqlite3
+*.sqlite-shm
+*.sqlite-wal
+*.sqlite.*
 *.db
 *.log
+
+# Backups and archives
+backups/
+backup_*/
+*.bundle
+*.bak*
+*.pre
+foundation/c/tmp/
+nul
+run_out.txt
+tmp_*.py
+tmp_*.db
+tmp_*.json
+tmp_*.csv
+data/m19_output/
 
 # Common local tooling
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
+
+# Local scratch / tool state
+__pycache__/
+*.pyc
+*.tmp
+*.swp
+*~

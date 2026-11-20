@@ -36,4 +36,26 @@ jobs:
             echo "Hermes submodule is not initialized" >&2
             exit 1
           fi
-          echo "SHAH AI workspace and Hermes source submodule are present."
+
+          # SHAH AI extension files
+          test -s COMMAND-CENTER.md
+          test -s Start-SHAI-Center.ps1
+          test -s modules/README.md
+          for m in 01 02 03 04 05 06 07 08 09 10 11 12 13 14; do
+            shopt -s nullglob
+            module_dirs=(modules/"$m"-*/)
+            shopt -u nullglob
+            if [ "${#module_dirs[@]}" -eq 0 ]; then
+              echo "missing module folder: modules/$m-" >&2
+              exit 1
+            fi
+            test -s modules/"$m"-*/README.md
+          done
+          test -s shared/templates/marketing-brief-template.md
+          test -s shared/templates/content-template.md
+          test -s shared/templates/approval-form.md
+          test -s shared/templates/qa-checklist.md
+          test -s shared/scripts/Open-Readme.ps1
+          test -s shared/scripts/Write-Draft.ps1
+          test -s docs/MODULES-ARCHITECTURE.md
+          echo "SHAH AI extension modules and shared files present."

@@ -1,0 +1,5 @@
+{
+    "db_path": "data/sgcc_foundation.sqlite",
+    "port": 8899,
+    "host": "127.0.0.1"
+}
