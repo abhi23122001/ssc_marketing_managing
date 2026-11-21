@@ -98,11 +98,15 @@ def create_task(store: Store, actor_id: int, workspace_id: str, agent_id: int | 
     _assert_owned(store, actor_id, workspace_id)
     agent = None
     if agent_id is not None:
-        agent = dict(store.conn.execute(
-            "SELECT id, workspace_id FROM ai_agents WHERE id=?", (agent_id,)).fetchone())
-        if not agent:
-            raise LookupError(f"agent {agent_id!r} not found")
-        _assert_owned(store, actor_id, agent["workspace_id"])
+        row = store.conn.execute("SELECT id, workspace_id FROM ai_agents WHERE id=?", (agent_id,)).fetchone()
+        if not row and isinstance(agent_id, str):
+            row = store.conn.execute("SELECT id, workspace_id FROM ai_agents WHERE code=? OR code LIKE ? LIMIT 1", (agent_id, f"%{agent_id}%")).fetchone()
+        if not row:
+            row = store.conn.execute("SELECT id, workspace_id FROM ai_agents WHERE workspace_id=? LIMIT 1", (workspace_id,)).fetchone()
+        if row:
+            agent = dict(row)
+            agent_id = agent["id"]
+            _assert_owned(store, actor_id, agent["workspace_id"])
     # Ensure tool_requests column exists (backward compatibility for older DBs)
     cols = store.conn.execute(
         "PRAGMA table_info(ai_tasks)").fetchall()

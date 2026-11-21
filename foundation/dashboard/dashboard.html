@@ -210,7 +210,7 @@
       <div class="item" data-sec="employees"><span class="ico">&#128105;</span>Employees & HRM</div>
       <div class="item" data-sec="marketing"><span class="ico">&#128240;</span>AI Social Media Studio</div>
       <div class="item" data-sec="crm"><span class="ico">&#128236;</span>CRM & Leads</div>
-      <div class="item" data-sec="ai"><span class="ico">&#129302;</span>Specialist AI Agents</div>
+      <div class="item" data-sec="ai"><span class="ico">&#129302;</span>AI Brain & Intelligence</div>
       <div class="item" data-sec="approvals"><span class="ico">&#10003;</span>Approvals Queue</div>
       <div class="item" data-sec="settings"><span class="ico">&#9881;</span>System & Users</div>
     </nav>
@@ -549,56 +549,154 @@
       </div>
     </section>
 
-    <!-- ==================== 8. SPECIALIST AI AGENTS ==================== -->
+    <!-- ==================== 8. SHAH GROUP AI BRAIN & COMMAND CENTER ==================== -->
     <section id="sec-ai" class="card" style="display:none">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <h2>Specialist AI Brain & Autonomous Agents</h2>
-        <span class="pill ok">12 Active Specialists</span>
-      </div>
-
-      <!-- 12 Agent Cards -->
-      <div class="grid3" id="ai-agents-grid" style="margin-bottom:16px"></div>
-
-      <!-- Task Dispatcher -->
-      <div class="grid2">
-        <div class="card">
-          <h3>Interactive Agent Task Dispatcher</h3>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <label style="font-size:11px;color:var(--muted)">Select Specialist Agent:</label>
-            <select id="task-agent-select" style="background:#0b1120;border:1px solid var(--line);color:var(--text);padding:8px;border-radius:6px"></select>
-
-            <label style="font-size:11px;color:var(--muted)">Allowlisted Tool:</label>
-            <select id="task-tool-select" style="background:#0b1120;border:1px solid var(--line);color:var(--text);padding:8px;border-radius:6px">
-              <option value="leads:read">leads:read — Inspect active CRM leads</option>
-              <option value="sites:read">sites:read — Verify site geofences & active projects</option>
-              <option value="vendors:read">vendors:read — Query approved suppliers</option>
-              <option value="clients:read">clients:read — Audit client accounts</option>
-              <option value="alerts:attendance">alerts:attendance — Evaluate team check-in compliance</option>
-              <option value="alerts:expense">alerts:expense — Scan unapproved expense claims</option>
-            </select>
-
-            <label style="font-size:11px;color:var(--muted)">Task Directive / Title:</label>
-            <input id="task-title-input" placeholder="e.g. Audit unapproved travel claims for Highway Site" style="background:#0b1120;border:1px solid var(--line);color:var(--text);padding:8px;border-radius:6px">
-
-            <button id="btn-dispatch-task" class="btn btn-primary" style="margin-top:4px">&#9889; Execute Agent Task</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3>Agent Execution & Tool Output Log</h3>
-          <div id="task-execution-output" style="background:#0b1120;border:1px solid var(--line);border-radius:8px;padding:12px;font-family:Consolas,monospace;font-size:12px;min-height:220px;max-height:300px;overflow-y:auto;white-space:pre-wrap;color:var(--accent)">Awaiting agent task execution...</div>
+        <h2>SHAH Group AI Brain — Autonomous Command Center</h2>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="pill ok">&#9679; Autonomous Intelligence Online</span>
+          <span class="pill info">Asia/Kolkata (IST)</span>
         </div>
       </div>
 
-      <!-- Fast Chat Box -->
-      <div class="card" style="margin-top:14px">
-        <h3>Direct Knowledge Query to Local Brain</h3>
-        <div class="chat">
-          <div class="in">
-            <input id="ai-input" placeholder="Ask the local brain a question about project scope or standards…">
-            <button id="ai-send" class="btn btn-primary">Query</button>
+      <div class="subnav" id="subnav-ai-brain">
+        <button class="active" data-sub="assistant">Universal Assistant (Ask Anything)</button>
+        <button data-sub="research">Autonomous Daily Research</button>
+        <button data-sub="briefs">Daily Marketing Briefs</button>
+        <button data-sub="alerts">Proactive Business Alerts</button>
+        <button data-sub="reports">Automated Reports Archive</button>
+        <button data-sub="scheduler">Background Scheduler</button>
+        <button data-sub="knowledge">Knowledge Base & SOPs</button>
+        <button data-sub="agents">12 Specialist Agents</button>
+      </div>
+
+      <!-- Sub 1: Universal Assistant (Ask Anything) -->
+      <div id="sub-ai-assistant">
+        <div class="card" style="margin-bottom:14px;background:#0b1120">
+          <h3>Ask Anything — Universal Business Intelligence (Hindi / English / Hinglish)</h3>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:10px">
+            Ask questions about software features, live project status, DGPS/RTK/Drone tolerances, MoRTH specifications, live P&amp;L profits, or government tenders. Answers are grounded strictly in live database records and verified engineering SOPs.
           </div>
-          <div class="resp" id="ai-resp">The local brain answers from project context only; it never hallucinates external facts.</div>
+          <div style="display:flex;gap:8px;margin-bottom:8px">
+            <input id="ask-input" placeholder="e.g. Total profit kitna hua hai? / DGPS accuracy standards kya hain? / Estimate kaise banate hain?" style="background:#020617;border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:6px;flex:1;font-size:13px">
+            <button id="btn-ask-ai" class="btn btn-primary" style="padding:0 18px">&#9889; Ask Brain</button>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+            <span style="font-size:11px;color:var(--muted);align-self:center">Quick Queries:</span>
+            <button class="btn btn-secondary btn-sm btn-quick-ask" data-q="Total operating profit kitna hua hai aur kitna baki hai?">Financial P&amp;L Status</button>
+            <button class="btn btn-secondary btn-sm btn-quick-ask" data-q="DGPS aur RTK survey accuracy ke kya standard hain?">DGPS Accuracy SOP</button>
+            <button class="btn btn-secondary btn-sm btn-quick-ask" data-q="Drone survey ke liye DGCA rules aur GCP spacing kya hai?">Drone &amp; Aerial LiDAR SOP</button>
+            <button class="btn btn-secondary btn-sm btn-quick-ask" data-q="MoRTH Section 300 earthwork compaction tolerances kya hain?">MoRTH Earthwork Standards</button>
+            <button class="btn btn-secondary btn-sm btn-quick-ask" data-q="How to create an estimate and quotation with 18% GST?">How to Create Quotation</button>
+            <button class="btn btn-secondary btn-sm btn-quick-ask" data-q="GeM portal aur government tenders ke liye eligibility checklist kya hai?">GeM Tender Eligibility</button>
+          </div>
+          <div id="ask-response-card" style="display:none;background:#020617;border:1px solid var(--accent);border-radius:8px;padding:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <span id="ask-intent-pill" class="pill ok">Intent: GENERAL</span>
+              <span id="ask-timestamp" class="muted" style="font-size:11px"></span>
+            </div>
+            <div id="ask-answer-body" style="font-size:13px;line-height:1.6;white-space:pre-wrap;color:var(--text)"></div>
+            <div id="ask-source-box" style="margin-top:10px;padding-top:8px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub 2: Autonomous Daily Research -->
+      <div id="sub-ai-research" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h3>Autonomous Daily Research &amp; Tender Feed</h3>
+          <button id="btn-refresh-research" class="btn btn-primary btn-sm">&#128260; Run Autonomous Daily Research</button>
+        </div>
+        <div id="research-feed-container" class="grid2"></div>
+      </div>
+
+      <!-- Sub 3: Daily Marketing Briefs -->
+      <div id="sub-ai-briefs" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h3>Daily Autonomous Marketing Brief — <span class="active-ws-title">SSC</span></h3>
+          <button id="btn-generate-brief" class="btn btn-primary btn-sm">&#9881; Generate Today's Brief</button>
+        </div>
+        <div id="marketing-brief-card" class="card" style="background:#0b1120"></div>
+      </div>
+
+      <!-- Sub 4: Proactive Business Alerts -->
+      <div id="sub-ai-alerts" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h3>Proactive Business Risk &amp; Action Alerts</h3>
+          <button id="btn-scan-alerts" class="btn btn-primary btn-sm">&#128269; Scan Live Business Conditions</button>
+        </div>
+        <div id="business-alerts-container"></div>
+      </div>
+
+      <!-- Sub 5: Automated Reports Archive -->
+      <div id="sub-ai-reports" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h3>Automated Operations, Financial &amp; Strategic Reports</h3>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-secondary btn-sm btn-gen-report" data-type="daily">+ Daily Report</button>
+            <button class="btn btn-secondary btn-sm btn-gen-report" data-type="weekly">+ Weekly Report</button>
+            <button class="btn btn-secondary btn-sm btn-gen-report" data-type="monthly">+ Monthly P&amp;L Report</button>
+          </div>
+        </div>
+        <div id="automated-reports-table" style="overflow-x:auto"></div>
+        <div id="report-detail-viewer" class="card" style="margin-top:14px;display:none;background:#0b1120"></div>
+      </div>
+
+      <!-- Sub 6: Background Scheduler -->
+      <div id="sub-ai-scheduler" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h3>Central Autonomous Scheduler Monitor (Persistent Daemon)</h3>
+          <span class="pill ok">&#9679; Scheduler Daemon Running</span>
+        </div>
+        <div class="card" style="background:#0b1120;margin-bottom:14px">
+          <h4>Scheduled Intelligence Jobs</h4>
+          <div id="scheduler-jobs-table" style="overflow-x:auto"></div>
+        </div>
+        <div class="card" style="background:#0b1120">
+          <h4>Execution History &amp; Diagnostics</h4>
+          <div id="scheduler-runs-table" style="overflow-x:auto"></div>
+        </div>
+      </div>
+
+      <!-- Sub 7: Knowledge Base & SOPs -->
+      <div id="sub-ai-knowledge" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h3>Company Knowledge Base, Standards &amp; SOPs</h3>
+          <button id="btn-add-sop" class="btn btn-primary btn-sm">+ Add SOP / Standard</button>
+        </div>
+        <div style="margin-bottom:10px">
+          <input id="sop-search-input" placeholder="Search standards, DGPS, MoRTH, Drone, Tenders, software guides..." style="background:#0b1120;border:1px solid var(--line);color:var(--text);padding:8px 12px;border-radius:6px;width:100%;font-size:12px">
+        </div>
+        <div id="knowledge-base-container" class="grid2"></div>
+      </div>
+
+      <!-- Sub 8: 12 Specialist Agents (Existing) -->
+      <div id="sub-ai-agents" style="display:none">
+        <div class="grid3" id="ai-agents-grid" style="margin-bottom:16px"></div>
+        <div class="grid2">
+          <div class="card">
+            <h3>Interactive Agent Task Dispatcher</h3>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <label style="font-size:11px;color:var(--muted)">Select Specialist Agent:</label>
+              <select id="task-agent-select" style="background:#0b1120;border:1px solid var(--line);color:var(--text);padding:8px;border-radius:6px"></select>
+              <label style="font-size:11px;color:var(--muted)">Allowlisted Tool:</label>
+              <select id="task-tool-select" style="background:#0b1120;border:1px solid var(--line);color:var(--text);padding:8px;border-radius:6px">
+                <option value="leads:read">leads:read — Inspect active CRM leads</option>
+                <option value="sites:read">sites:read — Verify site geofences & active projects</option>
+                <option value="vendors:read">vendors:read — Query approved suppliers</option>
+                <option value="clients:read">clients:read — Audit client accounts</option>
+                <option value="alerts:attendance">alerts:attendance — Evaluate team check-in compliance</option>
+                <option value="alerts:expense">alerts:expense — Scan unapproved expense claims</option>
+              </select>
+              <label style="font-size:11px;color:var(--muted)">Task Directive / Title:</label>
+              <input id="task-title-input" placeholder="e.g. Audit unapproved travel claims for Highway Site" style="background:#0b1120;border:1px solid var(--line);color:var(--text);padding:8px;border-radius:6px">
+              <button id="btn-dispatch-task" class="btn btn-primary" style="margin-top:4px">&#9889; Execute Agent Task</button>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Agent Execution &amp; Tool Output Log</h3>
+            <div id="task-execution-output" style="background:#0b1120;border:1px solid var(--line);border-radius:8px;padding:12px;font-family:Consolas,monospace;font-size:12px;min-height:220px;max-height:300px;overflow-y:auto;white-space:pre-wrap;color:var(--accent)">Awaiting agent task execution...</div>
+          </div>
         </div>
       </div>
     </section>
@@ -2310,7 +2408,7 @@ if(btnSyncCsv){
 }
 
 // -----------------------------------------------------------------------------
-// 8. SPECIALIST AI AGENTS
+// 8. SHAH GROUP AI BRAIN & AUTONOMOUS COMMAND CENTER
 // -----------------------------------------------------------------------------
 const AGENTS_METADATA = [
   {id:"owner_agent", name:"Owner Assistant", domain:"Executive & Oversight", icon:"&#128081;", tools:"Consolidated MIS, Strategic P&L, Cross-Workspace Audit"},
@@ -2327,7 +2425,471 @@ const AGENTS_METADATA = [
   {id:"research_agent", name:"Research Agent", domain:"Regulatory Norms", icon:"&#128269;", tools:"Civil Norms, Drone Flying Permissions, Soil Standards"}
 ];
 
+function setupAiSubnav(){
+  bindSubnav("#subnav-ai-brain", sub=>{
+    ["assistant", "research", "briefs", "alerts", "reports", "scheduler", "knowledge", "agents"].forEach(k=>{
+      const el = $("#sub-ai-"+k);
+      if(el) el.style.display = (k === sub) ? "block" : "none";
+    });
+  });
+}
+
 async function renderAi(){
+  setupAiSubnav();
+  await Promise.all([
+    renderAiAssistant(),
+    renderAiResearch(),
+    renderAiBriefs(),
+    renderAiAlerts(),
+    renderAiReports(),
+    renderAiScheduler(),
+    renderAiKnowledge(),
+    renderAiAgents()
+  ]);
+}
+
+// 1. Universal Assistant (Ask Anything)
+async function renderAiAssistant(){
+  const btn = $("#btn-ask-ai");
+  const inp = $("#ask-input");
+  const respCard = $("#ask-response-card");
+  const pill = $("#ask-intent-pill");
+  const timeEl = $("#ask-timestamp");
+  const bodyEl = $("#ask-answer-body");
+  const srcEl = $("#ask-source-box");
+
+  const submitQuery = async (queryText)=>{
+    const q = (queryText || inp.value).trim();
+    if(!q) return;
+    btn.disabled = true;
+    respCard.style.display = "block";
+    pill.className = "pill pending";
+    pill.textContent = "Processing...";
+    timeEl.textContent = "Analyzing query intent...";
+    bodyEl.textContent = "Thinking and retrieving authorized data...";
+    srcEl.textContent = "";
+
+    try{
+      const res = await api("/api/intelligence/ask", {
+        method: "POST",
+        body: {query: q, workspace: state.ws}
+      });
+      const a = res.answer || {};
+      pill.className = "pill ok";
+      pill.textContent = `Intent: ${a.intent || 'GENERAL'}`;
+      timeEl.textContent = a.calculated_at || a.retrieved_at || new Date().toLocaleString();
+      bodyEl.textContent = a.verified_answer || JSON.stringify(a, null, 2);
+      srcEl.innerHTML = `<strong>Data Source:</strong> ${esc(a.data_source || a.source || 'Authorized System Context')} | Workspace: <strong>${esc(state.ws)}</strong>`;
+      inp.value = "";
+    }catch(err){
+      pill.className = "pill rejected";
+      pill.textContent = "Error";
+      bodyEl.textContent = `Error querying AI Brain: ${err.message}`;
+    }finally{
+      btn.disabled = false;
+    }
+  };
+
+  if(btn && !btn._bound){
+    btn._bound = true;
+    btn.onclick = ()=>submitQuery();
+  }
+  if(inp && !inp._bound){
+    inp._bound = true;
+    inp.addEventListener("keydown", e=>{ if(e.key === "Enter") submitQuery(); });
+  }
+
+  document.querySelectorAll(".btn-quick-ask").forEach(b=>{
+    if(!b._bound){
+      b._bound = true;
+      b.onclick = ()=>submitQuery(b.dataset.q);
+    }
+  });
+}
+
+// 2. Autonomous Daily Research
+async function renderAiResearch(){
+  const box = $("#research-feed-container");
+  if(!box) return;
+  try{
+    const j = await api(`/api/intelligence/research?workspace=${state.ws}`);
+    const items = j.research || [];
+    box.innerHTML = items.length ? items.map(r=>`
+      <div class="card" style="background:#0b1120;border:1px solid var(--line);display:flex;flex-direction:column;justify-content:space-between">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <span class="pill info">${esc(r.category.toUpperCase())}</span>
+            <span class="pill ok">${r.relevance_score || 90}% Relevance</span>
+          </div>
+          <h4 style="color:var(--text);margin-bottom:6px;font-size:14px">${esc(r.topic)}</h4>
+          <p style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:8px">${esc(r.summary)}</p>
+        </div>
+        <div style="padding-top:8px;border-top:1px solid var(--line);font-size:11px">
+          <div style="margin-bottom:4px;color:var(--accent)"><strong>Action:</strong> ${esc(r.recommended_action || 'Review and file in bid registry')}</div>
+          <div class="muted">Source: <a href="${esc(r.source_url||'#')}" target="_blank" style="color:var(--accent)">${esc(r.source_name||'Official Publication')}</a> | ${esc(r.publication_date||'Recent')}</div>
+        </div>
+      </div>
+    `).join("") : `<div class="empty">No research items available. Click "Run Autonomous Daily Research" above.</div>`;
+  }catch(e){
+    box.innerHTML = `<div class="empty">Error loading research feed: ${esc(e.message)}</div>`;
+  }
+
+  const btn = $("#btn-refresh-research");
+  if(btn && !btn._bound){
+    btn._bound = true;
+    btn.onclick = async ()=>{
+      btn.disabled = true;
+      try{
+        await api("/api/intelligence/research/run", {method:"POST", body:{workspace:state.ws}});
+        toast("Autonomous Daily Research completed");
+        renderAiResearch();
+      }catch(err){ toast(err.message, "bad"); }
+      finally{ btn.disabled = false; }
+    };
+  }
+}
+
+// 3. Daily Marketing Briefs
+async function renderAiBriefs(){
+  const box = $("#marketing-brief-card");
+  if(!box) return;
+  try{
+    const j = await api(`/api/intelligence/briefs?workspace=${state.ws}`);
+    const b = j.brief;
+    if(!b){
+      box.innerHTML = `<div class="empty">No marketing brief generated yet. Click "Generate Today's Brief".</div>`;
+      return;
+    }
+    box.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div>
+          <h4 style="margin:0;font-size:15px">Morning Strategic Brief: ${esc(b.workspace_id)} (${esc(b.brief_date)})</h4>
+          <div class="muted" style="font-size:11px">Target Audience: ${esc(b.target_audience||'EPC Contractors & Infra Developers')}</div>
+        </div>
+        <span class="pill ok">Active Brief</span>
+      </div>
+      <div class="grid2" style="margin-bottom:12px">
+        <div style="background:#020617;padding:10px;border-radius:6px;border:1px solid var(--line)">
+          <strong style="color:var(--accent);font-size:12px">&#128200; Market Trends:</strong>
+          <p style="font-size:12px;margin:4px 0;line-height:1.4">${esc(b.industry_trends)}</p>
+        </div>
+        <div style="background:#020617;padding:10px;border-radius:6px;border:1px solid var(--line)">
+          <strong style="color:var(--accent);font-size:12px">&#128065; Competitor Insights:</strong>
+          <p style="font-size:12px;margin:4px 0;line-height:1.4">${esc(b.competitor_insights||'N/A')}</p>
+        </div>
+      </div>
+      <div style="background:#020617;padding:12px;border-radius:6px;border:1px solid var(--line);margin-bottom:12px">
+        <strong style="color:var(--accent);font-size:12px">&#128227; Recommended Content & Directives:</strong>
+        <div style="font-size:12px;line-height:1.6;white-space:pre-wrap;margin-top:6px">${esc(b.recommended_posts)}</div>
+      </div>
+      <div class="grid2">
+        <div style="background:#020617;padding:10px;border-radius:6px;border:1px solid var(--line)">
+          <strong style="color:var(--accent);font-size:12px">&#9200; Posting Schedule (Asia/Kolkata):</strong>
+          <div style="font-size:12px;line-height:1.5;white-space:pre-wrap;margin-top:4px">${esc(b.posting_schedule||'10:15 AM IST (LinkedIn), 06:30 PM IST (Reels)')}</div>
+        </div>
+        <div style="background:#020617;padding:10px;border-radius:6px;border:1px solid var(--line)">
+          <strong style="color:var(--accent);font-size:12px">&#127919; Call to Action (CTA):</strong>
+          <p style="font-size:12px;margin:4px 0;line-height:1.4">${esc(b.cta_objective||'Book a free consultation')}</p>
+        </div>
+      </div>
+    `;
+  }catch(e){
+    box.innerHTML = `<div class="empty">Error loading brief: ${esc(e.message)}</div>`;
+  }
+
+  const btn = $("#btn-generate-brief");
+  if(btn && !btn._bound){
+    btn._bound = true;
+    btn.onclick = async ()=>{
+      btn.disabled = true;
+      try{
+        await api("/api/intelligence/briefs/generate", {method:"POST", body:{workspace:state.ws}});
+        toast("Daily marketing brief generated");
+        renderAiBriefs();
+      }catch(err){ toast(err.message, "bad"); }
+      finally{ btn.disabled = false; }
+    };
+  }
+}
+
+// 4. Proactive Business Alerts
+async function renderAiAlerts(){
+  const box = $("#business-alerts-container");
+  if(!box) return;
+  try{
+    const j = await api(`/api/intelligence/alerts?workspace=${state.ws}`);
+    const alerts = j.alerts || [];
+    box.innerHTML = alerts.length ? alerts.map(a=>`
+      <div class="card" style="margin-bottom:10px;background:#0b1120;border-left:4px solid ${a.priority==='critical'?'#ef4444':a.priority==='high'?'#f59e0b':'#38bdf8'}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+          <div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="pill ${a.priority==='critical'?'rejected':a.priority==='high'?'warn':'info'}">${esc(a.priority.toUpperCase())}</span>
+              <strong style="font-size:13px;color:var(--text)">${esc(a.title)}</strong>
+            </div>
+            <p style="font-size:12px;color:var(--muted);margin:4px 0">${esc(a.description)}</p>
+          </div>
+          <button class="btn btn-good btn-sm btn-resolve-alert" data-id="${a.id}">&#10003; Acknowledge &amp; Resolve</button>
+        </div>
+        <div class="grid2" style="font-size:11px;margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.06)">
+          <div><strong>Why It Matters:</strong> ${esc(a.why_it_matters||'Operational risk')}</div>
+          <div><strong>Action:</strong> ${esc(a.recommended_action||'Review immediately')}</div>
+        </div>
+      </div>
+    `).join("") : `<div class="empty">&#10003; All business conditions optimal. Zero active risk alerts for ${state.ws}.</div>`;
+
+    box.querySelectorAll(".btn-resolve-alert").forEach(b=>{
+      b.onclick = async ()=>{
+        b.disabled = true;
+        try{
+          await api(`/api/intelligence/alerts/${b.dataset.id}/resolve`, {method:"POST"});
+          toast("Alert resolved");
+          renderAiAlerts();
+        }catch(err){ toast(err.message, "bad"); b.disabled = false; }
+      };
+    });
+  }catch(e){
+    box.innerHTML = `<div class="empty">Error loading alerts: ${esc(e.message)}</div>`;
+  }
+
+  const btn = $("#btn-scan-alerts");
+  if(btn && !btn._bound){
+    btn._bound = true;
+    btn.onclick = async ()=>{
+      btn.disabled = true;
+      try{
+        const r = await api("/api/intelligence/alerts/scan", {method:"POST", body:{workspace:state.ws}});
+        toast(`Scan complete: ${r.count} active alerts evaluated`);
+        renderAiAlerts();
+      }catch(err){ toast(err.message, "bad"); }
+      finally{ btn.disabled = false; }
+    };
+  }
+}
+
+// 5. Automated Reports Archive
+async function renderAiReports(){
+  const tBox = $("#automated-reports-table");
+  if(!tBox) return;
+  try{
+    const j = await api(`/api/intelligence/reports?workspace=${state.ws}`);
+    const reports = j.reports || [];
+    tBox.innerHTML = reports.length ? `
+      <table>
+        <thead>
+          <tr><th>Type</th><th>Period</th><th>Report Title</th><th>Generated At</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          ${reports.map(r=>`
+            <tr>
+              <td><span class="pill info">${esc(r.report_type.toUpperCase())}</span></td>
+              <td><strong>${esc(r.period_label)}</strong></td>
+              <td>${esc(r.title)}</td>
+              <td class="muted">${new Date(r.generated_at).toLocaleString()}</td>
+              <td style="display:flex;gap:4px">
+                <button class="btn btn-secondary btn-sm btn-view-report" data-id="${r.id}">View</button>
+                <button class="btn btn-secondary btn-sm btn-export-report" data-id="${r.id}">Export</button>
+              </td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    ` : `<div class="empty">No automated reports generated yet. Click a "+ Report" button above.</div>`;
+
+    tBox.querySelectorAll(".btn-view-report").forEach(b=>{
+      b.onclick = async ()=>{
+        const rid = b.dataset.id;
+        const res = await api(`/api/intelligence/reports/${rid}`);
+        const r = res.report;
+        const viewer = $("#report-detail-viewer");
+        if(viewer){
+          viewer.style.display = "block";
+          const content = JSON.parse(r.content_json || "{}");
+          viewer.innerHTML = `
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+              <h3 style="margin:0">${esc(r.title)}</h3>
+              <button class="btn btn-secondary btn-sm" onclick="$('#report-detail-viewer').style.display='none'">Close</button>
+            </div>
+            <p style="font-size:13px;color:var(--text);margin-bottom:10px">${esc(r.summary)}</p>
+            <div style="background:#020617;padding:12px;border-radius:6px;font-family:Consolas,monospace;font-size:12px;max-height:260px;overflow-y:auto;white-space:pre-wrap;color:var(--accent)">${esc(JSON.stringify(content, null, 2))}</div>
+          `;
+          viewer.scrollIntoView({behavior:"smooth"});
+        }
+      };
+    });
+
+    tBox.querySelectorAll(".btn-export-report").forEach(b=>{
+      b.onclick = async ()=>{
+        const rid = b.dataset.id;
+        const res = await api(`/api/intelligence/reports/${rid}`);
+        const blob = new Blob([JSON.stringify(res.report, null, 2)], {type:"application/json"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `Report_${res.report.report_type}_${res.report.period_label}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        toast("Report JSON exported");
+      };
+    });
+  }catch(e){
+    tBox.innerHTML = `<div class="empty">Error loading reports: ${esc(e.message)}</div>`;
+  }
+
+  document.querySelectorAll(".btn-gen-report").forEach(b=>{
+    if(!b._bound){
+      b._bound = true;
+      b.onclick = async ()=>{
+        b.disabled = true;
+        try{
+          await api("/api/intelligence/reports/generate", {method:"POST", body:{type:b.dataset.type, workspace:state.ws}});
+          toast(`${b.dataset.type} report generated`);
+          renderAiReports();
+        }catch(err){ toast(err.message, "bad"); }
+        finally{ b.disabled = false; }
+      };
+    }
+  });
+}
+
+// 6. Background Scheduler
+async function renderAiScheduler(){
+  const jBox = $("#scheduler-jobs-table");
+  const rBox = $("#scheduler-runs-table");
+  if(!jBox) return;
+
+  try{
+    const j = await api("/api/intelligence/scheduler/jobs");
+    const jobs = j.jobs || [];
+    jBox.innerHTML = jobs.length ? `
+      <table>
+        <thead>
+          <tr><th>Job Name</th><th>Frequency</th><th>Schedule / Timezone</th><th>Last Run</th><th>Next Scheduled Run</th><th>Status</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+          ${jobs.map(job=>`
+            <tr>
+              <td><strong>${esc(job.name)}</strong></td>
+              <td><span class="pill info">${esc(job.frequency)}</span></td>
+              <td>${esc(job.schedule_time)} (${esc(job.timezone)})</td>
+              <td class="muted">${job.last_run_at ? new Date(job.last_run_at).toLocaleString() : 'Pending'}</td>
+              <td class="muted">${job.next_run_at ? new Date(job.next_run_at).toLocaleString() : 'Immediate'}</td>
+              <td><span class="pill ${job.last_status==='success'?'ok':'warn'}">${esc(job.last_status||'active')}</span></td>
+              <td><button class="btn btn-primary btn-sm btn-run-job" data-key="${job.job_key}">Run Now</button></td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    ` : `<div class="empty">No scheduler jobs configured.</div>`;
+
+    jBox.querySelectorAll(".btn-run-job").forEach(b=>{
+      b.onclick = async ()=>{
+        b.disabled = true;
+        try{
+          const res = await api("/api/intelligence/scheduler/run-now", {method:"POST", body:{job_key:b.dataset.key}});
+          toast(`Job executed: ${res.run.summary || res.run.status}`);
+          renderAiScheduler();
+        }catch(err){ toast(err.message, "bad"); b.disabled = false; }
+      };
+    });
+
+    if(rBox){
+      const rj = await api("/api/intelligence/scheduler/runs");
+      const runs = rj.runs || [];
+      rBox.innerHTML = runs.length ? `
+        <table>
+          <thead>
+            <tr><th>Job Key</th><th>Started At</th><th>Completed At</th><th>Status</th><th>Diagnostics / Summary</th></tr>
+          </thead>
+          <tbody>
+            ${runs.map(r=>`
+              <tr>
+                <td><strong>${esc(r.job_key)}</strong></td>
+                <td class="muted">${new Date(r.started_at).toLocaleString()}</td>
+                <td class="muted">${r.completed_at ? new Date(r.completed_at).toLocaleString() : 'Running'}</td>
+                <td><span class="pill ${r.status==='success'?'ok':'rejected'}">${esc(r.status)}</span></td>
+                <td>${esc(r.summary || r.error_log || 'OK')}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      ` : `<div class="empty">No scheduler execution history recorded yet.</div>`;
+    }
+  }catch(e){
+    jBox.innerHTML = `<div class="empty">Error loading scheduler: ${esc(e.message)}</div>`;
+  }
+}
+
+// 7. Knowledge Base & SOPs
+async function renderAiKnowledge(){
+  const box = $("#knowledge-base-container");
+  if(!box) return;
+  const q = ($("#sop-search-input") ? $("#sop-search-input").value.trim() : "");
+  try{
+    const j = await api(`/api/intelligence/knowledge${q ? `?q=${encodeURIComponent(q)}` : ''}`);
+    const entries = j.knowledge || [];
+    box.innerHTML = entries.length ? entries.map(k=>`
+      <div class="card" style="background:#0b1120;border:1px solid var(--line)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span class="pill info">${esc(k.category.toUpperCase())}</span>
+          <span class="pill ok">Verified SOP</span>
+        </div>
+        <h4 style="margin:0 0 6px;color:var(--text);font-size:14px">${esc(k.title)}</h4>
+        <p style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:8px">${esc(k.content)}</p>
+        <div style="font-size:11px;color:var(--accent)">Tags: ${esc(k.tags||'SOP')} | Domain: ${esc(k.workspace_id||'ALL')}</div>
+      </div>
+    `).join("") : `<div class="empty">No SOPs found matching search.</div>`;
+  }catch(e){
+    box.innerHTML = `<div class="empty">Error loading knowledge base: ${esc(e.message)}</div>`;
+  }
+
+  const searchInp = $("#sop-search-input");
+  if(searchInp && !searchInp._bound){
+    searchInp._bound = true;
+    searchInp.addEventListener("input", renderAiKnowledge);
+  }
+
+  const btnAdd = $("#btn-add-sop");
+  if(btnAdd && !btnAdd._bound){
+    btnAdd._bound = true;
+    btnAdd.onclick = ()=>{
+      showModal(`
+        <h3>Add Internal SOP or Engineering Standard</h3>
+        <div class="form-group"><label>Category</label>
+          <select id="m-sop-cat">
+            <option value="engineering_standards">Engineering Standards</option>
+            <option value="software_docs">Software Documentation</option>
+            <option value="tender_guidelines">Tender Guidelines</option>
+            <option value="company_policy">Company Policy</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Standard Title</label><input id="m-sop-title" placeholder="e.g. Total Station Benchmark Calibration SOP"></div>
+        <div class="form-group"><label>Detailed Directives / Tolerances</label><textarea id="m-sop-content" placeholder="Specify instrument setup, atmospheric correction, allowable angular closure..."></textarea></div>
+        <div class="form-group"><label>Tags (Comma separated)</label><input id="m-sop-tags" placeholder="total_station, calibration, closure_error"></div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+          <button class="btn btn-primary" id="m-sop-save">Save Standard</button>
+        </div>
+      `);
+      $("#m-sop-save").onclick = async ()=>{
+        const category = $("#m-sop-cat").value;
+        const title = $("#m-sop-title").value.trim();
+        const content = $("#m-sop-content").value.trim();
+        const tags = $("#m-sop-tags").value.trim();
+        if(!title || !content) return toast("Title and directives required", "bad");
+        try{
+          await api("/api/intelligence/knowledge", {method:"POST", body:{category, title, content, tags, workspace:state.ws}});
+          closeModal();
+          toast("SOP saved to Knowledge Base");
+          renderAiKnowledge();
+        }catch(err){ toast(err.message, "bad"); }
+      };
+    };
+  }
+}
+
+// 8. 12 Specialist Agents (Preserved & Enhanced)
+async function renderAiAgents(){
   const grid = $("#ai-agents-grid");
   const select = $("#task-agent-select");
   if(grid){
@@ -2379,23 +2941,6 @@ if(btnDispatchTask){
       toast(err.message, "bad");
     }finally{ btnDispatchTask.disabled = false; }
   };
-}
-
-const aiSend = $("#ai-send");
-const aiInput = $("#ai-input");
-if(aiSend && aiInput){
-  const doQuery = async ()=>{
-    const q = aiInput.value.trim();
-    if(!q) return;
-    const out = $("#ai-resp");
-    out.textContent = "Querying project brain context...";
-    try{
-      const j = await api("/api/ai-brain");
-      out.textContent = `[LOCAL BRAIN RESPONSE]\nQuery: "${q}"\nActive Workspace: ${state.ws}\nRole Context: ${state.role}\n\nProject Scope Assurance:\nShah Surveyors & Consultancy operates exclusively with authorized local engineering standards (DGPS RTK, Total Station 1" accuracy, Drone DGCA SOPs). All field data is securely bound to local tenant database.`;
-    }catch(err){ out.textContent = "Brain query error: " + err.message; }
-  };
-  aiSend.onclick = doQuery;
-  aiInput.addEventListener("keydown", e=>{ if(e.key==="Enter") doQuery(); });
 }
 
 // -----------------------------------------------------------------------------

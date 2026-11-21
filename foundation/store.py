@@ -163,6 +163,8 @@ class Store:
         from .domains.migrate import create_domain_tables, create_m19_tables
         create_domain_tables(self.conn)
         create_m19_tables(self.conn)
+        from .domains.ai_intelligence import ensure_ai_intelligence_schema
+        ensure_ai_intelligence_schema(self.conn)
         self.conn.commit()
 
     def _seed_roles(self) -> None:

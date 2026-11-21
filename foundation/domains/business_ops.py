@@ -737,6 +737,7 @@ def get_profit_loss_summary(conn, workspace_id: str) -> Dict[str, Any]:
         """
         SELECT COALESCE(SUM(total_amount), 0),
                COALESCE(SUM(amount_paid), 0),
+               COALESCE(SUM(total_tax), 0),
                COUNT(id)
         FROM business_invoices
         WHERE workspace_id = ? AND status != 'cancelled'
@@ -745,7 +746,8 @@ def get_profit_loss_summary(conn, workspace_id: str) -> Dict[str, Any]:
     ).fetchone()
     total_invoiced = float(inv_row[0]) if inv_row else 0.0
     total_collected = float(inv_row[1]) if inv_row else 0.0
-    invoice_count = int(inv_row[2]) if inv_row else 0
+    total_gst_collected = float(inv_row[2]) if inv_row else 0.0
+    invoice_count = int(inv_row[3]) if inv_row else 0
     outstanding_receivables = round(total_invoiced - total_collected, 2)
 
     # 2. Approved Expenses
@@ -798,12 +800,14 @@ def get_profit_loss_summary(conn, workspace_id: str) -> Dict[str, Any]:
         "workspace_id": workspace_id,
         "total_invoiced_inr": total_invoiced,
         "total_collected_inr": total_collected,
+        "total_gst_collected_inr": total_gst_collected,
         "outstanding_receivables_inr": outstanding_receivables,
         "total_expenses_inr": total_expenses,
         "total_payroll_inr": total_payroll,
         "total_outflows_inr": total_outflows,
         "cash_operating_profit_inr": cash_operating_profit,
         "accrual_operating_profit_inr": accrual_operating_profit,
+        "net_operating_profit_inr": cash_operating_profit,
         "active_contract_value_inr": active_contract_value,
         "pipeline_quotations_inr": pipeline_quotations,
         "metrics": {

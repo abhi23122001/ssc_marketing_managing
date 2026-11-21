@@ -88,3 +88,19 @@ Authentication: `Authorization: Bearer <session_token>` or `X-Session-Token: <se
 | `GET` | `/api/ai-brain` | Yes | AI Brain status and context summary |
 | `GET` | `/api/ai-brain/agents` | Yes | List registered AI agents |
 | `GET` | `/api/ai-brain/tasks` | Yes | Query AI task queues and results |
+| `POST` | `/api/intelligence/ask` | Yes | Universal Multi-lingual Business AI Assistant (Software docs, live DB calculations, tenders, engineering SOPs) |
+| `GET` | `/api/intelligence/research` | Yes | Query autonomous daily industry research, tender notices, and tech intelligence |
+| `POST` | `/api/intelligence/research/run` | Yes | Trigger autonomous daily research job for workspace without prompting |
+| `GET` | `/api/intelligence/briefs` | Yes | Fetch morning strategic marketing brief for SSC or INFRA |
+| `POST` | `/api/intelligence/briefs/generate` | Yes | Synthesize morning marketing brief with Asia/Kolkata posting time optimization |
+| `GET` | `/api/intelligence/alerts` | Yes | Query proactive business risk, overdue invoice, pending QC, and uncontacted lead alerts |
+| `POST` | `/api/intelligence/alerts/scan` | Yes | Trigger proactive business conditions scan across live database records |
+| `POST` | `/api/intelligence/alerts/{id}/resolve` | Yes | Acknowledge and resolve an active business alert |
+| `GET` | `/api/intelligence/reports` | Yes | List factual Daily, Weekly, and Monthly performance reports |
+| `GET` | `/api/intelligence/reports/{id}` | Yes | Fetch detailed report structure with operational and P&L metrics |
+| `POST` | `/api/intelligence/reports/generate` | Yes | Generate new Daily, Weekly, or Monthly executive report |
+| `GET` | `/api/intelligence/scheduler/jobs` | Yes | List standing persistent scheduler daemon jobs with Asia/Kolkata timing |
+| `GET` | `/api/intelligence/scheduler/runs` | Yes | Query scheduler execution history, completion status, and diagnostics |
+| `POST` | `/api/intelligence/scheduler/run-now` | Yes | Manually trigger immediate execution of a scheduled intelligence job |
+| `GET` | `/api/intelligence/knowledge` | Yes | Query internal company SOPs, DGPS tolerances, MoRTH standards, and software guides |
+| `POST` | `/api/intelligence/knowledge` | Yes | Register new authoritative engineering SOP or software document in Knowledge Base |

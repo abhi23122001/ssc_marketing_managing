@@ -393,10 +393,12 @@ class Handler(BaseHTTPRequestHandler):
                     return
                 if len(parts) == 2:
                     self._handle_publish_list(user)
-                elif len(parts) == 4 and parts[3] == "reconcile":
-                    self._handle_publish_reconcile(user, parts[3])
+                elif len(parts) >= 3 and parts[2] == "reconcile":
+                    self._handle_publish_reconcile(user, parts[2])
+                elif len(parts) >= 3:
+                    self._handle_publish_detail(user, parts[2])
                 else:
-                    self._handle_publish_detail(user, parts[3])
+                    self._json_err("not found", 404)
                 return
             elif path.startswith("/api/social/accounts/"):
                 parts = [x for x in path.split("/") if x]
@@ -473,6 +475,9 @@ class Handler(BaseHTTPRequestHandler):
                 return
             elif path.startswith("/api/ai-brain"):
                 self._handle_ai_brain_route(path, user)
+                return
+            elif path.startswith("/api/intelligence"):
+                self._handle_intelligence_route(path, user)
                 return
             else:
                 self._json_err("not found", 404)
@@ -1473,10 +1478,12 @@ class Handler(BaseHTTPRequestHandler):
                     return
                 if len(parts) == 2:
                     self._handle_publish_create(user)
-                elif len(parts) == 4 and parts[3] == "reconcile":
-                    self._handle_publish_reconcile(user, parts[3])
+                elif len(parts) >= 3 and parts[2] == "reconcile":
+                    self._handle_publish_reconcile(user, parts[2])
+                elif len(parts) >= 3:
+                    self._handle_publish_detail(user, parts[2])
                 else:
-                    self._handle_publish_detail(user, parts[3])
+                    self._json_err("not found", 404)
                 return
             elif path == "/api/publish":
                 self._handle_publish_list(user)
@@ -1570,6 +1577,9 @@ class Handler(BaseHTTPRequestHandler):
                 return
             elif path.startswith("/api/ai-brain"):
                 self._handle_ai_brain_route(path, user)
+                return
+            elif path.startswith("/api/intelligence"):
+                self._handle_intelligence_route(path, user)
                 return
             else:
                 self._json_err("not found", 404)
@@ -2306,11 +2316,195 @@ class Handler(BaseHTTPRequestHandler):
         rows = ai_brain.list_tool_executions(self.store, int(tid))
         self._json_ok({"executions": rows})
 
+    def _handle_intelligence_route(self, path: str, user: dict) -> None:
+        """Autonomous AI Brain intelligence routes: Ask Anything, Daily Research, Marketing Briefs,
+        Reports, Alerts, Knowledge Base, and Scheduler Management."""
+        if user is None:
+            self._json_err("authentication required", 401)
+            return
+        if not self._has(user, "ai:brain:query"):
+            self._json_err("ai:brain:query not permitted", 403)
+            return
+
+        from foundation.domains import ai_intelligence
+        parsed = urllib.parse.urlparse(self.path)
+        qs = urllib.parse.parse_qs(parsed.query)
+        data = _read_json(self) if self.command == "POST" else {}
+
+        # Workspace resolution: Owner can query any workspace specified via query param / body or session;
+        # other roles are strictly bound to their assigned workspace.
+        assigned_ws = user.get("workspace_id") or "SSC"
+        req_ws = qs.get("workspace", [None])[0] or data.get("workspace")
+        if user.get("role") == "Owner" and req_ws:
+            ws = req_ws
+        else:
+            ws = assigned_ws
+
+        # 1. Ask Anything (POST /api/intelligence/ask)
+        if path == "/api/intelligence/ask":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            q = data.get("query", "").strip()
+            if not q:
+                self._json_err("query required", 400)
+                return
+            body_ws = data.get("workspace")
+            target_ws = body_ws if (user.get("role") == "Owner" and body_ws) else ws
+            ans = ai_intelligence.ask_anything(self.store, q, target_ws, user.get("role", "Owner"))
+            self._json_ok({"answer": ans})
+            return
+
+        # 2. Autonomous Daily Research
+        if path == "/api/intelligence/research":
+            cat = qs.get("category", [None])[0]
+            limit = int(qs.get("limit", [15])[0])
+            rows = ai_intelligence.get_latest_research_items(self.store, ws, cat, limit)
+            self._json_ok({"research": rows})
+            return
+
+        if path == "/api/intelligence/research/run":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            cat = data.get("category")
+            rows = ai_intelligence.generate_autonomous_daily_research(self.store, ws, cat)
+            self._json_ok({"research": rows})
+            return
+
+        # 3. Daily Marketing Briefs
+        if path == "/api/intelligence/briefs":
+            brief = ai_intelligence.get_latest_marketing_brief(self.store, ws)
+            self._json_ok({"brief": brief})
+            return
+
+        if path == "/api/intelligence/briefs/generate":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            brief = ai_intelligence.generate_daily_marketing_brief(self.store, ws)
+            self._json_ok({"brief": brief})
+            return
+
+        # 4. Proactive Business Alerts
+        if path == "/api/intelligence/alerts":
+            status = qs.get("status", [None])[0]
+            limit = int(qs.get("limit", [50])[0])
+            rows = ai_intelligence.list_business_alerts(self.store, ws, status, limit)
+            self._json_ok({"alerts": rows})
+            return
+
+        if path == "/api/intelligence/alerts/scan":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            alerts = ai_intelligence.scan_proactive_business_alerts(self.store, ws)
+            self._json_ok({"alerts": alerts, "count": len(alerts)})
+            return
+
+        if path.startswith("/api/intelligence/alerts/") and path.endswith("/resolve"):
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            parts = [x for x in path.split("/") if x]
+            try:
+                aid = int(parts[3])
+            except (IndexError, ValueError):
+                aid = int(data.get("alert_id", 0))
+            if not aid:
+                self._json_err("alert_id required", 400)
+                return
+            ai_intelligence.resolve_business_alert(self.store, aid)
+            self._json_ok({"ok": True, "alert_id": aid})
+            return
+
+        # 5. Automated Reports (Daily, Weekly, Monthly)
+        if path == "/api/intelligence/reports":
+            rtype = qs.get("type", [None])[0]
+            limit = int(qs.get("limit", [20])[0])
+            rows = ai_intelligence.list_generated_reports(self.store, ws, rtype, limit)
+            self._json_ok({"reports": rows})
+            return
+
+        if path.startswith("/api/intelligence/reports/"):
+            parts = [x for x in path.split("/") if x]
+            if len(parts) >= 4 and parts[3] == "generate":
+                if self.command != "POST":
+                    self._json_err("method not allowed", 405)
+                    return
+                rtype = data.get("type", "daily").lower()
+                if rtype == "weekly":
+                    rep = ai_intelligence.generate_weekly_report(self.store, ws)
+                elif rtype == "monthly":
+                    rep = ai_intelligence.generate_monthly_report(self.store, ws)
+                else:
+                    rep = ai_intelligence.generate_daily_report(self.store, ws)
+                self._json_ok({"report": rep})
+                return
+
+            if len(parts) >= 4 and parts[3].isdigit():
+                rid = int(parts[3])
+                rep = self.store.fetchone("SELECT * FROM ai_generated_reports WHERE id=?", (rid,))
+                if not rep:
+                    self._json_err("report not found", 404)
+                    return
+                if len(parts) >= 5 and parts[4] == "export":
+                    content = json.loads(rep.get("content_json") or "{}")
+                    self._json_ok({"report": rep, "parsed_content": content})
+                    return
+                self._json_ok({"report": rep})
+                return
+
+        # 6. Central Scheduler Jobs & Runs
+        if path == "/api/intelligence/scheduler/jobs":
+            jobs = ai_intelligence.list_scheduler_jobs(self.store)
+            self._json_ok({"jobs": jobs})
+            return
+
+        if path == "/api/intelligence/scheduler/runs":
+            runs = ai_intelligence.list_scheduler_runs(self.store)
+            self._json_ok({"runs": runs})
+            return
+
+        if path == "/api/intelligence/scheduler/run-now":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            jkey = data.get("job_key")
+            if not jkey:
+                self._json_err("job_key required", 400)
+                return
+            res = ai_intelligence.run_scheduler_job(self.store, jkey)
+            self._json_ok({"run": res})
+            return
+
+        # 7. Knowledge Base & SOPs
+        if path == "/api/intelligence/knowledge":
+            if self.command == "POST":
+                entry = ai_intelligence.add_knowledge_base_entry(
+                    self.store, ws,
+                    data.get("category", "custom"),
+                    data.get("title", "Untitled SOP"),
+                    data.get("content", ""),
+                    data.get("tags", "")
+                )
+                self._json_ok({"entry": entry})
+                return
+            cat = qs.get("category", [None])[0]
+            q = qs.get("q", [None])[0]
+            rows = ai_intelligence.query_knowledge_base(self.store, cat, q)
+            self._json_ok({"knowledge": rows})
+            return
+
+        self._json_err("intelligence endpoint not found", 404)
+
     def log_message(self, fmt, *args):  # quieter request logging
         pass
 
 
 def make_server(host: str = "127.0.0.1", port: int = 8899):
+    from foundation.scheduler import start_scheduler
+    start_scheduler(get_store())
     return ThreadingHTTPServer((host, port), Handler)
 
 

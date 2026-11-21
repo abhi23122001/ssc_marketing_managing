@@ -74,30 +74,30 @@ DEFAULT_CONFIG = {
             "workspace:list", "workspace:read", "workspace:manage",
             "resource:list", "resource:read", "resource:create", "resource:edit", "resource:delete",
             "approval:list", "approval:read", "approval:approve", "approval:comment",
-            "audit:list", "report:list", "report:read",
+            "audit:list", "report:list", "report:read", "ai:brain:query",
         ],
         "Project Manager": [
             "workspace:read", "resource:list", "resource:read", "resource:create", "resource:edit",
             "approval:list", "approval:read", "approval:comment",
-            "report:list", "report:read",
+            "report:list", "report:read", "ai:brain:query",
         ],
         "Finance Manager": [
             "workspace:read", "resource:list", "resource:read",
             "approval:list", "approval:read", "approval:approve", "approval:comment",
-            "report:list", "report:read",
+            "report:list", "report:read", "ai:brain:query",
         ],
         "HR Manager": [
             "workspace:read", "resource:list", "resource:read",
             "approval:list", "approval:read", "approval:comment",
-            "report:list", "report:read",
+            "report:list", "report:read", "ai:brain:query",
         ],
         "Employee": [
             "workspace:read", "resource:list", "resource:read",
             "approval:list", "approval:read", "approval:comment",
-            "report:list", "report:read",
+            "report:list", "report:read", "ai:brain:query",
         ],
         "Viewer": [
-            "workspace:read", "resource:list", "resource:read",
+            "workspace:read", "resource:list", "resource:read", "ai:brain:query",
         ],
     },
     # Demo accounts used by the testing guide. These are plain-text placeholders

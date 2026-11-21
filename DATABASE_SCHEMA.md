@@ -1,7 +1,7 @@
 # SHAH Group AI OS — Database Schema Reference
 
 **Database File**: `data/sgcc_foundation.sqlite`
-**Total Tables**: 54
+**Total Tables**: 66
 
 ## Table Summary
 | Table Name | Row Count | Primary Purpose |
@@ -57,8 +57,20 @@
 | `social_trends` | 0 | System / Domain table |
 | `social_video_jobs` | 0 | System / Domain table |
 | `social_workspaces` | 0 | System / Domain table |
-| `users` | 11 | System / Domain table |
+| `users` | 32 | System / Domain table |
 | `workspaces` | 3 | System / Domain table |
+| `business_estimates` | 5 | Business Operations: Project Estimates & BOQ |
+| `business_quotations` | 5 | Business Operations: Taxable Quotations (18% GST) |
+| `business_work_orders` | 5 | Business Operations: Work Orders & Field QC Status |
+| `business_invoices` | 5 | Business Operations: Tax Invoices & Billing |
+| `business_payments` | 10 | Business Operations: Inward Payments & Settlements |
+| `ai_research_items` | 37 | AI Brain: Autonomous Daily Industry & Tender Research |
+| `ai_marketing_briefs` | 19 | AI Brain: Daily Morning Marketing Briefs (Asia/Kolkata) |
+| `ai_generated_reports` | 16 | AI Brain: Daily, Weekly, Monthly Performance Reports |
+| `ai_business_alerts` | 6 | AI Brain: Proactive Business Risk & Tender Alerts |
+| `ai_knowledge_base` | 11 | AI Brain: Company Standards, SOPs & Software Guides |
+| `ai_scheduler_jobs` | 7 | AI Brain: Persistent Central Scheduler Standing Jobs |
+| `ai_scheduler_runs` | 13 | AI Brain: Central Scheduler Execution & Retry History |
 
 ## Detailed Table Schemas
 ### `ai_agents`

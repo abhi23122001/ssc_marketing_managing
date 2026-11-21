@@ -212,10 +212,16 @@ async function runBrowserVerification() {
           await new Promise(r => setTimeout(r, 200));
           results.push({ section: "marketing", sub: b.dataset.sub, active: b.classList.contains("active") });
         }
-        // AI Agents verification
+        // AI Brain Command Center sub-tabs verification
         const aiItem = document.querySelector('.item[data-sec="ai"]');
         if(aiItem) aiItem.click();
-        await new Promise(r => setTimeout(r, 400));
+        await new Promise(r => setTimeout(r, 600));
+        const aiSubs = document.querySelectorAll("#subnav-ai-brain button");
+        for(const b of aiSubs) {
+          b.click();
+          await new Promise(r => setTimeout(r, 250));
+          results.push({ section: "ai", sub: b.dataset.sub, active: b.classList.contains("active") });
+        }
         const agentCards = document.querySelectorAll("#ai-agents-grid .card").length;
         results.push({ section: "ai", agentCardsCount: agentCards });
 
