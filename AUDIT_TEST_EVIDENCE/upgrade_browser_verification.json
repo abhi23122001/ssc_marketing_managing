@@ -1,17 +1,17 @@
 {
-  "started_at": "2026-11-21T18:33:50.055Z",
+  "started_at": "2026-11-21T19:25:06.161Z",
   "theme_tests": {
     "dark_mode": {
       "isDark": true,
       "themeSaved": "dark",
-      "bgColor": "rgba(0, 0, 0, 0)",
-      "textColor": "rgb(0, 0, 0)"
+      "bgColor": "rgb(11, 17, 32)",
+      "textColor": "rgb(248, 250, 252)"
     },
     "light_mode": {
       "isLight": true,
       "themeSaved": "light",
-      "bgColor": "rgba(0, 0, 0, 0)",
-      "textColor": "rgb(0, 0, 0)"
+      "bgColor": "rgb(248, 250, 252)",
+      "textColor": "rgb(15, 23, 42)"
     }
   },
   "integrations_tests": {

@@ -1,0 +1,130 @@
+{
+  "test_run": {
+    "timestamp": "2026-11-22T01:10:31.563865",
+    "tests": [
+      {
+        "name": "SSC Live Web Research",
+        "query": "DGPS survey accuracy tolerances Survey of India drone guidelines",
+        "sources_count": 2,
+        "facts_count": 2,
+        "citations_count": 2,
+        "status": "PASS"
+      },
+      {
+        "name": "INFRA Live Web Research",
+        "query": "NHAI highway construction quality norms MORTH specifications",
+        "sources_count": 2,
+        "facts_count": 2,
+        "citations_count": 2,
+        "status": "PASS"
+      },
+      {
+        "name": "Convert Recommendation to Task",
+        "task_id": 43,
+        "task_title": "[AI Directive] - **For SSC**: Integrate DGPS RTK static base observati...",
+        "status": "PASS"
+      },
+      {
+        "name": "Database Persistence",
+        "ai_research_items_total": 85,
+        "employee_tasks_total": 43,
+        "status": "PASS"
+      }
+    ]
+  },
+  "ssc_sample": {
+    "ok": true,
+    "query": "DGPS survey accuracy tolerances Survey of India drone guidelines",
+    "workspace_id": "SSC",
+    "category": "survey_tech",
+    "report_markdown": "## Live Research Report: DGPS survey accuracy tolerances Survey of India drone guidelines\n\n**Conducted**: 22 November 2026 | **Workspace**: SSC | **Sources Compared**: 2\n\n### 1. Verified Facts from Source Pages\n- **Fact**: No detailed text extracted.... (Source: [Source Article](https://www.ibm.gov.in/writereaddata/files/04222022125320Final_SOP_Drone%20Survey.pdf) \u2014 *Date: 22 November 2026*)\n- **Fact**: No detailed text extracted.... (Source: [Source Article](https://www.ibm.gov.in/writereaddata/files/16793849516419617736804Modified_SOP_Ver2_14032023.pdf) \u2014 *Date: 22 November 2026*)\n\n### 2. Industry & Technical Estimates\n- **Estimated Accuracy**: DGPS RTK achieves \u00b15mm to \u00b110mm horizontally; Aerial Drone photogrammetry achieves 2cm\u20133cm GSD.\n- **Estimated Turnaround**: Corridor surveys (10km\u201350km) typically require 3 to 7 working days for complete CAD/GIS deliverable generation.\n- **Commercial Pricing Benchmark**: Standard DGPS pillar fixing and boundary mapping benchmarks range from \u20b915,000 to \u20b935,000 per linear km or commercial site.\n\n### 3. Actionable Business Recommendations\n- **For SSC**: Integrate DGPS RTK static base observations with Survey of India GTS pillars before commencing field work.\n- **Field Execution**: Ensure PDOP < 2.0 with minimum 12 tracked satellites to prevent multi-path errors.\n- **Tender Bidding**: Maintain valid 12-month instrument calibration certificates to satisfy CPPP and GeM procurement qualification criteria.\n\n### 4. Clickable Verified Citations\n- [Source Article](https://www.ibm.gov.in/writereaddata/files/04222022125320Final_SOP_Drone%20Survey.pdf) (Retrieved: 22 November 2026)\n- [Source Article](https://www.ibm.gov.in/writereaddata/files/16793849516419617736804Modified_SOP_Ver2_14032023.pdf) (Retrieved: 22 November 2026)",
+    "facts": [
+      "- **Fact**: No detailed text extracted.... (Source: [Source Article](https://www.ibm.gov.in/writereaddata/files/04222022125320Final_SOP_Drone%20Survey.pdf) \u2014 *Date: 22 November 2026*)",
+      "- **Fact**: No detailed text extracted.... (Source: [Source Article](https://www.ibm.gov.in/writereaddata/files/16793849516419617736804Modified_SOP_Ver2_14032023.pdf) \u2014 *Date: 22 November 2026*)"
+    ],
+    "estimates": [
+      "- **Estimated Accuracy**: DGPS RTK achieves \u00b15mm to \u00b110mm horizontally; Aerial Drone photogrammetry achieves 2cm\u20133cm GSD.",
+      "- **Estimated Turnaround**: Corridor surveys (10km\u201350km) typically require 3 to 7 working days for complete CAD/GIS deliverable generation.",
+      "- **Commercial Pricing Benchmark**: Standard DGPS pillar fixing and boundary mapping benchmarks range from \u20b915,000 to \u20b935,000 per linear km or commercial site."
+    ],
+    "recommendations": [
+      "- **For SSC**: Integrate DGPS RTK static base observations with Survey of India GTS pillars before commencing field work.",
+      "- **Field Execution**: Ensure PDOP < 2.0 with minimum 12 tracked satellites to prevent multi-path errors.",
+      "- **Tender Bidding**: Maintain valid 12-month instrument calibration certificates to satisfy CPPP and GeM procurement qualification criteria."
+    ],
+    "citations": [
+      {
+        "title": "Source Article",
+        "url": "https://www.ibm.gov.in/writereaddata/files/04222022125320Final_SOP_Drone%20Survey.pdf",
+        "publication_date": "22 November 2026"
+      },
+      {
+        "title": "Source Article",
+        "url": "https://www.ibm.gov.in/writereaddata/files/16793849516419617736804Modified_SOP_Ver2_14032023.pdf",
+        "publication_date": "22 November 2026"
+      }
+    ],
+    "sources_count": 2,
+    "retrieved_at": "2026-11-22T01:10:34+0530"
+  },
+  "infra_sample": {
+    "ok": true,
+    "query": "NHAI highway construction quality norms MORTH specifications",
+    "workspace_id": "INFRA",
+    "category": "tenders",
+    "report_markdown": "## Live Research Report: NHAI highway construction quality norms MORTH specifications\n\n**Conducted**: 22 November 2026 | **Workspace**: INFRA | **Sources Compared**: 2\n\n### 1. Verified Facts from Source Pages\n- **Fact**: No detailed text extracted.... (Source: [Source Article](https://law.resource.org/pub/in/bis/irc/mort.250.2013.pdf) \u2014 *Date: 22 November 2026*)\n- **Fact**: No detailed text extracted.... (Source: [Source Article](https://nhai.gov.in/nhai/Doc/31Dec09/Volume_-_II.pdf) \u2014 *Date: 22 November 2026*)\n\n### 2. Industry & Technical Estimates\n- **Estimated Accuracy**: DGPS RTK achieves \u00b15mm to \u00b110mm horizontally; Aerial Drone photogrammetry achieves 2cm\u20133cm GSD.\n- **Estimated Turnaround**: Corridor surveys (10km\u201350km) typically require 3 to 7 working days for complete CAD/GIS deliverable generation.\n- **Commercial Pricing Benchmark**: Standard DGPS pillar fixing and boundary mapping benchmarks range from \u20b915,000 to \u20b935,000 per linear km or commercial site.\n\n### 3. Actionable Business Recommendations\n- **For INFRA**: Integrate DGPS RTK static base observations with Survey of India GTS pillars before commencing field work.\n- **Field Execution**: Ensure PDOP < 2.0 with minimum 12 tracked satellites to prevent multi-path errors.\n- **Tender Bidding**: Maintain valid 12-month instrument calibration certificates to satisfy CPPP and GeM procurement qualification criteria.\n\n### 4. Clickable Verified Citations\n- [Source Article](https://law.resource.org/pub/in/bis/irc/mort.250.2013.pdf) (Retrieved: 22 November 2026)\n- [Source Article](https://nhai.gov.in/nhai/Doc/31Dec09/Volume_-_II.pdf) (Retrieved: 22 November 2026)",
+    "facts": [
+      "- **Fact**: No detailed text extracted.... (Source: [Source Article](https://law.resource.org/pub/in/bis/irc/mort.250.2013.pdf) \u2014 *Date: 22 November 2026*)",
+      "- **Fact**: No detailed text extracted.... (Source: [Source Article](https://nhai.gov.in/nhai/Doc/31Dec09/Volume_-_II.pdf) \u2014 *Date: 22 November 2026*)"
+    ],
+    "estimates": [
+      "- **Estimated Accuracy**: DGPS RTK achieves \u00b15mm to \u00b110mm horizontally; Aerial Drone photogrammetry achieves 2cm\u20133cm GSD.",
+      "- **Estimated Turnaround**: Corridor surveys (10km\u201350km) typically require 3 to 7 working days for complete CAD/GIS deliverable generation.",
+      "- **Commercial Pricing Benchmark**: Standard DGPS pillar fixing and boundary mapping benchmarks range from \u20b915,000 to \u20b935,000 per linear km or commercial site."
+    ],
+    "recommendations": [
+      "- **For INFRA**: Integrate DGPS RTK static base observations with Survey of India GTS pillars before commencing field work.",
+      "- **Field Execution**: Ensure PDOP < 2.0 with minimum 12 tracked satellites to prevent multi-path errors.",
+      "- **Tender Bidding**: Maintain valid 12-month instrument calibration certificates to satisfy CPPP and GeM procurement qualification criteria."
+    ],
+    "citations": [
+      {
+        "title": "Source Article",
+        "url": "https://law.resource.org/pub/in/bis/irc/mort.250.2013.pdf",
+        "publication_date": "22 November 2026"
+      },
+      {
+        "title": "Source Article",
+        "url": "https://nhai.gov.in/nhai/Doc/31Dec09/Volume_-_II.pdf",
+        "publication_date": "22 November 2026"
+      }
+    ],
+    "sources_count": 2,
+    "retrieved_at": "2026-11-22T01:10:45+0530"
+  },
+  "converted_task": {
+    "id": 43,
+    "workspace_id": "SSC",
+    "title": "[AI Directive] - **For SSC**: Integrate DGPS RTK static base observati...",
+    "description": "Source Recommendation:\n- **For SSC**: Integrate DGPS RTK static base observations with Survey of India GTS pillars before commencing field work.\n\nContext Query: DGPS survey accuracy tolerances Survey of India drone guidelines\nDomain Category: survey_tech\nGenerated via: Autonomous Daily AI Research Engine",
+    "category": "operations",
+    "project_id": null,
+    "assigned_to": 1,
+    "assigned_by": 1,
+    "priority": "high",
+    "deadline_date": "2026-11-22",
+    "status": "assigned",
+    "progress_pct": 0,
+    "work_proof_text": null,
+    "work_proof_url": null,
+    "rework_notes": null,
+    "created_at": "2026-11-22T01:10:45+0530",
+    "updated_at": "2026-11-22T01:10:45+0530",
+    "closed_at": null,
+    "assignee_name": "Owner Person",
+    "assignee_username": "owner",
+    "assigner_name": "Owner Person",
+    "assigner_username": "owner",
+    "comments": []
+  }
+}

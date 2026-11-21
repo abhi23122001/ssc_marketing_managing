@@ -1,0 +1,9 @@
+{
+  "timestamp": "2026-11-21T19:35:51.500Z",
+  "quotations_loaded": 8,
+  "invoices_loaded": 8,
+  "payslips_loaded": 245,
+  "vault_documents_count": 261,
+  "console_errors": 0,
+  "verdict": "PASS"
+}

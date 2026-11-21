@@ -1,0 +1,25 @@
+{
+  "timestamp": "2026-11-21T19:26:06.721Z",
+  "auth": {
+    "role": "Owner",
+    "tokenPresent": true,
+    "ws": "SSC",
+    "user": "owner"
+  },
+  "templates_tested": [
+    "dgps_survey",
+    "drone_lidar",
+    "infra_land"
+  ],
+  "presets_tested": [
+    "1080x1080",
+    "1280x720"
+  ],
+  "video_editor": {
+    "playerPresent": true,
+    "scrubberPresent": true,
+    "timecodeText": "00:00 / 00:06"
+  },
+  "console_errors_count": 0,
+  "verdict": "PASS"
+}

@@ -1,0 +1,45 @@
+{
+  "backup_name": "overnight_2026-11-22_004100",
+  "backup_dir": "backups/overnight_2026-11-22_004100",
+  "created_at": "2026-11-22T00:41:00+05:30",
+  "git_baseline_commit": "c3501f1",
+  "database_integrity": "ok",
+  "database_tables_count": 75,
+  "files": [
+    {
+      "name": "api.py",
+      "path": "foundation/api.py",
+      "backup_path": "backups/overnight_2026-11-22_004100/api.py",
+      "size_bytes": 146515,
+      "sha256": "962FB271B4BBEC30B0B6BD7C610B5E05CE56B90CE08A7C6B7507B55734CD36F5"
+    },
+    {
+      "name": "dashboard.html",
+      "path": "foundation/dashboard/dashboard.html",
+      "backup_path": "backups/overnight_2026-11-22_004100/dashboard.html",
+      "size_bytes": 294917,
+      "sha256": "E079E7F54F78018B6323BEE2FAEE300C37D4EFA53D1EF5AC5B1DA58C3668102C"
+    },
+    {
+      "name": "integrations_center.py",
+      "path": "foundation/domains/integrations_center.py",
+      "backup_path": "backups/overnight_2026-11-22_004100/integrations_center.py",
+      "size_bytes": 19948,
+      "sha256": "12E4224A7B0FD7C3881E995DEAC1398BFA9A1747DCBEAEBE872DF8109F1470F5"
+    },
+    {
+      "name": "sgcc_foundation.sqlite",
+      "path": "data/sgcc_foundation.sqlite",
+      "backup_path": "backups/overnight_2026-11-22_004100/sgcc_foundation.sqlite",
+      "size_bytes": 2445312,
+      "sha256": "AD5C2FDE3900A639B0DF16A34F5C0DFBEF84DC53049F2D87B4136277FBD8D43B"
+    },
+    {
+      "name": "store.py",
+      "path": "foundation/store.py",
+      "backup_path": "backups/overnight_2026-11-22_004100/store.py",
+      "size_bytes": 41547,
+      "sha256": "474C856A82D3BAEAE2A5EFB362FBFD61695F720CD9E4A9CF5CD63A71A7C29074"
+    }
+  ]
+}
