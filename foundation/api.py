@@ -156,6 +156,34 @@ class Handler(BaseHTTPRequestHandler):
     def _token(self) -> str | None:
         return _get_token(self)
 
+    def _get_request_workspace(self, user: dict, data: dict | None = None) -> tuple[str, str | None]:
+        """Extracts target workspace from query param, header, body data, or user default.
+        Enforces tenant isolation: Non-owner/non-admin roles can ONLY access their assigned workspace.
+        Returns (workspace_id, error_message).
+        """
+        if not user:
+            return "SSC", "authentication required"
+
+        parsed = urllib.parse.urlparse(self.path)
+        qs = urllib.parse.parse_qs(parsed.query)
+
+        requested = (
+            qs.get("workspace", [None])[0] or 
+            self.headers.get("X-Workspace-ID") or 
+            (data.get("workspace") if data else None)
+        )
+
+        user_ws = user.get("workspace_id") or "SSC"
+        user_role = user.get("role") or ""
+
+        if user_role in ("Owner", "Admin"):
+            return (requested or user_ws), None
+
+        if requested and requested not in (user_ws, "ALL"):
+            return user_ws, f"Tenant isolation: role '{user_role}' assigned to '{user_ws}' cannot access '{requested}'"
+
+        return user_ws, None
+
     def _json_ok(self, payload, status=200):
         _send_json(self, payload, status)
 
@@ -516,6 +544,9 @@ class Handler(BaseHTTPRequestHandler):
             elif path.startswith("/api/filter"):
                 self._handle_filter_route(path, user)
                 return
+            elif path.startswith("/api/integrations"):
+                self._handle_integrations_route(path, user)
+                return
             else:
                 self._json_err("not found", 404)
         except Exception as e:  # pragma: no cover - defensive
@@ -533,8 +564,11 @@ class Handler(BaseHTTPRequestHandler):
             if not self._has(user, "resource:read"):
                 self._json_err("resource:read not permitted", 403)
                 return
-            ws = user.get("workspace_id") or "SSC"
-            rows = self.store.fetchall("SELECT * FROM social_leads WHERE workspace_id=? ORDER BY created_at DESC", (ws,))
+            ws, err = self._get_request_workspace(user)
+            if err:
+                self._json_err(err, 403)
+                return
+            rows = self.store.fetchall("SELECT * FROM social_leads WHERE workspace_id=? ORDER BY created_at DESC", (ws,)) if ws != "ALL" else self.store.fetchall("SELECT * FROM social_leads ORDER BY created_at DESC")
             self._json_ok({"leads": rows})
             return
         if path == "/api/leads/sync-csv":
@@ -652,8 +686,12 @@ class Handler(BaseHTTPRequestHandler):
         if not self._has(user, "resource:read"):
             self._json_err("resource:read not permitted", 403)
             return
+        ws, err = self._get_request_workspace(user)
+        if err:
+            self._json_err(err, 403)
+            return
         if self.command == "GET":
-            clients = self.store.list_clients()
+            clients = self.store.list_clients(ws)
             self._json_ok({"clients": clients})
             return
         if self.command == "POST":
@@ -665,10 +703,10 @@ class Handler(BaseHTTPRequestHandler):
             if not comp:
                 self._json_err("company_name required", 400)
                 return
-            code = data.get("client_workspace_id") or f"CLT-{len(self.store.list_clients()) + 1:03d}"
+            code = data.get("client_workspace_id") or f"CLT-{len(self.store.list_clients(ws)) + 1:03d}"
             pkg = data.get("service_package", "Survey & Consultancy")
             meta = data.get("contract_metadata", {})
-            client = self.store.create_client(code, comp, pkg, meta)
+            client = self.store.create_client(code, comp, pkg, meta, workspace_id=ws)
             self._json_ok({"client": client}, 201)
             return
         self._json_err("not found", 404)
@@ -680,13 +718,16 @@ class Handler(BaseHTTPRequestHandler):
         if not self._has(user, "resource:read"):
             self._json_err("resource:read not permitted", 403)
             return
-        ws = user.get("workspace_id") or "SSC"
+        ws, err = self._get_request_workspace(user)
+        if err:
+            self._json_err(err, 403)
+            return
         if path == "/api/sites/export":
-            sites = self.store.list_sites(None if user.get("role") == "Owner" else ws)
+            sites = self.store.list_sites(None if ws == "ALL" else ws)
             self._send_csv(f"sites_{ws}.csv", ["id", "code", "name", "address", "geofence_radius", "active", "created_at"], sites)
             return
         if self.command == "GET":
-            sites = self.store.list_sites(None if user.get("role") == "Owner" else ws)
+            sites = self.store.list_sites(None if ws == "ALL" else ws)
             self._json_ok({"sites": sites})
             return
         if self.command == "POST":
@@ -717,7 +758,10 @@ class Handler(BaseHTTPRequestHandler):
         if not self._has(user, "resource:read"):
             self._json_err("resource:read not permitted", 403)
             return
-        ws = user.get("workspace_id") or "SSC"
+        ws, err = self._get_request_workspace(user)
+        if err:
+            self._json_err(err, 403)
+            return
         if path in ("/api/finance/export", "/api/finance/expenses/export"):
             claims = self.store.list_expense_claims(ws)
             self._send_csv(f"expenses_{ws}.csv", ["id", "project_id", "category", "amount", "currency", "status", "notes", "created_at"], claims)
@@ -782,7 +826,10 @@ class Handler(BaseHTTPRequestHandler):
         if user is None:
             self._json_err("authentication required", 401)
             return
-        ws = user.get("workspace_id") or "SSC"
+        ws, err = self._get_request_workspace(user)
+        if err:
+            self._json_err(err, 403)
+            return
         parts = [x for x in path.split("/") if x]
         if len(parts) == 2 and parts[1] == "estimates":
             if self.command == "GET":
@@ -816,7 +863,10 @@ class Handler(BaseHTTPRequestHandler):
         if user is None:
             self._json_err("authentication required", 401)
             return
-        ws = user.get("workspace_id") or "SSC"
+        ws, err = self._get_request_workspace(user)
+        if err:
+            self._json_err(err, 403)
+            return
         parts = [x for x in path.split("/") if x]
         if len(parts) == 2 and parts[1] == "quotations":
             if self.command == "GET":
@@ -850,7 +900,10 @@ class Handler(BaseHTTPRequestHandler):
         if user is None:
             self._json_err("authentication required", 401)
             return
-        ws = user.get("workspace_id") or "SSC"
+        ws, err = self._get_request_workspace(user)
+        if err:
+            self._json_err(err, 403)
+            return
         parts = [x for x in path.split("/") if x]
         if len(parts) == 2 and parts[1] == "work-orders":
             if self.command == "GET":
@@ -886,7 +939,10 @@ class Handler(BaseHTTPRequestHandler):
         if user is None:
             self._json_err("authentication required", 401)
             return
-        ws = user.get("workspace_id") or "SSC"
+        ws, err = self._get_request_workspace(user)
+        if err:
+            self._json_err(err, 403)
+            return
         parts = [x for x in path.split("/") if x]
         if len(parts) == 2 and parts[1] == "invoices":
             if self.command == "GET":
@@ -919,7 +975,10 @@ class Handler(BaseHTTPRequestHandler):
         if user is None:
             self._json_err("authentication required", 401)
             return
-        ws = user.get("workspace_id") or "SSC"
+        ws, err = self._get_request_workspace(user)
+        if err:
+            self._json_err(err, 403)
+            return
         parts = [x for x in path.split("/") if x]
         if len(parts) == 2 and parts[1] == "payments":
             if self.command == "GET":
@@ -1655,6 +1714,9 @@ class Handler(BaseHTTPRequestHandler):
             elif path.startswith("/api/filter"):
                 self._handle_filter_route(path, user)
                 return
+            elif path.startswith("/api/integrations"):
+                self._handle_integrations_route(path, user)
+                return
             else:
                 self._json_err("not found", 404)
         except Exception as e:
@@ -1702,7 +1764,10 @@ class Handler(BaseHTTPRequestHandler):
         if user is None:
             self._json_err("authentication required", 401)
             return
-        ws = user.get("workspace_id") or "SSC"
+        ws, err = self._get_request_workspace(user)
+        if err:
+            self._json_err(err, 403)
+            return
         store = self.store
 
         if section == "overview":
@@ -1726,13 +1791,24 @@ class Handler(BaseHTTPRequestHandler):
             if not self._has(user, ("resource:read", "workspace:list", "workspace:read")):
                 self._json_err("resource:read required", 403)
                 return
-            sites = store.list_sites(None if user.get("role") == "Owner" else ws)
-            deliverables = [
-                {"site_code": "SITE-SGR-01", "name": "Jayant Coal Block DGPS Control Network KML", "type": "KML / GIS", "status": "Ready"},
-                {"site_code": "SITE-SGR-01", "name": "Topographic Contour Map (0.5m interval) DWG", "type": "CAD DWG", "status": "Ready"},
-                {"site_code": "SITE-ANP-02", "name": "Industrial Corridor Pillar Boundary Coordinates CSV", "type": "Coordinates", "status": "In Progress"},
-                {"site_code": "SITE-SOL-03", "name": "2.5 MW Solar Shadow & Elevation Analysis Report PDF", "type": "Engineering Report", "status": "Completed"}
-            ]
+            sites = store.list_sites(None if ws == "ALL" else ws)
+            if ws == "INFRA":
+                deliverables = [
+                    {"site_code": "SITE-INF-01", "name": "Rewa Ring Road Civil Earthworks DPR & Cross Sections", "type": "Civil DPR", "status": "Ready"},
+                    {"site_code": "SITE-INF-02", "name": "Shah Heights Piling & Soil Bearing Capacity Test Report", "type": "Structural Report", "status": "Ready"},
+                    {"site_code": "SITE-INF-03", "name": "Anuppur Logistics Park Pavement & Drainage Layout", "type": "Civil Drawing", "status": "In Progress"}
+                ]
+            elif ws == "OTHER":
+                deliverables = [
+                    {"site_code": "SITE-OTH-01", "name": "Agrotech Facility Master Plan & Boundary Survey", "type": "Master Plan", "status": "Ready"}
+                ]
+            else:
+                deliverables = [
+                    {"site_code": "SITE-SGR-01", "name": "Jayant Coal Block DGPS Control Network KML", "type": "KML / GIS", "status": "Ready"},
+                    {"site_code": "SITE-SGR-01", "name": "Topographic Contour Map (0.5m interval) DWG", "type": "CAD DWG", "status": "Ready"},
+                    {"site_code": "SITE-ANP-02", "name": "Industrial Corridor Pillar Boundary Coordinates CSV", "type": "Coordinates", "status": "In Progress"},
+                    {"site_code": "SITE-SOL-03", "name": "2.5 MW Solar Shadow & Elevation Analysis Report PDF", "type": "Engineering Report", "status": "Completed"}
+                ]
             self._json_ok({"resources": store.list_resources(ws), "sites": sites, "deliverables": deliverables})
             return
         if section == "finance":
@@ -1770,8 +1846,8 @@ class Handler(BaseHTTPRequestHandler):
             if not self._has(user, "resource:list"):
                 self._json_err("resource:list required", 403)
                 return
-            leads = store.fetchall("SELECT * FROM social_leads WHERE workspace_id=? ORDER BY created_at DESC", (ws,))
-            clients = store.list_clients()
+            leads = store.fetchall("SELECT * FROM social_leads WHERE workspace_id=? ORDER BY created_at DESC", (ws,)) if ws != "ALL" else store.fetchall("SELECT * FROM social_leads ORDER BY created_at DESC")
+            clients = store.list_clients(ws)
             stats = {
                 "total_leads": len(leads),
                 "new_leads": len([l for l in leads if l.get("lead_status") == "new"]),
@@ -2170,15 +2246,21 @@ class Handler(BaseHTTPRequestHandler):
         self._json_ok({"job": job})
 
     def _handle_social_accounts(self, user: dict) -> None:
-        """Social account registry."""
-        ws = user.get("workspace_id") or "SSC"
-        from foundation.domains.m19_core import list_accounts
-        accounts = list_accounts(self.store, ws)
+        """Social account registry with multi-platform health and status."""
+        ws, err = self._get_request_workspace(user)
+        if err:
+            self._json_err(err, 403)
+            return
+        from foundation.domains import social_integrations
+        accounts = social_integrations.list_social_accounts(self.store, ws)
         self._json_ok({"workspace": ws, "accounts": accounts})
 
     def _handle_social_account_add(self, user: dict) -> None:
         """Add a social account."""
-        ws = user.get("workspace_id") or "SSC"
+        ws, err = self._get_request_workspace(user)
+        if err:
+            self._json_err(err, 403)
+            return
         if not self._has(user, "resource:create"):
             self._json_err("resource:create required", 403)
             return
@@ -2196,28 +2278,21 @@ class Handler(BaseHTTPRequestHandler):
 
     def _handle_social_account_connect(self, user: dict, aid: str) -> None:
         """Mark an account as connected via OAuth."""
-        ws = user.get("workspace_id") or "SSC"
-        from foundation.domains.m19_core import connect_account
-        try:
-            acc = connect_account(self.store, user.get("user_id") or user.get("id"), int(aid))
-        except LookupError as e:
-            self._json_err(str(e), 404)
-            return
-        except PermissionError as e:
-            self._json_err(str(e), 403)
-            return
+        from foundation.domains import social_integrations
+        acc = social_integrations.toggle_account_connection(self.store, int(aid), connect=True)
+        self._json_ok({"account": acc})
+
+    def _handle_social_account_disconnect(self, user: dict, aid: str) -> None:
+        """Mark an account as disconnected."""
+        from foundation.domains import social_integrations
+        acc = social_integrations.toggle_account_connection(self.store, int(aid), connect=False)
         self._json_ok({"account": acc})
 
     def _handle_social_account_sync(self, user: dict, aid: str) -> None:
-        """Trigger a one-way sync and record the result."""
-        ws = user.get("workspace_id") or "SSC"
-        from foundation.domains.m19_core import refresh_sync_history
-        try:
-            acc = refresh_sync_history(self.store, int(aid), "ok", "scoped", "synthetic local sync")
-        except LookupError as e:
-            self._json_err(str(e), 404)
-            return
-        self._json_ok({"account": acc})
+        """Trigger an account sync and record telemetry."""
+        from foundation.domains import social_integrations
+        res = social_integrations.sync_account_telemetry(self.store, int(aid))
+        self._json_ok(res)
 
     def _handle_reports_list(self, user: dict) -> None:
         """Reports list + generate."""
@@ -2618,10 +2693,11 @@ class Handler(BaseHTTPRequestHandler):
         parsed = urllib.parse.urlparse(self.path)
         qs = urllib.parse.parse_qs(parsed.query)
         data = _read_json(self) if self.command == "POST" else {}
-        ws = user.get("workspace_id") or "SSC"
+        ws, err = self._get_request_workspace(user, data)
+        if err:
+            self._json_err(err, 403)
+            return
         uid = int(user.get("id") or user.get("user_id") or 1)
-        if user.get("role") == "Owner":
-            ws = qs.get("workspace", [None])[0] or data.get("workspace") or ws
 
         if path == "/api/studio/templates":
             self._json_ok({"templates": creative_studio.list_studio_templates(self.store, ws)})
@@ -2669,7 +2745,87 @@ class Handler(BaseHTTPRequestHandler):
             self._json_ok(res)
             return
 
+        # AI Image Generation
+        if path == "/api/studio/ai-image/generate":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            prompt = data.get("prompt", "").strip()
+            if not prompt:
+                self._json_err("prompt required", 400)
+                return
+            aspect = data.get("aspect_ratio", "1:1")
+            style = data.get("style", "surveying_dgps")
+            from foundation.domains import ai_image_gen
+            res = ai_image_gen.generate_ai_image(self.store, prompt, workspace_id=ws, aspect_ratio=aspect, style_key=style, save_to_library=True)
+            self._json_ok(res)
+            return
+
+        if path == "/api/studio/ai-image/enhance":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            prompt = data.get("prompt", "").strip()
+            style = data.get("style", "surveying_dgps")
+            from foundation.domains import ai_image_gen
+            enhanced = ai_image_gen.enhance_prompt(prompt, style, ws)
+            self._json_ok({"enhanced_prompt": enhanced})
+            return
+
+        if path == "/api/studio/ai-image/styles":
+            from foundation.domains import ai_image_gen
+            self._json_ok(ai_image_gen.get_image_generation_styles())
+            return
+
+        # AI Video Generation
+        if path == "/api/studio/ai-video/generate-script":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            topic = data.get("topic", "DGPS High Precision Survey").strip()
+            from foundation.domains import ai_video_gen
+            scenes = ai_video_gen.decompose_script_to_scenes(topic, "", ws)
+            self._json_ok({"topic": topic, "scenes": scenes})
+            return
+
+        if path == "/api/studio/ai-video/render-script-video":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            topic = data.get("topic", "SHAH Group Project Reel").strip()
+            scenes = data.get("scenes", [])
+            from foundation.domains import ai_video_gen
+            if not scenes:
+                scenes = ai_video_gen.decompose_script_to_scenes(topic, "", ws)
+            res = ai_video_gen.render_script_video(self.store, topic, scenes, workspace_id=ws, actor_id=uid)
+            self._json_ok(res)
+            return
+
         self._json_err("studio endpoint not found", 404)
+
+    def _handle_integrations_route(self, path: str, user: dict) -> None:
+        if user is None:
+            self._json_err("authentication required", 401)
+            return
+        ws, err = self._get_request_workspace(user)
+        if err:
+            self._json_err(err, 403)
+            return
+        data = _read_json(self) if self.command == "POST" else {}
+        from foundation.domains import google_sheets_sync
+        if path == "/api/integrations/google/status":
+            self._json_ok(google_sheets_sync.get_google_sheets_status(self.store, ws))
+            return
+        if path == "/api/integrations/google/sync":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            ent = data.get("entity", "all")
+            direction = data.get("direction", "bidirectional")
+            res = google_sheets_sync.execute_sheets_sync(self.store, ws, ent, direction)
+            self._json_ok(res)
+            return
+        self._json_err("integrations endpoint not found", 404)
 
     def _handle_tasks_route(self, path: str, user: dict) -> None:
         if user is None:
@@ -2679,10 +2835,11 @@ class Handler(BaseHTTPRequestHandler):
         parsed = urllib.parse.urlparse(self.path)
         qs = urllib.parse.parse_qs(parsed.query)
         data = _read_json(self) if self.command == "POST" else {}
-        ws = user.get("workspace_id") or "SSC"
+        ws, err = self._get_request_workspace(user, data)
+        if err:
+            self._json_err(err, 403)
+            return
         uid = int(user.get("id") or user.get("user_id") or 1)
-        if user.get("role") == "Owner":
-            ws = qs.get("workspace", [None])[0] or data.get("workspace") or ws
 
         if path == "/api/tasks":
             if self.command == "POST":
@@ -2762,9 +2919,10 @@ class Handler(BaseHTTPRequestHandler):
         parsed = urllib.parse.urlparse(self.path)
         qs = urllib.parse.parse_qs(parsed.query)
         data = _read_json(self) if self.command == "POST" else {}
-        ws = user.get("workspace_id") or "SSC"
-        if user.get("role") == "Owner":
-            ws = qs.get("workspace", [None])[0] or data.get("workspace") or ws
+        ws, err = self._get_request_workspace(user, data)
+        if err:
+            self._json_err(err, 403)
+            return
 
         parts = [x for x in path.split("/") if x]
         if len(parts) < 3:

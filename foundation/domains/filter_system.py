@@ -13,12 +13,13 @@ Features:
      - leads (social_leads)
      - media (social_media_assets)
      - studio (studio_projects)
+     - clients (social_client_profiles)
   2. Multi-criteria query combining:
      - Full-text search (LIKE %query%)
      - Date range (from_date to to_date)
      - Status, Priority, Category
      - Assigned Employee / Client / Project
-     - Workspace isolation
+     - Workspace isolation (SSC, INFRA, OTHER, or ALL)
   3. Dynamic sorting and pagination (page, limit, total_count, total_pages).
   4. Real CSV and JSON export generation with sanitized headers and escaping.
   5. Active filter summary indicators for UI state hydration.
@@ -36,66 +37,116 @@ from ..store import Store
 KOLKATA_TZ = timezone(timedelta(hours=5, minutes=30))
 
 # Searchable columns mapping per operational table
-TABLE_CONFIG = {
+TABLE_CONFIG: Dict[str, Dict[str, Any]] = {
     "tasks": {
         "table": "employee_tasks",
         "search_cols": ["title", "description", "category", "project_id"],
         "date_col": "deadline_date",
-        "workspace_col": "workspace_id"
+        "workspace_col": "workspace_id",
+        "status_col": "status",
+        "priority_col": "priority",
+        "category_col": "category",
+        "emp_col": "assigned_to"
     },
     "sites": {
         "table": "sites",
-        "search_cols": ["site_code", "name", "client_name", "location"],
+        "search_cols": ["code", "name", "address"],
         "date_col": "created_at",
-        "workspace_col": "workspace_id"
+        "workspace_col": "workspace_id",
+        "status_col": "status",
+        "priority_col": None,
+        "category_col": None,
+        "emp_col": None
     },
     "estimates": {
         "table": "business_estimates",
-        "search_cols": ["client_name", "project_subject", "scope_description"],
+        "search_cols": ["title", "service_type", "site_location", "scope_of_work"],
         "date_col": "created_at",
-        "workspace_col": "workspace_id"
+        "workspace_col": "workspace_id",
+        "status_col": "status",
+        "priority_col": None,
+        "category_col": "service_type",
+        "emp_col": None
     },
     "quotations": {
         "table": "business_quotations",
-        "search_cols": ["client_name", "quotation_number", "scope_of_work"],
+        "search_cols": ["quotation_number", "project_name", "terms"],
         "date_col": "created_at",
-        "workspace_col": "workspace_id"
+        "workspace_col": "workspace_id",
+        "status_col": "status",
+        "priority_col": None,
+        "category_col": None,
+        "emp_col": None
     },
     "work_orders": {
         "table": "business_work_orders",
-        "search_cols": ["order_number", "client_name", "assigned_leader", "scope_of_work"],
+        "search_cols": ["work_order_number", "title", "notes"],
         "date_col": "created_at",
-        "workspace_col": "workspace_id"
+        "workspace_col": "workspace_id",
+        "status_col": "status",
+        "priority_col": None,
+        "category_col": None,
+        "emp_col": "assigned_team_leader_id"
     },
     "invoices": {
         "table": "business_invoices",
-        "search_cols": ["invoice_number", "client_name"],
+        "search_cols": ["invoice_number"],
         "date_col": "invoice_date",
-        "workspace_col": "workspace_id"
+        "workspace_col": "workspace_id",
+        "status_col": "status",
+        "priority_col": None,
+        "category_col": "payment_status",
+        "emp_col": None
     },
     "expenses": {
         "table": "expense_claims",
-        "search_cols": ["project_id", "description", "category"],
-        "date_col": "claim_date",
-        "workspace_col": "workspace_id"
+        "search_cols": ["category", "notes", "project_id"],
+        "date_col": "submitted_at",
+        "workspace_col": "workspace_id",
+        "status_col": "status",
+        "priority_col": None,
+        "category_col": "category",
+        "emp_col": "employee_id"
     },
     "leads": {
         "table": "social_leads",
         "search_cols": ["lead_name", "company", "phone", "email", "service_interest"],
         "date_col": "created_at",
-        "workspace_col": "workspace_id"
+        "workspace_col": "workspace_id",
+        "status_col": "lead_status",
+        "priority_col": "lead_priority",
+        "category_col": "service_interest",
+        "emp_col": "assigned_employee_id"
     },
     "media": {
         "table": "social_media_assets",
         "search_cols": ["filename", "file_type", "resolution"],
         "date_col": "created_at",
-        "workspace_col": "workspace_id"
+        "workspace_col": "workspace_id",
+        "status_col": "status",
+        "priority_col": None,
+        "category_col": "content_type",
+        "emp_col": None
     },
     "studio": {
         "table": "studio_projects",
         "search_cols": ["title", "project_type", "aspect_ratio"],
         "date_col": "created_at",
-        "workspace_col": "workspace_id"
+        "workspace_col": "workspace_id",
+        "status_col": "status",
+        "priority_col": None,
+        "category_col": "project_type",
+        "emp_col": "created_by"
+    },
+    "clients": {
+        "table": "social_client_profiles",
+        "search_cols": ["company_name", "service_package"],
+        "date_col": "created_at",
+        "workspace_col": "workspace_id",
+        "status_col": None,
+        "priority_col": None,
+        "category_col": "service_package",
+        "emp_col": None
     }
 }
 
@@ -114,6 +165,10 @@ def build_filtered_query(
     search_cols = cfg["search_cols"]
     date_col = cfg["date_col"]
     ws_col = cfg["workspace_col"]
+    status_col = cfg.get("status_col")
+    priority_col = cfg.get("priority_col")
+    category_col = cfg.get("category_col")
+    emp_col = cfg.get("emp_col")
 
     where_clauses: List[str] = []
     params: List[Any] = []
@@ -140,44 +195,41 @@ def build_filtered_query(
 
     # 3. Status filter
     status = (filters.get("status") or "").strip()
-    if status and status.lower() != "all":
-        where_clauses.append(f"{tbl}.status = ?")
+    if status and status.lower() != "all" and status_col:
+        where_clauses.append(f"{tbl}.{status_col} = ?")
         params.append(status)
         active_tags.append(f"Status: {status}")
 
     # 4. Priority filter (if applicable)
     priority = (filters.get("priority") or "").strip()
-    if priority and priority.lower() != "all" and entity in ["tasks", "leads"]:
-        col = "priority" if entity == "tasks" else "lead_priority"
-        where_clauses.append(f"{tbl}.{col} = ?")
+    if priority and priority.lower() != "all" and priority_col:
+        where_clauses.append(f"{tbl}.{priority_col} = ?")
         params.append(priority)
         active_tags.append(f"Priority: {priority}")
 
     # 5. Category filter
     category = (filters.get("category") or "").strip()
-    if category and category.lower() != "all" and entity in ["tasks", "expenses", "studio"]:
-        col = "category" if entity != "studio" else "project_type"
-        where_clauses.append(f"{tbl}.{col} = ?")
+    if category and category.lower() != "all" and category_col:
+        where_clauses.append(f"{tbl}.{category_col} = ?")
         params.append(category)
         active_tags.append(f"Category: {category}")
 
     # 6. Assigned Employee / User filter
     emp_id = filters.get("employee_id") or filters.get("assigned_to")
-    if emp_id and str(emp_id).isdigit() and entity in ["tasks", "expenses"]:
-        col = "assigned_to" if entity == "tasks" else "employee_id"
-        where_clauses.append(f"{tbl}.{col} = ?")
+    if emp_id and str(emp_id).isdigit() and emp_col:
+        where_clauses.append(f"{tbl}.{emp_col} = ?")
         params.append(int(emp_id))
         active_tags.append(f"Employee ID: {emp_id}")
 
     # 7. Date Range (from_date, to_date)
     from_date = (filters.get("from_date") or "").strip()
-    if from_date:
+    if from_date and date_col:
         where_clauses.append(f"date({tbl}.{date_col}) >= date(?)")
         params.append(from_date)
         active_tags.append(f"From: {from_date}")
 
     to_date = (filters.get("to_date") or "").strip()
-    if to_date:
+    if to_date and date_col:
         where_clauses.append(f"date({tbl}.{date_col}) <= date(?)")
         params.append(to_date)
         active_tags.append(f"To: {to_date}")
@@ -223,7 +275,7 @@ def query_filtered_records(
     # Sorting
     cfg = TABLE_CONFIG[entity]
     sort_dir = "ASC" if str(sort_dir).upper() == "ASC" else "DESC"
-    order_col = sort_by if (sort_by and re.match(r"^[a-zA-Z0-9_]+$", sort_by)) else cfg["date_col"]
+    order_col = sort_by if (sort_by and re.match(r"^[a-zA-Z0-9_]+$", sort_by)) else (cfg["date_col"] or "id")
 
     sql = f"{base_sql} ORDER BY {order_col} {sort_dir} LIMIT ? OFFSET ?"
     params.extend([limit, offset])
@@ -258,13 +310,13 @@ def export_filtered_csv(
     base_sql, params, _, _, _ = build_filtered_query(entity, workspace_id, filters)
     
     cfg = TABLE_CONFIG[entity]
-    sql = f"{base_sql} ORDER BY {cfg['date_col']} DESC LIMIT 2000"
+    order_col = cfg["date_col"] or "id"
+    sql = f"{base_sql} ORDER BY {order_col} DESC LIMIT 2000"
     rows = store.fetchall(sql, params)
 
     output = io.StringIO()
     if rows:
         headers = list(rows[0].keys())
-        # Filter out heavy internal JSON strings from CSV columns if desired
         clean_headers = [h for h in headers if not h.endswith(("_json", "_metadata"))]
         writer = csv.DictWriter(output, fieldnames=clean_headers, extrasaction="ignore")
         writer.writeheader()

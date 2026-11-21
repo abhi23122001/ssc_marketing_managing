@@ -1,0 +1,38 @@
+id,workspace_id,company,lead_name,phone,email,service_interest,lead_priority,lead_status,created_at
+1,SSC,Vindhya Stone & Minerals Pvt Ltd,,9425109988,vikram@vindhyaminerals.in,,medium,won,2026-11-20T09:00:00Z
+2,SSC,Agarwal Cold Chain & Logistics,,9826044321,mahesh@agarwalcoldchain.com,,medium,new,2026-11-20T09:00:00Z
+3,SSC,Satna Infra Buildcon,,9425332211,rkmishra@satnabuildcon.in,,medium,new,2026-11-20T09:00:00Z
+4,SSC,Singrauli Industrial Park Developers,,9893112233,deepak@sipdevelopers.in,,medium,new,2026-11-20T09:00:00Z
+5,SSC,Q4 Co,Q4 Demo Lead,,,survey,medium,new,2026-11-19 23:26:29
+6,SSC,Seed Co,Seed Demo Lead,,,,medium,new,2026-11-20 00:16:12
+7,SSC,API Co,API Test Lead,,,,medium,new,2026-11-20 01:34:07
+8,SSC,API Co,API Test Lead,,,,medium,new,2026-11-20 04:50:30
+9,SSC,API Co,API Test Lead,,,,medium,new,2026-11-20 05:24:07
+10,SSC,API Co,API Test Lead,,,,medium,new,2026-11-20 05:25:02
+11,SSC,API Co,API Test Lead,,,,medium,new,2026-11-20 05:57:10
+12,SSC,RudraX Mapping Solutions,RudraX Mapping Solutions,,,Geospatial / Survey Services,medium,new,2026-11-20T07:46:00Z
+13,SSC,Complete Surveying Solutions,Complete Surveying Solutions,,,Geospatial / Survey Services,medium,new,2026-11-20T07:46:00Z
+14,SSC,Shahi Construction,Shahi Construction,,,Construction / Survey Services,low,new,2026-11-20T07:46:00Z
+15,SSC,BBPL Building Atelier,BBPL Building Atelier,,,Survey / Building Construction,high,new,2026-11-20T07:46:00Z
+16,SSC,API Co,API Test Lead,,,,medium,new,2026-11-20 07:48:51
+17,SSC,API Co,API Test Lead,,,,medium,won,2026-11-20 08:05:45
+18,SSC,API Co,API Test Lead,,,,medium,won,2026-11-20 08:38:22
+19,SSC,API Co,API Test Lead,,,,medium,won,2026-11-20 08:51:38
+20,SSC,API Co,API Test Lead,,,,medium,won,2026-11-20 09:37:13
+21,SSC,API Co,API Test Lead,,,,medium,won,2026-11-20 09:41:40
+22,SSC,Vikramaditya Infrastructure Corp,Vikramaditya Infrastructure Corp,+91 98260 99999,,DGPS & Topographical Survey,high,won,2026-11-20T19:21:44Z
+23,SSC,Vikramaditya Infrastructure Corp,Vikramaditya Infrastructure Corp,+91 98260 99999,,DGPS & Topographical Survey,high,won,2026-11-20T19:22:39Z
+24,SSC,Vikramaditya Infrastructure Corp,Vikramaditya Infrastructure Corp,+91 98260 99999,,DGPS & Topographical Survey,high,won,2026-11-21T02:11:53Z
+25,SSC,Vikramaditya Infrastructure Corp,Vikramaditya Infrastructure Corp,+91 98260 99999,,DGPS & Topographical Survey,high,won,2026-11-21T02:20:04Z
+26,SSC,SRB Infrastructure,Shri Ram Builders,+91 99999 11111,,,high,new,2026-11-21 02:59:21
+27,SSC,SRB Infrastructure,Shri Ram Builders,+91 99999 11111,,,high,new,2026-11-21 03:01:00
+28,SSC,SRB Infrastructure,Shri Ram Builders,+91 99999 11111,,,high,new,2026-11-21 03:02:55
+29,SSC,SRB Infrastructure,Shri Ram Builders,+91 99999 11111,,,high,new,2026-11-21 03:16:34
+30,SSC,Vikramaditya Infrastructure Corp,Vikramaditya Infrastructure Corp,+91 98260 99999,,DGPS & Topographical Survey,high,won,2026-11-21T03:16:34Z
+31,SSC,SRB Infrastructure,Shri Ram Builders,+91 99999 11111,,,high,new,2026-11-21 03:31:06
+32,SSC,SRB Infrastructure,Shri Ram Builders,+91 99999 11111,,,high,won,2026-11-21 03:34:07
+33,SSC,Vikramaditya Infrastructure Corp,Vikramaditya Infrastructure Corp,+91 98260 99999,,DGPS & Topographical Survey,high,won,2026-11-21T03:34:07Z
+34,SSC,SRB Infrastructure,Shri Ram Builders,+91 99999 11111,,,high,won,2026-11-21 03:43:13
+35,SSC,Vikramaditya Infrastructure Corp,Vikramaditya Infrastructure Corp,+91 98260 99999,,DGPS & Topographical Survey,high,won,2026-11-21T05:02:21Z
+39,SSC,Vikramaditya Infrastructure Corp,Vikramaditya Infrastructure Corp,+91 98260 99999,,DGPS & Topographical Survey,high,won,2026-11-21T08:02:48Z
+40,SSC,SRB Infrastructure,Shri Ram Builders,+91 99999 11111,,,high,new,2026-11-21 08:04:18

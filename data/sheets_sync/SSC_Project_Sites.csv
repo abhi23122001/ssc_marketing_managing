@@ -1,0 +1,37 @@
+id,workspace_id,code,name,address,geofence_radius_m,status,created_at
+1,SSC,SITE-SGR-01,NCL Jayant Coal Block Topographic & DGPS Survey,,100.0,active,2026-11-20T09:00:00Z
+2,SSC,SITE-ANP-02,Anuppur Industrial Corridor Boundary Demarcation,,100.0,active,2026-11-20T09:00:00Z
+3,SSC,SITE-SOL-03,Waidhan 2.5 MW Rooftop & Ground Solar EPC,,100.0,active,2026-11-20T09:00:00Z
+4,SSC,SITE-GEO-04,Rewa Highway Bridge Soil & Borehole Investigation,,100.0,active,2026-11-20T09:00:00Z
+5,SSC,SITE-CLT-01,Vindhya Stone & Minerals Pvt Ltd - Survey Site,Client Project Location,150.0,active,2026-11-20T07:48:04Z
+6,SSC,SITE-SSTP-05,Singrauli Super Thermal Power DGPS Alignment,"Singrauli Energy Hub, MP",250.0,active,2026-11-20T07:48:04Z
+7,SSC,SITE-SSTP-2316,Singrauli Super Thermal Power Alignment 2316,"Singrauli Energy Hub, MP",250.0,active,2026-11-20T07:57:42Z
+8,SSC,SITE-SSTP-8033,Singrauli Super Thermal Power Alignment 8033,"Singrauli Energy Hub, MP",250.0,active,2026-11-20T07:58:08Z
+9,SSC,SITE-CLT-17,API Co - Survey Site,Client Project Location,150.0,active,2026-11-20T08:05:45Z
+10,SSC,SITE-API-1945,API Survey Site 1795161945,,100.0,active,2026-11-20T08:05:45Z
+11,SSC,SITE-CLT-18,API Co - Survey Site,Client Project Location,150.0,active,2026-11-20T08:38:22Z
+12,SSC,SITE-API-3902,API Survey Site 1795163902,,100.0,active,2026-11-20T08:38:22Z
+13,SSC,SITE-CLT-19,API Co - Survey Site,Client Project Location,150.0,active,2026-11-20T08:51:38Z
+14,SSC,SITE-API-4698,API Survey Site 1795164698,,100.0,active,2026-11-20T08:51:38Z
+15,SSC,SITE-SSTP-9180,Singrauli Super Thermal Power Alignment 9180,"Singrauli Energy Hub, MP",250.0,active,2026-11-20T08:52:39Z
+16,SSC,SITE-SSTP-3686,Singrauli Super Thermal Power Alignment 3686,"Singrauli Energy Hub, MP",250.0,active,2026-11-20T09:04:13Z
+17,SSC,SITE-SSTP-3140,Singrauli Super Thermal Power Alignment 3140,"Singrauli Energy Hub, MP",250.0,active,2026-11-20T09:36:23Z
+18,SSC,SITE-CLT-20,API Co - Survey Site,Client Project Location,150.0,active,2026-11-20T09:37:13Z
+19,SSC,SITE-API-7433,API Survey Site 1795167433,,100.0,active,2026-11-20T09:37:13Z
+20,SSC,SITE-SSTP-3643,Singrauli Super Thermal Power Alignment 3643,"Singrauli Energy Hub, MP",250.0,active,2026-11-20T09:37:43Z
+21,SSC,SITE-SSTP-1592,Singrauli Super Thermal Power Alignment 1592,"Singrauli Energy Hub, MP",250.0,active,2026-11-20T09:39:21Z
+22,SSC,SITE-CLT-21,API Co - Survey Site,Client Project Location,150.0,active,2026-11-20T09:41:40Z
+23,SSC,SITE-API-7700,API Survey Site 1795167700,,100.0,active,2026-11-20T09:41:40Z
+24,SSC,SITE-CLT-22,Vikramaditya Infrastructure Corp - DGPS & Topographical Survey,Bhopal Industrial Zone,150.0,active,2026-11-20T19:21:44Z
+25,SSC,SITE-CLT-23,Vikramaditya Infrastructure Corp - DGPS & Topographical Survey,Bhopal Industrial Zone,150.0,active,2026-11-20T19:22:39Z
+26,SSC,SITE-CLT-24,Vikramaditya Infrastructure Corp - DGPS & Topographical Survey,Bhopal Industrial Zone,150.0,active,2026-11-21T02:11:53Z
+27,SSC,SITE-SSTP-3724,Singrauli Super Thermal Power Alignment 3724,"Singrauli Energy Hub, MP",250.0,active,2026-11-21T02:14:33Z
+28,SSC,SITE-CLT-25,Vikramaditya Infrastructure Corp - DGPS & Topographical Survey,Bhopal Industrial Zone,150.0,active,2026-11-21T02:20:04Z
+29,SSC,SITE-SSTP-5075,Singrauli Super Thermal Power Alignment 5075,"Singrauli Energy Hub, MP",250.0,active,2026-11-21T02:20:05Z
+30,SSC,SITE-CLT-30,Vikramaditya Infrastructure Corp - DGPS & Topographical Survey,Bhopal Industrial Zone,150.0,active,2026-11-21T03:16:34Z
+31,SSC,SITE-CLT-33,Vikramaditya Infrastructure Corp - DGPS & Topographical Survey,Bhopal Industrial Zone,150.0,active,2026-11-21T03:34:07Z
+32,SSC,SITE-CLT-34,SRB Infrastructure - Survey Site,Client Project Location,150.0,active,2026-11-21T03:46:14Z
+33,SSC,SITE-CLT-35,Vikramaditya Infrastructure Corp - DGPS & Topographical Survey,Bhopal Industrial Zone,150.0,active,2026-11-21T05:02:21Z
+38,SSC,SITE-CLT-32,SRB Infrastructure - Survey Site,Client Project Location,150.0,active,2026-11-21T07:23:28Z
+39,SSC,SITE-CLT-39,Vikramaditya Infrastructure Corp - DGPS & Topographical Survey,Bhopal Industrial Zone,150.0,active,2026-11-21T08:02:48Z
+40,SSC,SITE-SSTP-1380,Singrauli Super Thermal Power Alignment 1380,"Singrauli Energy Hub, MP",250.0,active,2026-11-21T08:05:01Z

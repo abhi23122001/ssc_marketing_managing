@@ -541,15 +541,18 @@ class Store:
         return self.fetchone("SELECT * FROM sites WHERE id=?", (cur.lastrowid,))
 
     # -- clients ---------------------------------------------------------------
-    def list_clients(self) -> list[dict[str, Any]]:
+    def list_clients(self, workspace_id: str | None = None) -> list[dict[str, Any]]:
+        if workspace_id and workspace_id != "ALL":
+            return self.fetchall("SELECT * FROM social_client_profiles WHERE workspace_id=? ORDER BY created_at DESC", (workspace_id,))
         return self.fetchall("SELECT * FROM social_client_profiles ORDER BY created_at DESC")
 
     def create_client(self, client_workspace_id: str, company_name: str,
-                      service_package: str = "", contract_metadata: dict | None = None) -> dict[str, Any]:
+                      service_package: str = "", contract_metadata: dict | None = None,
+                      workspace_id: str = "SSC") -> dict[str, Any]:
         self.conn.execute(
-            "INSERT INTO social_client_profiles (client_workspace_id, company_name, service_package, contract_metadata, created_at) "
-            "VALUES (?,?,?,?,?)",
-            (client_workspace_id, company_name, service_package, json_dumps(contract_metadata or {}), now_iso())
+            "INSERT INTO social_client_profiles (client_workspace_id, company_name, service_package, contract_metadata, workspace_id, created_at) "
+            "VALUES (?,?,?,?,?,?)",
+            (client_workspace_id, company_name, service_package, json_dumps(contract_metadata or {}), workspace_id, now_iso())
         )
         self.conn.commit()
         return self.fetchone("SELECT * FROM social_client_profiles WHERE client_workspace_id=?", (client_workspace_id,))
