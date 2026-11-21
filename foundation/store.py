@@ -197,10 +197,15 @@ class Store:
 
     # -- convenience ---------------------------------------------------------
     def fetchall(self, sql: str, params=()) -> list[dict[str, Any]]:
+        if self.conn.row_factory != sqlite3.Row:
+            self.conn.row_factory = sqlite3.Row
         return [dict(r) for r in self.conn.execute(sql, params).fetchall()]
 
     def fetchone(self, sql: str, params=()) -> dict[str, Any] | None:
-        return dict(self.conn.execute(sql, params).fetchone()) if self.conn.execute(sql, params).fetchone() else None
+        if self.conn.row_factory != sqlite3.Row:
+            self.conn.row_factory = sqlite3.Row
+        row = self.conn.execute(sql, params).fetchone()
+        return dict(row) if row else None
 
     def exec(self, sql: str, params=()) -> None:
         self.conn.execute(sql, params)
@@ -240,9 +245,9 @@ class Store:
         return token
 
     def decode_session(self, token: str) -> dict[str, Any] | None:
-        row = self.conn.execute("SELECT s.*, u.username, u.name, u.role_id, r.code AS role, u.workspace_id, u.active "
-                                "FROM sessions s JOIN users u ON u.id=s.user_id "
-                                "LEFT JOIN roles r ON r.id=u.role_id WHERE s.token=?", (token,)).fetchone()
+        row = self.fetchone("SELECT s.*, u.username, u.name, u.role_id, r.code AS role, u.workspace_id, u.active "
+                            "FROM sessions s JOIN users u ON u.id=s.user_id "
+                            "LEFT JOIN roles r ON r.id=u.role_id WHERE s.token=?", (token,))
         if not row or not row["active"]:
             return None
         if not isinstance(row["expires_at"], str):
@@ -530,6 +535,23 @@ class Store:
         total = len(self.fetchall("SELECT id FROM social_leads WHERE workspace_id=?", (workspace_id,)))
         return {"imported": imported, "total": total}
 
+    def create_lead(self, workspace_id: str, lead_name: str, company: str = "",
+                    service_interest: str = "", location: str = "", phone: str = "",
+                    priority: str = "medium", notes: str = "") -> dict[str, Any]:
+        comp = company or lead_name
+        cur = self.conn.execute(
+            "INSERT INTO social_leads (workspace_id, client_workspace_id, lead_name, company, phone, email, "
+            "location, platform, source_post, enquiry_text, service_interest, lead_priority, lead_status, "
+            "quotation_status, conversion_status, created_at, updated_at) "
+            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            (workspace_id, None, lead_name, comp, phone, "",
+             location, "direct", "", notes, service_interest,
+             priority.lower(), "new", "none", "none",
+             now_iso(), now_iso())
+        )
+        self.conn.commit()
+        return self.fetchone("SELECT * FROM social_leads WHERE id=?", (cur.lastrowid,)) or {}
+
     def convert_lead(self, lead_id: int, workspace_id: str, actor_id: int, create_site: bool = True) -> dict[str, Any]:
         lead = self.fetchone("SELECT * FROM social_leads WHERE id=? AND workspace_id=?", (lead_id, workspace_id))
         if not lead:
@@ -654,4 +676,80 @@ class Store:
         )
         self.conn.commit()
         return self.fetchone("SELECT * FROM leaves WHERE id=?", (cur.lastrowid,)) or {}
+
+    # -- Business Operations (Estimates, Quotations, Work Orders, Invoices, Payments, P&L) --
+    def create_estimate(self, workspace_id: str, data: dict[str, Any]) -> dict[str, Any]:
+        from .domains import business_ops
+        return business_ops.create_estimate(self.conn, workspace_id, data)
+
+    def list_estimates(self, workspace_id: str, status: str | None = None) -> list[dict[str, Any]]:
+        from .domains import business_ops
+        return business_ops.list_estimates(self.conn, workspace_id, status)
+
+    def get_estimate(self, estimate_id: int) -> dict[str, Any] | None:
+        from .domains import business_ops
+        return business_ops.get_estimate(self.conn, estimate_id)
+
+    def update_estimate_status(self, estimate_id: int, status: str) -> dict[str, Any] | None:
+        from .domains import business_ops
+        return business_ops.update_estimate_status(self.conn, estimate_id, status)
+
+    def create_quotation(self, workspace_id: str, data: dict[str, Any]) -> dict[str, Any]:
+        from .domains import business_ops
+        return business_ops.create_quotation(self.conn, workspace_id, data)
+
+    def list_quotations(self, workspace_id: str, status: str | None = None) -> list[dict[str, Any]]:
+        from .domains import business_ops
+        return business_ops.list_quotations(self.conn, workspace_id, status)
+
+    def get_quotation(self, quotation_id: int) -> dict[str, Any] | None:
+        from .domains import business_ops
+        return business_ops.get_quotation(self.conn, quotation_id)
+
+    def update_quotation_status(self, quotation_id: int, status: str) -> dict[str, Any] | None:
+        from .domains import business_ops
+        return business_ops.update_quotation_status(self.conn, quotation_id, status)
+
+    def create_work_order(self, workspace_id: str, data: dict[str, Any]) -> dict[str, Any]:
+        from .domains import business_ops
+        return business_ops.create_work_order(self.conn, workspace_id, data)
+
+    def list_work_orders(self, workspace_id: str, status: str | None = None) -> list[dict[str, Any]]:
+        from .domains import business_ops
+        return business_ops.list_work_orders(self.conn, workspace_id, status)
+
+    def get_work_order(self, work_order_id: int) -> dict[str, Any] | None:
+        from .domains import business_ops
+        return business_ops.get_work_order(self.conn, work_order_id)
+
+    def update_work_order_status(self, work_order_id: int, status: str,
+                                 field_qc_status: str | None = None,
+                                 deliverables_status: str | None = None) -> dict[str, Any] | None:
+        from .domains import business_ops
+        return business_ops.update_work_order_status(self.conn, work_order_id, status, field_qc_status, deliverables_status)
+
+    def create_invoice(self, workspace_id: str, data: dict[str, Any]) -> dict[str, Any]:
+        from .domains import business_ops
+        return business_ops.create_invoice(self.conn, workspace_id, data)
+
+    def list_invoices(self, workspace_id: str, status: str | None = None) -> list[dict[str, Any]]:
+        from .domains import business_ops
+        return business_ops.list_invoices(self.conn, workspace_id, status)
+
+    def get_invoice(self, invoice_id: int) -> dict[str, Any] | None:
+        from .domains import business_ops
+        return business_ops.get_invoice(self.conn, invoice_id)
+
+    def record_payment(self, workspace_id: str, invoice_id: int, data: dict[str, Any]) -> dict[str, Any]:
+        from .domains import business_ops
+        return business_ops.record_payment(self.conn, workspace_id, invoice_id, data)
+
+    def list_payments(self, workspace_id: str, invoice_id: int | None = None) -> list[dict[str, Any]]:
+        from .domains import business_ops
+        return business_ops.list_payments(self.conn, workspace_id, invoice_id)
+
+    def get_profit_loss_summary(self, workspace_id: str) -> dict[str, Any]:
+        from .domains import business_ops
+        return business_ops.get_profit_loss_summary(self.conn, workspace_id)
+
 

@@ -339,6 +339,9 @@ class Handler(BaseHTTPRequestHandler):
             elif path == "/api/content":
                 self._handle_content_list(user)
                 return
+            elif path == "/api/content/ideas":
+                self._handle_content_ideas(user)
+                return
             elif path.startswith("/api/content/"):
                 parts = [x for x in path.split("/") if x]
                 if len(parts) >= 3 and parts[1] == "content":
@@ -435,6 +438,30 @@ class Handler(BaseHTTPRequestHandler):
             elif path.startswith("/api/payroll"):
                 self._handle_payroll_route(path, user)
                 return
+            elif path.startswith("/api/estimates"):
+                self._handle_estimates_route(path, user)
+                return
+            elif path.startswith("/api/quotations"):
+                self._handle_quotations_route(path, user)
+                return
+            elif path.startswith("/api/work-orders"):
+                self._handle_work_orders_route(path, user)
+                return
+            elif path.startswith("/api/invoices"):
+                self._handle_invoices_route(path, user)
+                return
+            elif path.startswith("/api/payments"):
+                self._handle_payments_route(path, user)
+                return
+            elif path == "/api/calendar":
+                self._handle_calendar(user)
+                return
+            elif path == "/api/content/ideas":
+                self._handle_content_ideas(user)
+                return
+            elif path == "/api/social/trends":
+                self._handle_social_trends(user)
+                return
             elif path == "/api/ai-brain/action":
                 self._handle_ai_brain_action(user)
                 return
@@ -450,6 +477,7 @@ class Handler(BaseHTTPRequestHandler):
             else:
                 self._json_err("not found", 404)
         except Exception as e:  # pragma: no cover - defensive
+            import traceback; traceback.print_exc()
             self._json_err(f"internal error: {e}", 500)
 
     def _handle_leads_route(self, path: str, user: dict) -> None:
@@ -648,9 +676,13 @@ class Handler(BaseHTTPRequestHandler):
             self._json_err("resource:read not permitted", 403)
             return
         ws = user.get("workspace_id") or "SSC"
-        if path == "/api/finance/expenses/export":
+        if path in ("/api/finance/export", "/api/finance/expenses/export"):
             claims = self.store.list_expense_claims(ws)
             self._send_csv(f"expenses_{ws}.csv", ["id", "project_id", "category", "amount", "currency", "status", "notes", "created_at"], claims)
+            return
+        if path == "/api/finance/profit-loss":
+            summary = self.store.get_profit_loss_summary(ws)
+            self._json_ok({"profit_loss": summary})
             return
         parts = [x for x in path.split("/") if x]
         if len(parts) >= 3 and parts[2] == "vendors":
@@ -700,6 +732,190 @@ class Handler(BaseHTTPRequestHandler):
                 self._json_ok({"expense": claim}, 201)
                 return
         self._json_err("not found", 404)
+
+    # ------------------------------------------------------------------
+    # Business Operations: Estimates, Quotations, Work Orders, Invoices, Payments
+    # ------------------------------------------------------------------
+    def _handle_estimates_route(self, path: str, user: dict) -> None:
+        if user is None:
+            self._json_err("authentication required", 401)
+            return
+        ws = user.get("workspace_id") or "SSC"
+        parts = [x for x in path.split("/") if x]
+        if len(parts) == 2 and parts[1] == "estimates":
+            if self.command == "GET":
+                estimates = self.store.list_estimates(ws)
+                self._json_ok({"estimates": estimates, "count": len(estimates)})
+                return
+            if self.command == "POST":
+                data = _read_json(self)
+                est = self.store.create_estimate(ws, data)
+                self._json_ok({"estimate": est}, 201)
+                return
+        if len(parts) == 3 and parts[1] == "estimates":
+            eid = int(parts[2])
+            if self.command == "GET":
+                est = self.store.get_estimate(eid)
+                if not est:
+                    self._json_err("estimate not found", 404)
+                    return
+                self._json_ok({"estimate": est})
+                return
+        if len(parts) == 4 and parts[1] == "estimates" and parts[3] == "status" and self.command == "POST":
+            eid = int(parts[2])
+            data = _read_json(self)
+            status = data.get("status", "submitted")
+            updated = self.store.update_estimate_status(eid, status)
+            self._json_ok({"estimate": updated})
+            return
+        self._json_err("not found", 404)
+
+    def _handle_quotations_route(self, path: str, user: dict) -> None:
+        if user is None:
+            self._json_err("authentication required", 401)
+            return
+        ws = user.get("workspace_id") or "SSC"
+        parts = [x for x in path.split("/") if x]
+        if len(parts) == 2 and parts[1] == "quotations":
+            if self.command == "GET":
+                quotations = self.store.list_quotations(ws)
+                self._json_ok({"quotations": quotations, "count": len(quotations)})
+                return
+            if self.command == "POST":
+                data = _read_json(self)
+                q = self.store.create_quotation(ws, data)
+                self._json_ok({"quotation": q}, 201)
+                return
+        if len(parts) == 3 and parts[1] == "quotations":
+            qid = int(parts[2])
+            if self.command == "GET":
+                q = self.store.get_quotation(qid)
+                if not q:
+                    self._json_err("quotation not found", 404)
+                    return
+                self._json_ok({"quotation": q})
+                return
+        if len(parts) == 4 and parts[1] == "quotations" and parts[3] in ("status", "accept") and self.command == "POST":
+            qid = int(parts[2])
+            data = _read_json(self) if (self.headers.get("Content-Length") and int(self.headers.get("Content-Length", 0)) > 0) else {}
+            status = data.get("status", "accepted") if parts[3] != "accept" else "accepted"
+            updated = self.store.update_quotation_status(qid, status)
+            self._json_ok({"quotation": updated})
+            return
+        self._json_err("not found", 404)
+
+    def _handle_work_orders_route(self, path: str, user: dict) -> None:
+        if user is None:
+            self._json_err("authentication required", 401)
+            return
+        ws = user.get("workspace_id") or "SSC"
+        parts = [x for x in path.split("/") if x]
+        if len(parts) == 2 and parts[1] == "work-orders":
+            if self.command == "GET":
+                wos = self.store.list_work_orders(ws)
+                self._json_ok({"work_orders": wos, "count": len(wos)})
+                return
+            if self.command == "POST":
+                data = _read_json(self)
+                wo = self.store.create_work_order(ws, data)
+                self._json_ok({"work_order": wo}, 201)
+                return
+        if len(parts) == 3 and parts[1] == "work-orders":
+            wo_id = int(parts[2])
+            if self.command == "GET":
+                wo = self.store.get_work_order(wo_id)
+                if not wo:
+                    self._json_err("work order not found", 404)
+                    return
+                self._json_ok({"work_order": wo})
+                return
+        if len(parts) == 4 and parts[1] == "work-orders" and parts[3] in ("status", "qc-pass") and self.command == "POST":
+            wo_id = int(parts[2])
+            data = _read_json(self) if (self.headers.get("Content-Length") and int(self.headers.get("Content-Length", 0)) > 0) else {}
+            status = data.get("status", "active")
+            qc_status = "qc_passed" if parts[3] == "qc-pass" else data.get("field_qc_status")
+            deliv_status = data.get("deliverables_status")
+            updated = self.store.update_work_order_status(wo_id, status, qc_status, deliv_status)
+            self._json_ok({"work_order": updated})
+            return
+        self._json_err("not found", 404)
+
+    def _handle_invoices_route(self, path: str, user: dict) -> None:
+        if user is None:
+            self._json_err("authentication required", 401)
+            return
+        ws = user.get("workspace_id") or "SSC"
+        parts = [x for x in path.split("/") if x]
+        if len(parts) == 2 and parts[1] == "invoices":
+            if self.command == "GET":
+                invs = self.store.list_invoices(ws)
+                self._json_ok({"invoices": invs, "count": len(invs)})
+                return
+            if self.command == "POST":
+                data = _read_json(self)
+                inv = self.store.create_invoice(ws, data)
+                self._json_ok({"invoice": inv}, 201)
+                return
+        if len(parts) == 3 and parts[1] == "invoices":
+            inv_id = int(parts[2])
+            if self.command == "GET":
+                inv = self.store.get_invoice(inv_id)
+                if not inv:
+                    self._json_err("invoice not found", 404)
+                    return
+                self._json_ok({"invoice": inv})
+                return
+        if len(parts) == 4 and parts[1] == "invoices" and parts[3] == "payment" and self.command == "POST":
+            inv_id = int(parts[2])
+            data = _read_json(self)
+            updated = self.store.record_payment(ws, inv_id, data)
+            self._json_ok({"invoice": updated})
+            return
+        self._json_err("not found", 404)
+
+    def _handle_payments_route(self, path: str, user: dict) -> None:
+        if user is None:
+            self._json_err("authentication required", 401)
+            return
+        ws = user.get("workspace_id") or "SSC"
+        parts = [x for x in path.split("/") if x]
+        if len(parts) == 2 and parts[1] == "payments":
+            if self.command == "GET":
+                payments = self.store.list_payments(ws)
+                self._json_ok({"payments": payments, "count": len(payments)})
+                return
+            if self.command == "POST":
+                data = _read_json(self)
+                inv_id = int(data.get("invoice_id"))
+                updated = self.store.record_payment(ws, inv_id, data)
+                self._json_ok({"payment": data, "invoice": updated}, 201)
+                return
+        self._json_err("not found", 404)
+
+    def _handle_social_trends(self, user: dict) -> None:
+        if user is None:
+            self._json_err("authentication required", 401)
+            return
+        ws = user.get("workspace_id") or "SSC"
+        from foundation.domains import m19_core
+        report = m19_core.daily_trend_report(self.store, ws)
+        trends = m19_core.discover_trends(self.store, ws)
+        self._json_ok({"trend_report": report, "trends": trends})
+
+    def _handle_content_ideas(self, user: dict) -> None:
+        if user is None:
+            self._json_err("authentication required", 401)
+            return
+        ws = user.get("workspace_id") or "SSC"
+        from foundation.domains import m19_core
+        if self.command == "POST":
+            ideas = m19_core.generate_content_ideas(self.store, ws, limit=8)
+            self._json_ok({"ideas": ideas}, 201)
+            return
+        rows = self.store.fetchall("SELECT * FROM social_content_ideas WHERE workspace_id=? ORDER BY created_at DESC", (ws,))
+        if not rows:
+            rows = m19_core.generate_content_ideas(self.store, ws, limit=8)
+        self._json_ok({"ideas": rows})
 
     # ------------------------------------------------------------------
     # HRM — Employees, Attendance, Leaves
@@ -977,6 +1193,7 @@ class Handler(BaseHTTPRequestHandler):
                     return
             self._json_err("not found", 404)
         except Exception as e:
+            import traceback; traceback.print_exc()
             self._json_err(f"internal error: {e}", 500)
 
     def _handle_user_edit(self, user: dict, uid: int, data: dict) -> None:
@@ -1206,6 +1423,9 @@ class Handler(BaseHTTPRequestHandler):
             elif path == "/api/content":
                 self._handle_content_create(user)
                 return
+            elif path == "/api/content/ideas":
+                self._handle_content_ideas(user)
+                return
             elif path.startswith("/api/content/"):
                 parts = [x for x in path.split("/") if x]
                 if len(parts) >= 3 and parts[1] == "content":
@@ -1318,6 +1538,30 @@ class Handler(BaseHTTPRequestHandler):
             elif path.startswith("/api/payroll"):
                 self._handle_payroll_route(path, user)
                 return
+            elif path.startswith("/api/estimates"):
+                self._handle_estimates_route(path, user)
+                return
+            elif path.startswith("/api/quotations"):
+                self._handle_quotations_route(path, user)
+                return
+            elif path.startswith("/api/work-orders"):
+                self._handle_work_orders_route(path, user)
+                return
+            elif path.startswith("/api/invoices"):
+                self._handle_invoices_route(path, user)
+                return
+            elif path.startswith("/api/payments"):
+                self._handle_payments_route(path, user)
+                return
+            elif path == "/api/calendar":
+                self._handle_calendar(user)
+                return
+            elif path == "/api/content/ideas":
+                self._handle_content_ideas(user)
+                return
+            elif path == "/api/social/trends":
+                self._handle_social_trends(user)
+                return
             elif path == "/api/ai-brain/action":
                 self._handle_ai_brain_action(user)
                 return
@@ -1330,6 +1574,7 @@ class Handler(BaseHTTPRequestHandler):
             else:
                 self._json_err("not found", 404)
         except Exception as e:
+            import traceback; traceback.print_exc()
             self._json_err(f"internal error: {e}", 500)
 
     def _handle_ai_brain_route(self, path: str, user: dict) -> None:

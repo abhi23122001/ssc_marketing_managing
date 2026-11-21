@@ -158,9 +158,9 @@ async function runBrowserVerification() {
     `);
     console.log("[PASS] 2. Logged in:", loginRes);
 
-    // Step 3: Tab navigation & rendering
-    const sections = ["overview", "workspaces", "projects", "finance", "employees", "marketing", "crm", "approvals", "settings"];
-    console.log("[STEP 3] Verifying navigation and content across all sections...");
+    // Step 3: Tab navigation & rendering across all 10 core sections
+    const sections = ["overview", "workspaces", "projects", "finance", "employees", "marketing", "crm", "ai", "approvals", "settings"];
+    console.log("[STEP 3] Verifying navigation and content across all 10 sections...");
     for (const sec of sections) {
       const secInfo = await cdp.eval(`
         (async () => {
@@ -177,10 +177,60 @@ async function runBrowserVerification() {
       console.log(`[PASS] Section [${sec}]: displayed=${secInfo.displayed}, content=${secInfo.hasContent}`);
     }
 
+    // Step 3b: Sub-navigation clicks
+    console.log("[STEP 3b] Verifying sub-navigation across Projects, HRM, Marketing, and Finance...");
+    const subnavClicks = await cdp.eval(`
+      (async () => {
+        const results = [];
+        // Projects sub-tabs
+        const projItem = document.querySelector('.item[data-sec="projects"]');
+        if(projItem) projItem.click();
+        await new Promise(r => setTimeout(r, 400));
+        const pSubs = document.querySelectorAll("#subnav-projects button");
+        for(const b of pSubs) {
+          b.click();
+          await new Promise(r => setTimeout(r, 200));
+          results.push({ section: "projects", sub: b.dataset.sub, active: b.classList.contains("active") });
+        }
+        // HRM sub-tabs
+        const hrmItem = document.querySelector('.item[data-sec="employees"]');
+        if(hrmItem) hrmItem.click();
+        await new Promise(r => setTimeout(r, 400));
+        const hSubs = document.querySelectorAll("#subnav-hrm button");
+        for(const b of hSubs) {
+          b.click();
+          await new Promise(r => setTimeout(r, 200));
+          results.push({ section: "employees", sub: b.dataset.sub, active: b.classList.contains("active") });
+        }
+        // Marketing sub-tabs
+        const mktItem = document.querySelector('.item[data-sec="marketing"]');
+        if(mktItem) mktItem.click();
+        await new Promise(r => setTimeout(r, 400));
+        const mSubs = document.querySelectorAll("#subnav-marketing button");
+        for(const b of mSubs) {
+          b.click();
+          await new Promise(r => setTimeout(r, 200));
+          results.push({ section: "marketing", sub: b.dataset.sub, active: b.classList.contains("active") });
+        }
+        // AI Agents verification
+        const aiItem = document.querySelector('.item[data-sec="ai"]');
+        if(aiItem) aiItem.click();
+        await new Promise(r => setTimeout(r, 400));
+        const agentCards = document.querySelectorAll("#ai-agents-grid .card").length;
+        results.push({ section: "ai", agentCardsCount: agentCards });
+
+        return results;
+      })()
+    `);
+    console.log("[PASS] 3b. Subnav verification results:", subnavClicks);
+
     // Step 4: User Management Table in Settings
     console.log("[STEP 4] Verifying User Management in Settings tab...");
     const usersInfo = await cdp.eval(`
-      (() => {
+      (async () => {
+        const item = document.querySelector('.item[data-sec="settings"]');
+        if(item) item.click();
+        await new Promise(r => setTimeout(r, 800));
         const rows = document.querySelectorAll("#users-manage table tbody tr");
         const list = [];
         rows.forEach(r => {
@@ -206,7 +256,9 @@ async function runBrowserVerification() {
     const docsDir = path.resolve(__dirname, "..", "docs");
     if (!fs.existsSync(docsDir)) fs.mkdirSync(docsDir, { recursive: true });
     const screenshotPath = path.join(docsDir, "dashboard_browser_verification.png");
+    const screenshotPathV2 = path.join(docsDir, "dashboard_browser_verification_v2.png");
     fs.writeFileSync(screenshotPath, Buffer.from(screenshot.data, "base64"));
+    fs.writeFileSync(screenshotPathV2, Buffer.from(screenshot.data, "base64"));
     console.log("[PASS] 5. Screenshot captured and saved to:", screenshotPath);
 
     // Step 6: Console Error Audit
