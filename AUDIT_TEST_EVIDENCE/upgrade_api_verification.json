@@ -1,0 +1,39 @@
+{
+  "integration_health": {
+    "status": 200,
+    "providers_count": 8
+  },
+  "sheets_mappings": {
+    "status": 200,
+    "modules_mapped": 12
+  },
+  "drive_folders": {
+    "status": 200,
+    "folders_count": 10
+  },
+  "drive_upload": {
+    "status": 201,
+    "file_id": 1
+  },
+  "activity_logs": {
+    "status": 200,
+    "count": 3
+  },
+  "save_canvas_project": {
+    "status": 200,
+    "id": 12
+  },
+  "save_video_project": {
+    "status": 200,
+    "id": 13
+  },
+  "ai_image_gen": {
+    "status": 200,
+    "provider": "pollinations_free",
+    "filename": null
+  },
+  "video_render": {
+    "status": 200,
+    "video_url": null
+  }
+}

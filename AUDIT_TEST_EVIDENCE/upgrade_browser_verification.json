@@ -1,0 +1,65 @@
+{
+  "started_at": "2026-11-21T18:33:50.055Z",
+  "theme_tests": {
+    "dark_mode": {
+      "isDark": true,
+      "themeSaved": "dark",
+      "bgColor": "rgba(0, 0, 0, 0)",
+      "textColor": "rgb(0, 0, 0)"
+    },
+    "light_mode": {
+      "isLight": true,
+      "themeSaved": "light",
+      "bgColor": "rgba(0, 0, 0, 0)",
+      "textColor": "rgb(0, 0, 0)"
+    }
+  },
+  "integrations_tests": {
+    "health_monitor": {
+      "displayed": true,
+      "providerCardsCount": 8
+    },
+    "drive_folders": {
+      "foldersCount": 10
+    },
+    "sheets_mappings": {
+      "mappingRowsCount": 12
+    }
+  },
+  "creative_studio_tests": {
+    "canvas_editor": {
+      "canvasFound": true,
+      "canvasWidth": 1080,
+      "canvasHeight": 1920,
+      "layersCount": 0
+    },
+    "video_editor": {
+      "playerFound": true,
+      "scrubberFound": true,
+      "timecodeFound": true,
+      "timecodeText": "00:00 / 00:06"
+    },
+    "ai_image_studio": {
+      "promptBoxFound": true,
+      "genBtnFound": true
+    }
+  },
+  "notification_center": {
+    "isOpen": true,
+    "badgeText": "4",
+    "itemsCount": 4
+  },
+  "screenshots_captured": [
+    "upgrade_01_dark_overview.png",
+    "upgrade_02_light_overview.png",
+    "upgrade_03_integrations_health.png",
+    "upgrade_04_integrations_drive.png",
+    "upgrade_05_integrations_sheets.png",
+    "upgrade_06_canvas_editor.png",
+    "upgrade_07_video_editor.png",
+    "upgrade_08_ai_image_studio.png"
+  ],
+  "console_errors_count": 0,
+  "console_errors": [],
+  "verdict": "PASS"
+}

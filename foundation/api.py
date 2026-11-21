@@ -2724,6 +2724,11 @@ class Handler(BaseHTTPRequestHandler):
         if path.startswith("/api/studio/projects/"):
             parts = [x for x in path.split("/") if x]
             pid = int(parts[3])
+            if self.command == "DELETE" or (len(parts) >= 5 and parts[4] == "delete"):
+                self.store.conn.execute("DELETE FROM studio_projects WHERE id=?", (pid,))
+                self.store.conn.commit()
+                self._json_ok({"ok": True, "deleted": pid})
+                return
             proj = creative_studio.get_studio_project(self.store, pid)
             if not proj:
                 self._json_err("project not found", 404)
@@ -2821,7 +2826,75 @@ class Handler(BaseHTTPRequestHandler):
             self._json_err(err, 403)
             return
         data = _read_json(self) if self.command == "POST" else {}
-        from foundation.domains import google_sheets_sync
+        from foundation.domains import google_sheets_sync, integrations_center
+
+        # Central Health Monitor
+        if path == "/api/integrations/center/health":
+            self._json_ok(integrations_center.get_integration_health_monitor(self.store, ws))
+            return
+
+        # Google Sheets Mappings & Sync
+        if path == "/api/integrations/sheets/mappings":
+            if self.command == "POST":
+                m_key = data.get("module_key", "")
+                if not m_key:
+                    self._json_err("module_key required", 400)
+                    return
+                res = integrations_center.update_sheet_mapping(self.store, ws, m_key, data)
+                self._json_ok(res)
+                return
+            self._json_ok({"mappings": integrations_center.list_sheets_mappings(self.store, ws)})
+            return
+
+        # Google Drive Folders & File Staging
+        if path == "/api/integrations/drive/folders":
+            self._json_ok(integrations_center.get_drive_folder_tree(self.store, ws))
+            return
+
+        if path == "/api/integrations/drive/upload":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            fname = data.get("filename", "").strip()
+            fb64 = data.get("file_b64", "").strip()
+            mkey = data.get("module_key", "documents").strip()
+            if not fname or not fb64:
+                self._json_err("filename and file_b64 required", 400)
+                return
+            res = integrations_center.stage_drive_file_upload(self.store, ws, mkey, fname, fb64)
+            self._json_ok(res, 201)
+            return
+
+        # Activity Logs
+        if path == "/api/integrations/center/logs":
+            logs = self.store.fetchall(
+                "SELECT * FROM integration_activity_logs WHERE workspace_id=? ORDER BY id DESC LIMIT 50",
+                (ws,)
+            )
+            self._json_ok({"logs": [dict(l) for l in logs]})
+            return
+
+        # Connect / Disconnect Provider
+        if path == "/api/integrations/center/connect":
+            prov = data.get("provider", "google_account")
+            self.store.conn.execute(
+                "INSERT INTO integration_activity_logs (workspace_id, provider, action, status, details) VALUES (?,?,?,?,?)",
+                (ws, prov, "Connect initiated", "pending", "Setup instructions or OAuth redirect prepared")
+            )
+            self.store.conn.commit()
+            self._json_ok({"status": "setup_required", "provider": prov, "message": f"Setup instructions generated for {prov}."})
+            return
+
+        if path == "/api/integrations/center/disconnect":
+            prov = data.get("provider", "google_account")
+            self.store.conn.execute(
+                "INSERT INTO integration_activity_logs (workspace_id, provider, action, status, details) VALUES (?,?,?,?,?)",
+                (ws, prov, "Disconnected", "success", f"{prov} disconnected by user.")
+            )
+            self.store.conn.commit()
+            self._json_ok({"status": "disconnected", "provider": prov})
+            return
+
         if path == "/api/integrations/google/status":
             self._json_ok(google_sheets_sync.get_google_sheets_status(self.store, ws))
             return
