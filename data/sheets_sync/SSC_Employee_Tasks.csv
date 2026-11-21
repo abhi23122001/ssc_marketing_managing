@@ -1,6 +1,6 @@
 id,workspace_id,title,description,category,assigned_to,priority,deadline_date,status,progress_pct,created_at
 1,SSC,DGPS Control Benchmark Calibration,Establish 2-hr static baseline connected to Survey of India GTS datum.,field_survey,3,urgent,2026-11-25,approved,100,2026-11-21T09:53:47+0530
-2,SSC,Alpha Drone Topo Mapping,High resolution contour survey,field_survey,1,urgent,2026-11-20,assigned,0,2026-11-21T09:57:28+0530
+2,SSC,Alpha Drone Topo Mapping,High resolution contour survey,field_survey,1,urgent,2026-11-20,approved,0,2026-11-21T09:57:28+0530
 3,SSC,Beta Highway Alignment QC,MoRTH Section 300 checks,site_qc,1,low,2026-11-28,assigned,0,2026-11-21T09:57:28+0530
 4,SSC,Alpha Drone Topo Mapping,High resolution contour survey,field_survey,1,urgent,2026-11-20,assigned,0,2026-11-21T09:57:28+0530
 5,SSC,Beta Highway Alignment QC,MoRTH Section 300 checks,site_qc,1,low,2026-11-28,assigned,0,2026-11-21T09:57:28+0530

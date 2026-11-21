@@ -1,0 +1,438 @@
+{
+  "google_status_code": 200,
+  "google_status_response": {
+    "ok": true,
+    "workspace_id": "SSC",
+    "config": {
+      "id": 1,
+      "workspace_id": "SSC",
+      "spreadsheet_id": "1SHAH-GROUP-AI-OS-MASTER-SPREADSHEET-2026",
+      "spreadsheet_name": "SHAH Group AI OS \u2014 Master Operational Data",
+      "connection_status": "connected",
+      "auth_type": "oauth2_service_account",
+      "service_account_email": "sync-agent@shah-group-ai-os.iam.gserviceaccount.com",
+      "auto_sync_interval_mins": 15,
+      "last_sync_at": "2026-11-21 13:44:28",
+      "last_status": "synced",
+      "updated_at": "2026-11-21 07:46:00"
+    },
+    "tables": [
+      "leads",
+      "clients",
+      "sites",
+      "tasks",
+      "attendance",
+      "quotations",
+      "invoices",
+      "payments",
+      "expenses",
+      "calendar",
+      "publishing",
+      "reports"
+    ],
+    "mapped_entities": [
+      "leads",
+      "clients",
+      "sites",
+      "tasks",
+      "attendance",
+      "quotations",
+      "invoices",
+      "payments",
+      "expenses",
+      "calendar",
+      "publishing",
+      "reports"
+    ],
+    "table_details": {
+      "leads": {
+        "title": "CRM_Leads",
+        "table": "social_leads",
+        "record_count": 37,
+        "status": "Synced",
+        "last_sync": "2026-11-21 23:00"
+      },
+      "clients": {
+        "title": "Client_Profiles",
+        "table": "social_client_profiles",
+        "record_count": 21,
+        "status": "Synced",
+        "last_sync": "2026-11-21 23:00"
+      },
+      "sites": {
+        "title": "Project_Sites",
+        "table": "sites",
+        "record_count": 36,
+        "status": "Synced",
+        "last_sync": "2026-11-21 23:00"
+      },
+      "tasks": {
+        "title": "Employee_Tasks",
+        "table": "employee_tasks",
+        "record_count": 42,
+        "status": "Synced",
+        "last_sync": "2026-11-21 23:00"
+      },
+      "attendance": {
+        "title": "Staff_Attendance",
+        "table": "attendance_logs",
+        "record_count": 48,
+        "status": "Synced",
+        "last_sync": "2026-11-21 23:00"
+      },
+      "quotations": {
+        "title": "Commercial_Quotations",
+        "table": "business_quotations",
+        "record_count": 8,
+        "status": "Synced",
+        "last_sync": "2026-11-21 23:00"
+      },
+      "invoices": {
+        "title": "GST_Invoices",
+        "table": "business_invoices",
+        "record_count": 8,
+        "status": "Synced",
+        "last_sync": "2026-11-21 23:00"
+      },
+      "payments": {
+        "title": "Payment_Receipts",
+        "table": "business_payments",
+        "record_count": 16,
+        "status": "Synced",
+        "last_sync": "2026-11-21 23:00"
+      },
+      "expenses": {
+        "title": "Expense_Claims",
+        "table": "expense_claims",
+        "record_count": 25,
+        "status": "Synced",
+        "last_sync": "2026-11-21 23:00"
+      },
+      "calendar": {
+        "title": "Content_Calendar",
+        "table": "social_calendar_entries",
+        "record_count": 0,
+        "status": "Synced",
+        "last_sync": "2026-11-21 23:00"
+      },
+      "publishing": {
+        "title": "Publishing_Logs",
+        "table": "social_published_posts",
+        "record_count": 0,
+        "status": "Synced",
+        "last_sync": "2026-11-21 23:00"
+      },
+      "reports": {
+        "title": "AI_Intelligence_Reports",
+        "table": "ai_generated_reports",
+        "record_count": 31,
+        "status": "Synced",
+        "last_sync": "2026-11-21 23:00"
+      }
+    },
+    "total_entities_mapped": 12,
+    "recent_syncs": [
+      {
+        "id": 48,
+        "workspace_id": "SSC",
+        "entity_name": "reports",
+        "direction": "bidirectional",
+        "records_pushed": 0,
+        "records_pulled": 0,
+        "conflicts_resolved": 0,
+        "status": "success",
+        "audit_note": "Synchronized 0 records cleanly with mirror tab [AI_Intelligence_Reports]",
+        "created_at": "2026-11-21 08:14:28"
+      },
+      {
+        "id": 47,
+        "workspace_id": "SSC",
+        "entity_name": "publishing",
+        "direction": "bidirectional",
+        "records_pushed": 0,
+        "records_pulled": 0,
+        "conflicts_resolved": 0,
+        "status": "success",
+        "audit_note": "Synchronized 0 records cleanly with mirror tab [Publishing_Logs]",
+        "created_at": "2026-11-21 08:14:28"
+      },
+      {
+        "id": 46,
+        "workspace_id": "SSC",
+        "entity_name": "calendar",
+        "direction": "bidirectional",
+        "records_pushed": 0,
+        "records_pulled": 0,
+        "conflicts_resolved": 0,
+        "status": "success",
+        "audit_note": "Synchronized 0 records cleanly with mirror tab [Content_Calendar]",
+        "created_at": "2026-11-21 08:14:28"
+      },
+      {
+        "id": 45,
+        "workspace_id": "SSC",
+        "entity_name": "expenses",
+        "direction": "bidirectional",
+        "records_pushed": 25,
+        "records_pulled": 0,
+        "conflicts_resolved": 0,
+        "status": "success",
+        "audit_note": "Synchronized 25 records cleanly with mirror tab [Expense_Claims]",
+        "created_at": "2026-11-21 08:14:28"
+      },
+      {
+        "id": 44,
+        "workspace_id": "SSC",
+        "entity_name": "payments",
+        "direction": "bidirectional",
+        "records_pushed": 0,
+        "records_pulled": 0,
+        "conflicts_resolved": 0,
+        "status": "success",
+        "audit_note": "Synchronized 0 records cleanly with mirror tab [Payment_Receipts]",
+        "created_at": "2026-11-21 08:14:28"
+      },
+      {
+        "id": 43,
+        "workspace_id": "SSC",
+        "entity_name": "invoices",
+        "direction": "bidirectional",
+        "records_pushed": 8,
+        "records_pulled": 0,
+        "conflicts_resolved": 0,
+        "status": "success",
+        "audit_note": "Synchronized 8 records cleanly with mirror tab [GST_Invoices]",
+        "created_at": "2026-11-21 08:14:28"
+      },
+      {
+        "id": 42,
+        "workspace_id": "SSC",
+        "entity_name": "quotations",
+        "direction": "bidirectional",
+        "records_pushed": 8,
+        "records_pulled": 0,
+        "conflicts_resolved": 0,
+        "status": "success",
+        "audit_note": "Synchronized 8 records cleanly with mirror tab [Commercial_Quotations]",
+        "created_at": "2026-11-21 08:14:28"
+      },
+      {
+        "id": 41,
+        "workspace_id": "SSC",
+        "entity_name": "attendance",
+        "direction": "bidirectional",
+        "records_pushed": 46,
+        "records_pulled": 0,
+        "conflicts_resolved": 0,
+        "status": "success",
+        "audit_note": "Synchronized 46 records cleanly with mirror tab [Staff_Attendance]",
+        "created_at": "2026-11-21 08:14:28"
+      },
+      {
+        "id": 40,
+        "workspace_id": "SSC",
+        "entity_name": "tasks",
+        "direction": "bidirectional",
+        "records_pushed": 42,
+        "records_pulled": 0,
+        "conflicts_resolved": 0,
+        "status": "success",
+        "audit_note": "Synchronized 42 records cleanly with mirror tab [Employee_Tasks]",
+        "created_at": "2026-11-21 08:14:28"
+      },
+      {
+        "id": 39,
+        "workspace_id": "SSC",
+        "entity_name": "sites",
+        "direction": "bidirectional",
+        "records_pushed": 36,
+        "records_pulled": 0,
+        "conflicts_resolved": 0,
+        "status": "success",
+        "audit_note": "Synchronized 36 records cleanly with mirror tab [Project_Sites]",
+        "created_at": "2026-11-21 08:14:28"
+      }
+    ],
+    "zero_paid_billing_enforced": true
+  },
+  "single_entity_sync": {
+    "status": 200,
+    "response": {
+      "ok": true,
+      "workspace_id": "SSC",
+      "synced_entities_count": 1,
+      "total_records_pushed": 37,
+      "total_records_pulled": 0,
+      "conflicts_resolved": 0,
+      "latency_ms": 4,
+      "synced_at": "2026-11-21 23:00:52",
+      "details": [
+        {
+          "entity": "leads",
+          "sheet_tab": "CRM_Leads",
+          "records_synced": 37,
+          "csv_mirror": "data/sheets_sync/SSC_CRM_Leads.csv"
+        }
+      ]
+    }
+  },
+  "all_entities_sync": {
+    "status": 200,
+    "response": {
+      "ok": true,
+      "workspace_id": "SSC",
+      "synced_entities_count": 12,
+      "total_records_pushed": 225,
+      "total_records_pulled": 0,
+      "conflicts_resolved": 0,
+      "latency_ms": 16,
+      "synced_at": "2026-11-21 23:00:52",
+      "details": [
+        {
+          "entity": "leads",
+          "sheet_tab": "CRM_Leads",
+          "records_synced": 37,
+          "csv_mirror": "data/sheets_sync/SSC_CRM_Leads.csv"
+        },
+        {
+          "entity": "clients",
+          "sheet_tab": "Client_Profiles",
+          "records_synced": 21,
+          "csv_mirror": "data/sheets_sync/SSC_Client_Profiles.csv"
+        },
+        {
+          "entity": "sites",
+          "sheet_tab": "Project_Sites",
+          "records_synced": 36,
+          "csv_mirror": "data/sheets_sync/SSC_Project_Sites.csv"
+        },
+        {
+          "entity": "tasks",
+          "sheet_tab": "Employee_Tasks",
+          "records_synced": 42,
+          "csv_mirror": "data/sheets_sync/SSC_Employee_Tasks.csv"
+        },
+        {
+          "entity": "attendance",
+          "sheet_tab": "Staff_Attendance",
+          "records_synced": 48,
+          "csv_mirror": "data/sheets_sync/SSC_Staff_Attendance.csv"
+        },
+        {
+          "entity": "quotations",
+          "sheet_tab": "Commercial_Quotations",
+          "records_synced": 8,
+          "csv_mirror": "data/sheets_sync/SSC_Commercial_Quotations.csv"
+        },
+        {
+          "entity": "invoices",
+          "sheet_tab": "GST_Invoices",
+          "records_synced": 8,
+          "csv_mirror": "data/sheets_sync/SSC_GST_Invoices.csv"
+        },
+        {
+          "entity": "payments",
+          "sheet_tab": "Payment_Receipts",
+          "records_synced": 0,
+          "csv_mirror": "data/sheets_sync/SSC_Payment_Receipts.csv"
+        },
+        {
+          "entity": "expenses",
+          "sheet_tab": "Expense_Claims",
+          "records_synced": 25,
+          "csv_mirror": "data/sheets_sync/SSC_Expense_Claims.csv"
+        },
+        {
+          "entity": "calendar",
+          "sheet_tab": "Content_Calendar",
+          "records_synced": 0,
+          "csv_mirror": "data/sheets_sync/SSC_Content_Calendar.csv"
+        },
+        {
+          "entity": "publishing",
+          "sheet_tab": "Publishing_Logs",
+          "records_synced": 0,
+          "csv_mirror": "data/sheets_sync/SSC_Publishing_Logs.csv"
+        },
+        {
+          "entity": "reports",
+          "sheet_tab": "AI_Intelligence_Reports",
+          "records_synced": 0,
+          "csv_mirror": "data/sheets_sync/SSC_AI_Intelligence_Reports.csv"
+        }
+      ]
+    }
+  },
+  "csv_mirrors": {
+    "directory": "C:\\Users\\HP\\Desktop\\ssc_marketing_managing\\data\\sheets_sync",
+    "total_files": 12,
+    "total_data_rows": 225,
+    "files": [
+      {
+        "filename": "SSC_AI_Intelligence_Reports.csv",
+        "size_bytes": 57,
+        "data_rows": 0
+      },
+      {
+        "filename": "SSC_Client_Profiles.csv",
+        "size_bytes": 1822,
+        "data_rows": 21
+      },
+      {
+        "filename": "SSC_Commercial_Quotations.csv",
+        "size_bytes": 1002,
+        "data_rows": 8
+      },
+      {
+        "filename": "SSC_Content_Calendar.csv",
+        "size_bytes": 94,
+        "data_rows": 0
+      },
+      {
+        "filename": "SSC_CRM_Leads.csv",
+        "size_bytes": 3756,
+        "data_rows": 37
+      },
+      {
+        "filename": "SSC_Employee_Tasks.csv",
+        "size_bytes": 5758,
+        "data_rows": 42
+      },
+      {
+        "filename": "SSC_Expense_Claims.csv",
+        "size_bytes": 3331,
+        "data_rows": 25
+      },
+      {
+        "filename": "SSC_GST_Invoices.csv",
+        "size_bytes": 922,
+        "data_rows": 8
+      },
+      {
+        "filename": "SSC_Payment_Receipts.csv",
+        "size_bytes": 91,
+        "data_rows": 0
+      },
+      {
+        "filename": "SSC_Project_Sites.csv",
+        "size_bytes": 4270,
+        "data_rows": 36
+      },
+      {
+        "filename": "SSC_Publishing_Logs.csv",
+        "size_bytes": 68,
+        "data_rows": 0
+      },
+      {
+        "filename": "SSC_Staff_Attendance.csv",
+        "size_bytes": 3505,
+        "data_rows": 48
+      }
+    ]
+  },
+  "live_google_credentials": {
+    "env_var_set": false,
+    "service_account_file_exists": false
+  },
+  "operational_mode": "Local CSV Mirror Sync Active (Offline Resilient, Zero Paid Billing)"
+}

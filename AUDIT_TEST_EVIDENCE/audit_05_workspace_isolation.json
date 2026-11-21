@@ -1,0 +1,69 @@
+{
+  "owner_scoping": {
+    "SSC": {
+      "sites_count": 36,
+      "leads_count": 37,
+      "sites_sample": [
+        "SITE-SSTP-1380",
+        "SITE-CLT-39",
+        "SITE-CLT-32"
+      ],
+      "leads_sample": [
+        "Vikramaditya Infrastructure Corp",
+        "Vikramaditya Infrastructure Corp",
+        "Vikramaditya Infrastructure Corp"
+      ]
+    },
+    "INFRA": {
+      "sites_count": 3,
+      "leads_count": 3,
+      "sites_sample": [
+        "SITE-INF-01",
+        "SITE-INF-02",
+        "SITE-INF-03"
+      ],
+      "leads_sample": [
+        "Bhopal Metro Viaduct Section 3",
+        "Katni Bypass Flyover Retaining Wall",
+        "Singrauli Industrial Corridor Road Extension"
+      ]
+    },
+    "OTHER": {
+      "sites_count": 1,
+      "leads_count": 0,
+      "sites_sample": [
+        "SITE-OTH-01"
+      ],
+      "leads_sample": []
+    }
+  },
+  "ssc_employee_cross_tenant_blocks": [
+    {
+      "target": "INFRA",
+      "http": 403,
+      "blocked": true
+    },
+    {
+      "target": "OTHER",
+      "http": 403,
+      "blocked": true
+    }
+  ],
+  "infra_pm_cross_tenant_blocks": [
+    {
+      "target": "SSC",
+      "http": 403,
+      "blocked": true
+    },
+    {
+      "target": "OTHER",
+      "http": 403,
+      "blocked": true
+    }
+  ],
+  "creation_isolation": {
+    "created_id": 41,
+    "leaked_into_ssc": false,
+    "pass": true
+  }
+}

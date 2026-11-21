@@ -1,0 +1,48 @@
+{
+  "checkin_api": {
+    "status": "PASS",
+    "http": 201,
+    "timestamp_present": true,
+    "log_id": 51
+  },
+  "checkout_api": {
+    "status": "PASS",
+    "http": 201,
+    "timestamp_present": true,
+    "log_id": 52
+  },
+  "classification_math": {
+    "ontime_result": "present",
+    "late_result": "late",
+    "early_result": "early",
+    "ontime_pass": true,
+    "late_pass": true,
+    "early_pass": true
+  },
+  "worked_hours_computation": {
+    "worked_hours": 9.5,
+    "overtime_hours": 1.5,
+    "pass": true
+  },
+  "monthly_summary": {
+    "employee_id": 1,
+    "month": "2026-11",
+    "days_present": 24,
+    "days_absent": 0,
+    "weekly_off_days": 0,
+    "total_hours": 0.0,
+    "overtime_hours": 0.0
+  },
+  "leave_application": {
+    "status": "PASS",
+    "id": 27
+  },
+  "approval_queue_gating": {
+    "found_in_queue": true,
+    "approval_id": 88
+  },
+  "approval_transition": {
+    "status": "PASS",
+    "http": 200
+  }
+}

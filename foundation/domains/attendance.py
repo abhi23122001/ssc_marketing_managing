@@ -231,11 +231,12 @@ def _classify(check_in: str, check_out: str, work_start: int = 9,
         return "weekly_off"
     if not check_out:
         return "present"
-    co = datetime.fromisoformat(check_out.replace("Z", "+00:00")).replace(tzinfo=None)
-    late = ci.hour > work_start
-    early = co.hour < work_end or (ci.hour == work_start and co.hour == work_start)
-    if late and early:
+    try:
+        co = datetime.fromisoformat(check_out.replace("Z", "+00:00")).replace(tzinfo=None)
+    except Exception:
         return "present"
+    late = (ci.hour > work_start) or (ci.hour == work_start and ci.minute > 15)
+    early = (co.hour < work_end)
     if late:
         return "late"
     if early:
@@ -244,9 +245,14 @@ def _classify(check_in: str, check_out: str, work_start: int = 9,
 
 
 def compute_worked_hours(check_in: str, check_out: str) -> float:
-    ci = datetime.fromisoformat(check_in.replace("Z", "+00:00")).replace(tzinfo=None)
-    co = datetime.fromisoformat(check_out.replace("Z", "+00:00")).replace(tzinfo=None)
-    return max((co - ci).total_seconds() / 3600.0, 0.0)
+    if not check_in or not check_out:
+        return 0.0
+    try:
+        ci = datetime.fromisoformat(check_in.replace("Z", "+00:00")).replace(tzinfo=None)
+        co = datetime.fromisoformat(check_out.replace("Z", "+00:00")).replace(tzinfo=None)
+        return max((co - ci).total_seconds() / 3600.0, 0.0)
+    except Exception:
+        return 0.0
 
 
 def compute_overtime(worked_hours: float, regular_hours: float = 8.0) -> float:
@@ -289,8 +295,8 @@ def summary_monthly(store: Store, employee_id: int, year_month: str) -> dict | N
             days_absent += 1
             continue
         days_present += 1
-        h = compute_worked_hours(daily["check_in"],
-                                 daily.get("check_out", daily["check_in"]))
+        co_val = daily.get("check_out") or daily["check_in"]
+        h = compute_worked_hours(daily["check_in"], co_val)
         total_hours += h
         ot_hours += compute_overtime(h, 8.0)
     return {"employee_id": employee_id, "month": year_month,

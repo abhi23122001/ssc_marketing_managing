@@ -1,0 +1,30 @@
+{
+  "password_hashing": {
+    "total_users_checked": 32,
+    "properly_hashed": 32,
+    "plaintext_found": 0,
+    "compliance": true
+  },
+  "sqli_login_test": {
+    "status_code": 401,
+    "blocked": true
+  },
+  "tampered_jwt_test": {
+    "status_code": 401,
+    "blocked": true
+  },
+  "sqli_filter_test": {
+    "status_code": 200,
+    "safe_response": true,
+    "rows_returned": 0
+  },
+  "backup_manifest_file_count": 263,
+  "restore_verification": {
+    "matched_checksums": 263,
+    "mismatched_checksums": 0,
+    "missing_files": 0,
+    "restored_db_integrity_check": "ok",
+    "restored_db_table_count": 75,
+    "restore_passed": true
+  }
+}

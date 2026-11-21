@@ -703,7 +703,13 @@ class Handler(BaseHTTPRequestHandler):
             if not comp:
                 self._json_err("company_name required", 400)
                 return
-            code = data.get("client_workspace_id") or f"CLT-{len(self.store.list_clients(ws)) + 1:03d}"
+            code = data.get("client_workspace_id")
+            if not code:
+                existing_codes = {r.get("client_workspace_id") for r in self.store.fetchall("SELECT client_workspace_id FROM social_client_profiles")}
+                i = 1
+                while f"CLT-{i:03d}" in existing_codes:
+                    i += 1
+                code = f"CLT-{i:03d}"
             pkg = data.get("service_package", "Survey & Consultancy")
             meta = data.get("contract_metadata", {})
             client = self.store.create_client(code, comp, pkg, meta, workspace_id=ws)
@@ -1189,6 +1195,9 @@ class Handler(BaseHTTPRequestHandler):
             return
         # /api/payroll/runs/{id}/approve
         if len(parts) == 5 and parts[2] == "runs" and parts[4] == "approve" and self.command == "POST":
+            if not self._has(user, ("hr:manage", "workspace:manage")):
+                self._json_err("permission denied", 403)
+                return
             run_id = int(parts[3])
             try:
                 approved = payroll.approve_run(self.store, actor_id, run_id)
@@ -2936,23 +2945,32 @@ class Handler(BaseHTTPRequestHandler):
             if k not in filters and v:
                 filters[k] = v[0]
 
+        if entity == "query":
+            entity = filters.get("entity", "leads")
+
         if len(parts) >= 4 and parts[3] == "export":
-            csv_text, fname = filter_system.export_filtered_csv(self.store, entity, ws, filters)
-            b = csv_text.encode("utf-8")
-            self.send_response(200)
-            self.send_header("Content-Type", "text/csv; charset=utf-8")
-            self.send_header("Content-Disposition", f'attachment; filename="{fname}"')
-            self.send_header("Content-Length", str(len(b)))
-            self.end_headers()
-            self.wfile.write(b)
+            try:
+                csv_text, fname = filter_system.export_filtered_csv(self.store, entity, ws, filters)
+                b = csv_text.encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "text/csv; charset=utf-8")
+                self.send_header("Content-Disposition", f'attachment; filename="{fname}"')
+                self.send_header("Content-Length", str(len(b)))
+                self.end_headers()
+                self.wfile.write(b)
+            except Exception as e:
+                self._json_err(str(e), 400)
             return
 
-        page = int(filters.get("page", 1))
-        limit = int(filters.get("limit", 20))
-        sort_by = filters.get("sort_by")
-        sort_dir = filters.get("sort_dir", "DESC")
-        res = filter_system.query_filtered_records(self.store, entity, ws, filters, page, limit, sort_by, sort_dir)
-        self._json_ok(res)
+        try:
+            page = int(filters.get("page", 1))
+            limit = int(filters.get("limit", 20))
+            sort_by = filters.get("sort_by")
+            sort_dir = filters.get("sort_dir", "DESC")
+            res = filter_system.query_filtered_records(self.store, entity, ws, filters, page, limit, sort_by, sort_dir)
+            self._json_ok(res)
+        except Exception as e:
+            self._json_err(str(e), 400)
 
     def log_message(self, fmt, *args):  # quieter request logging
         pass

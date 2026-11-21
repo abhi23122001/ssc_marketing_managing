@@ -1,0 +1,50 @@
+{
+  "step_01_lead": {
+    "status_code": 201,
+    "lead_id": 43
+  },
+  "step_02_client": {
+    "status_code": 201,
+    "client_id": 25
+  },
+  "step_03_site": {
+    "status_code": 201,
+    "site_id": 42
+  },
+  "step_04_estimate": {
+    "status_code": 201,
+    "estimate_id": 11
+  },
+  "step_05_quotation": {
+    "status_code": 201,
+    "quotation_id": 11,
+    "quotation_number": "SSC-QT-2026-009"
+  },
+  "step_06_work_order": {
+    "status_code": 201,
+    "work_order_id": 11,
+    "work_order_number": "SSC-WO-2026-009"
+  },
+  "step_07_qc_pass": {
+    "status_code": 200,
+    "field_qc_status": "qc_passed"
+  },
+  "step_08_invoice": {
+    "status_code": 201,
+    "invoice_id": 11,
+    "invoice_number": "SSC-INV-2026-009"
+  },
+  "step_09_payment": {
+    "status_code": 201,
+    "amount_paid": 88500.0,
+    "payment_status": "partially_paid"
+  },
+  "step_10_profit_loss": {
+    "status_code": 200,
+    "total_invoiced_inr": 2725800.0,
+    "total_collected_inr": 2637300.0,
+    "net_operating_profit_inr": -1978700.0,
+    "profit_margin_pct": -69.3
+  },
+  "pipeline_verdict": "PASS"
+}

@@ -1,0 +1,91 @@
+{
+  "started_at": "2026-11-21T17:46:41.611Z",
+  "sections_tested": [
+    {
+      "sec": "overview",
+      "displayed": true,
+      "hasContent": true,
+      "contentLength": 3268
+    },
+    {
+      "sec": "workspaces",
+      "displayed": true,
+      "hasContent": true,
+      "contentLength": 4133
+    },
+    {
+      "sec": "projects",
+      "displayed": true,
+      "hasContent": true,
+      "contentLength": 39179
+    },
+    {
+      "sec": "finance",
+      "displayed": true,
+      "hasContent": true,
+      "contentLength": 18170
+    },
+    {
+      "sec": "employees",
+      "displayed": true,
+      "hasContent": true,
+      "contentLength": 236773
+    },
+    {
+      "sec": "marketing",
+      "displayed": true,
+      "hasContent": true,
+      "contentLength": 70241
+    },
+    {
+      "sec": "crm",
+      "displayed": true,
+      "hasContent": true,
+      "contentLength": 37261
+    },
+    {
+      "sec": "ai",
+      "displayed": true,
+      "hasContent": true,
+      "contentLength": 103645
+    },
+    {
+      "sec": "approvals",
+      "displayed": true,
+      "hasContent": true,
+      "contentLength": 67416
+    },
+    {
+      "sec": "settings",
+      "displayed": true,
+      "hasContent": true,
+      "contentLength": 32886
+    }
+  ],
+  "subsections_tested": [
+    {
+      "hasSheetsContent": false,
+      "userRowsCount": 28
+    }
+  ],
+  "screenshots_captured": [
+    "audit_01_overview.png",
+    "audit_02_projects.png",
+    "audit_03_finance.png",
+    "audit_04_hrm_attendance.png",
+    "audit_07_social_studio.png",
+    "audit_06_crm_leads.png",
+    "audit_05_ai_brain.png",
+    "audit_08_settings.png"
+  ],
+  "console_errors_count": 0,
+  "console_errors": [],
+  "verdict": "PASS",
+  "page_title": "SHAH Group AI OS — Owner Dashboard",
+  "session": {
+    "userLabel": "Owner owner\n        Logout",
+    "role": "Owner",
+    "ws": "SSC",
+    "tokenSet": true
+  }
+}

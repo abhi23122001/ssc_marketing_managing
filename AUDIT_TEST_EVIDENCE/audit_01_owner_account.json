@@ -1,0 +1,161 @@
+{
+  "auth_login": {
+    "status": "PASS",
+    "role": "Owner",
+    "username": "owner"
+  },
+  "workspace_switching": {
+    "SSC": {
+      "status": "PASS",
+      "overview_keys": [
+        "workspace",
+        "pending_approvals",
+        "recent_audit",
+        "demo_seed"
+      ],
+      "sites_count": 36,
+      "leads_count": 37
+    },
+    "INFRA": {
+      "status": "PASS",
+      "overview_keys": [
+        "workspace",
+        "pending_approvals",
+        "recent_audit",
+        "demo_seed"
+      ],
+      "sites_count": 3,
+      "leads_count": 3
+    },
+    "OTHER": {
+      "status": "PASS",
+      "overview_keys": [
+        "workspace",
+        "pending_approvals",
+        "recent_audit",
+        "demo_seed"
+      ],
+      "sites_count": 1,
+      "leads_count": 0
+    }
+  },
+  "hrm_access": {
+    "status": "PASS",
+    "employees_count": 27,
+    "attendance_count": 46,
+    "leaves_count": 25
+  },
+  "modules_check": {
+    "tasks": {
+      "status": "PASS",
+      "http_status": 200,
+      "count": 42
+    },
+    "sites": {
+      "status": "PASS",
+      "http_status": 200,
+      "count": 36
+    },
+    "leads": {
+      "status": "PASS",
+      "http_status": 200,
+      "count": 37
+    },
+    "clients": {
+      "status": "PASS",
+      "http_status": 200,
+      "count": 21
+    },
+    "estimates": {
+      "status": "PASS",
+      "http_status": 200,
+      "count": 8
+    },
+    "quotations": {
+      "status": "PASS",
+      "http_status": 200,
+      "count": 8
+    },
+    "work_orders": {
+      "status": "PASS",
+      "http_status": 200,
+      "count": null
+    },
+    "invoices": {
+      "status": "PASS",
+      "http_status": 200,
+      "count": 8
+    },
+    "payments": {
+      "status": "PASS",
+      "http_status": 200,
+      "count": 16
+    },
+    "expenses": {
+      "status": "PASS",
+      "http_status": 200,
+      "count": null
+    },
+    "vendors": {
+      "status": "PASS",
+      "http_status": 200,
+      "count": 19
+    },
+    "payroll_runs": {
+      "status": "PASS",
+      "http_status": 200,
+      "count": null
+    },
+    "payslips": {
+      "status": "PASS",
+      "http_status": 200,
+      "count": 245
+    },
+    "approvals": {
+      "status": "PASS",
+      "http_status": 200,
+      "count": 86
+    },
+    "users": {
+      "status": "PASS",
+      "http_status": 200,
+      "count": 32
+    },
+    "roles": {
+      "status": "PASS",
+      "http_status": 200,
+      "count": 7
+    },
+    "ai_agents": {
+      "status": "PASS",
+      "http_status": 200,
+      "count": 24
+    },
+    "ai_reports": {
+      "status": "PASS",
+      "http_status": 200,
+      "count": 20
+    },
+    "social_assets": {
+      "status": "PASS",
+      "http_status": 200,
+      "count": 9
+    },
+    "social_accounts": {
+      "status": "PASS",
+      "http_status": 200,
+      "count": 19
+    },
+    "google_sheets": {
+      "status": "PASS",
+      "http_status": 200,
+      "count": 12
+    }
+  },
+  "database_backing_verified": {
+    "status": "PASS",
+    "db_users_count": 32,
+    "api_users_count": 32,
+    "matches_users": true
+  }
+}

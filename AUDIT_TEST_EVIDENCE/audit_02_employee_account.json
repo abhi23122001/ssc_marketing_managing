@@ -1,0 +1,137 @@
+{
+  "login": {
+    "status": "PASS",
+    "user": {
+      "id": 3,
+      "username": "employee",
+      "name": "Employee Person",
+      "role": "Employee",
+      "workspace_id": "SSC"
+    }
+  },
+  "auth_me": {
+    "status": "PASS",
+    "http": 200,
+    "user": {
+      "user": {
+        "token": "D2s0u_GXdaB727rI3SZZh8wvnJ68mNVPRg3o_hBLOnk",
+        "user_id": 3,
+        "username": "employee",
+        "name": "Employee Person",
+        "role": "Employee",
+        "workspace_id": "SSC",
+        "active": 1,
+        "expires_at": "1795256204.2350852"
+      }
+    }
+  },
+  "tasks_access": {
+    "status": "PASS",
+    "http": 200,
+    "count": 4
+  },
+  "attendance_checkin": {
+    "status": "PASS",
+    "http": 201,
+    "response": {
+      "log": {
+        "id": 54,
+        "workspace_id": "SSC",
+        "employee_id": 1,
+        "site_id": 0,
+        "check_in": "2026-11-21T09:16:44Z",
+        "check_out": "",
+        "gps_lat": 0.0,
+        "gps_lng": 0.0,
+        "geofence_passed": 0,
+        "selfie_taken": 0,
+        "status": "present",
+        "notes": "Audit disposable test checkin",
+        "created_at": "2026-11-21T09:16:44Z"
+      }
+    }
+  },
+  "leave_submission": {
+    "status": "PASS",
+    "http": 201,
+    "response": {
+      "leave": {
+        "id": 29,
+        "employee_id": 1,
+        "type": "casual",
+        "start_date": "2026-12-01",
+        "end_date": "2026-12-02",
+        "days": 2.0,
+        "status": "applied",
+        "approved_by": null,
+        "reason": "Audit disposable test leave",
+        "created_at": "2026-11-21T09:16:44Z"
+      }
+    }
+  },
+  "unauthorized_access_controls": {
+    "payroll_run": {
+      "status": "PASS",
+      "expected_http": 403,
+      "actual_http": 403,
+      "blocked": true,
+      "response": {
+        "error": "permission denied"
+      }
+    },
+    "payroll_approve": {
+      "status": "PASS",
+      "expected_http": 403,
+      "actual_http": 403,
+      "blocked": true,
+      "response": {
+        "error": "permission denied"
+      }
+    },
+    "user_management_list": {
+      "status": "PASS",
+      "expected_http": 403,
+      "actual_http": 403,
+      "blocked": true,
+      "response": {
+        "error": "user:manage not permitted for this role"
+      }
+    },
+    "user_creation": {
+      "status": "PASS",
+      "expected_http": 403,
+      "actual_http": 403,
+      "blocked": true,
+      "response": {
+        "error": "user:manage not permitted for this role"
+      }
+    },
+    "approvals_transition": {
+      "status": "PASS",
+      "expected_http": 403,
+      "actual_http": 403,
+      "blocked": true,
+      "response": {
+        "error": "Employee cannot approve. Owner/Manager/Finance/PM only."
+      }
+    },
+    "cross_workspace_infra": {
+      "status": "PASS",
+      "expected_http": 403,
+      "actual_http": 403,
+      "blocked": true,
+      "response": {
+        "error": "Tenant isolation: role 'Employee' assigned to 'SSC' cannot access 'INFRA'"
+      }
+    },
+    "cross_workspace_other": {
+      "status": "PASS",
+      "expected_http": 403,
+      "actual_http": 403,
+      "blocked": true,
+      "response": {
+        "error": "Tenant isolation: role 'Employee' assigned to 'SSC' cannot access 'OTHER'"
+      }
+    }
+  }
+}

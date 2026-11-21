@@ -1,0 +1,5 @@
+# Phase 2 implementation — Open tasks & approvals tracker (sample rows)
+task_id,description,module,owner,deadline,status,approval_record,notes
+T-001,Build content planner module,02-daily-content-planner,owner,2026-12-31,DRAFT,0,Sample template; replace with real SSC task
+T-002,Create LinkedIn B2B topic briefs,04-linkedin-b2b-marketing,owner,2026-12-31,DRAFT,0,Sample template; replace with real SSC task
+T-003,Complete Module 01 Command Center README,01-marketing-command-center,owner,2026-12-31,APPROVED,1,Phase 2 implementation done

@@ -150,6 +150,15 @@ TABLE_CONFIG: Dict[str, Dict[str, Any]] = {
     }
 }
 
+ENTITY_ALIASES = {
+    "workorders": "work_orders",
+    "claims": "expenses",
+    "logs": "media",
+}
+
+def normalize_entity(entity: str) -> str:
+    return ENTITY_ALIASES.get(entity, entity)
+
 
 def build_filtered_query(
     entity: str,
@@ -157,6 +166,7 @@ def build_filtered_query(
     filters: Dict[str, Any]
 ) -> Tuple[str, List[Any], str, List[Any], List[str]]:
     """Constructs base parameterized SQL, params, count SQL, count params, and active filter tags."""
+    entity = normalize_entity(entity)
     cfg = TABLE_CONFIG.get(entity)
     if not cfg:
         raise ValueError(f"Unknown entity '{entity}' for universal filter.")
@@ -181,7 +191,7 @@ def build_filtered_query(
         active_tags.append(f"Workspace: {workspace_id}")
 
     # 2. Text Search
-    search_val = (filters.get("search") or "").strip()
+    search_val = (filters.get("search") or filters.get("q") or "").strip()
     if search_val:
         search_terms = search_val.split()
         sub_clauses = []
@@ -261,6 +271,7 @@ def query_filtered_records(
     sort_dir: str = "DESC"
 ) -> Dict[str, Any]:
     """Executes filtered search with database pagination and metadata."""
+    entity = normalize_entity(entity)
     base_sql, params, count_sql, count_params, active_tags = build_filtered_query(entity, workspace_id, filters)
 
     # Total count
@@ -307,6 +318,7 @@ def export_filtered_csv(
     filters: Dict[str, Any]
 ) -> Tuple[str, str]:
     """Generates standard CSV content from filtered query results."""
+    entity = normalize_entity(entity)
     base_sql, params, _, _, _ = build_filtered_query(entity, workspace_id, filters)
     
     cfg = TABLE_CONFIG[entity]

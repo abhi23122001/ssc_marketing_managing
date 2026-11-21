@@ -1,0 +1,127 @@
+{
+  "hermes_status": {
+    "installed": true,
+    "binary_path": "C:\\Users\\HP\\AppData\\Local\\hermes\\bin\\hermes.exe",
+    "version": "Hermes Agent v0.23.1 (2026.9.24) \u00b7 stable \u00b7 local 3b4215785882",
+    "authenticated": true,
+    "auth_provider": "nous",
+    "account_email": null,
+    "paid_access": false,
+    "rate_limit_source": "free_hermes_agent",
+    "primary_model": "upstage/solar-mini4:free",
+    "fallback_model": "stepfun/step-3.7-flash:free",
+    "inference_endpoint": "https://inference-api.nousresearch.com/v1",
+    "token_expires_at": "2026-11-21T10:01:46+00:00",
+    "zero_paid_billing_enforced": true,
+    "total_invocations": 20,
+    "recent_logs": [
+      {
+        "id": 20,
+        "workspace_id": "SSC",
+        "prompt_snippet": "What are the core technical advantages of using DGPS RTK rovers over optical total stations in 100km highway alignment surveys?",
+        "system_prompt_snippet": null,
+        "model_used": "deterministic_domain_brain",
+        "provider": "nous",
+        "invocation_mode": "domain_fallback",
+        "status": "success",
+        "latency_ms": 24144,
+        "response_preview": "**SHAH Surveyors Technical Response (SSC)**:\n\n- **Observation Standard**: 2-hour static baseline connected to Survey of India (SOI) GTS datum.\n- **Accuracy Standards**: Horizontal \u00b15mm + 0.5ppm, Vertical \u00b110mm + 0.8ppm with PDOP < 2.0.\n- **Deliverables**: Ground control network coordinates, 0.5m contour interval DWG, and raw RINEX logs.",
+        "tokens_estimate": 0,
+        "error_message": null,
+        "created_at": "2026-11-21T14:36:41+0530"
+      },
+      {
+        "id": 19,
+        "workspace_id": "SSC",
+        "prompt_snippet": "What are the core technical advantages of using DGPS RTK rovers over optical total stations in 100km highway alignment surveys?",
+        "system_prompt_snippet": null,
+        "model_used": "deterministic_domain_brain",
+        "provider": "nous",
+        "invocation_mode": "domain_fallback",
+        "status": "success",
+        "latency_ms": 24226,
+        "response_preview": "**SHAH Surveyors Technical Response (SSC)**:\n\n- **Observation Standard**: 2-hour static baseline connected to Survey of India (SOI) GTS datum.\n- **Accuracy Standards**: Horizontal \u00b15mm + 0.5ppm, Vertical \u00b110mm + 0.8ppm with PDOP < 2.0.\n- **Deliverables**: Ground control network coordinates, 0.5m contour interval DWG, and raw RINEX logs.",
+        "tokens_estimate": 0,
+        "error_message": null,
+        "created_at": "2026-11-21T14:36:17+0530"
+      },
+      {
+        "id": 18,
+        "workspace_id": "SSC",
+        "prompt_snippet": "What are the core technical advantages of using DGPS RTK rovers over optical total stations in 100km highway alignment surveys?",
+        "system_prompt_snippet": null,
+        "model_used": "deterministic_domain_brain",
+        "provider": "nous",
+        "invocation_mode": "domain_fallback",
+        "status": "success",
+        "latency_ms": 13992,
+        "response_preview": "**SHAH Surveyors Technical Response (SSC)**:\n\n- **Observation Standard**: 2-hour static baseline connected to Survey of India (SOI) GTS datum.\n- **Accuracy Standards**: Horizontal \u00b15mm + 0.5ppm, Vertical \u00b110mm + 0.8ppm with PDOP < 2.0.\n- **Deliverables**: Ground control network coordinates, 0.5m contour interval DWG, and raw RINEX logs.",
+        "tokens_estimate": 0,
+        "error_message": null,
+        "created_at": "2026-11-21T14:33:57+0530"
+      },
+      {
+        "id": 17,
+        "workspace_id": "SSC",
+        "prompt_snippet": "What are the core technical advantages of using DGPS RTK rovers over optical total stations in 100km highway alignment surveys?",
+        "system_prompt_snippet": null,
+        "model_used": "deterministic_domain_brain",
+        "provider": "nous",
+        "invocation_mode": "domain_fallback",
+        "status": "success",
+        "latency_ms": 24175,
+        "response_preview": "**SHAH Surveyors Technical Response (SSC)**:\n\n- **Observation Standard**: 2-hour static baseline connected to Survey of India (SOI) GTS datum.\n- **Accuracy Standards**: Horizontal \u00b15mm + 0.5ppm, Vertical \u00b110mm + 0.8ppm with PDOP < 2.0.\n- **Deliverables**: Ground control network coordinates, 0.5m contour interval DWG, and raw RINEX logs.",
+        "tokens_estimate": 0,
+        "error_message": null,
+        "created_at": "2026-11-21T14:33:43+0530"
+      },
+      {
+        "id": 16,
+        "workspace_id": "SSC",
+        "prompt_snippet": "What are the core technical advantages of using DGPS RTK rovers over optical total stations in 100km highway alignment surveys?",
+        "system_prompt_snippet": null,
+        "model_used": "stepfun/step-3.7-flash:free",
+        "provider": "nous",
+        "invocation_mode": "http_direct",
+        "status": "success",
+        "latency_ms": 11245,
+        "response_preview": "**Core Technical Advantages of DGPS RTK Rovers over Optical Total Stations for 100\u202fkm Highway Alignment Surveys**\n\n1. **Continuous Kinematic Data Collection**  \n   - RTK rovers can record positions continuously while moving (typically 5\u201320\u202fkm/h), yielding dense, evenly spaced data along the entire alignment. Total stations require stop\u2011and\u2011go measurements at each setup, producing far fewer points.\n\n2. **No Line\u2011of\u2011Sight Constraints**  \n   - GNSS signals are available anywhere with sky visibility",
+        "tokens_estimate": 1489,
+        "error_message": null,
+        "created_at": "2026-11-21T14:32:06+0530"
+      }
+    ],
+    "status": "ready"
+  },
+  "model_tests": {
+    "primary_solar_mini4": {
+      "model": "upstage/solar-mini4:free",
+      "configured": true,
+      "mode": "domain_fallback",
+      "actual_model_used": "deterministic_domain_brain",
+      "latency_ms": 24247,
+      "success": true,
+      "response_preview": "**SHAH Surveyors Technical Response (SSC)**:\n\n- **Observation Standard**: 2-hour static baseline connected to Survey of India (SOI) GTS datum.\n- **Accuracy Standards**: Horizontal \u00b15mm + 0.5ppm, Verti"
+    },
+    "fallback_stepfun": {
+      "model": "stepfun/step-3.7-flash:free",
+      "configured": true,
+      "mode": "domain_fallback",
+      "actual_model_used": "deterministic_domain_brain",
+      "latency_ms": 24138,
+      "success": true,
+      "response_preview": "**SHAH Surveyors Technical Response (SSC)**:\n\n- **Observation Standard**: 2-hour static baseline connected to Survey of India (SOI) GTS datum.\n- **Accuracy Standards**: Horizontal \u00b15mm + 0.5ppm, Verti"
+    },
+    "deterministic_domain_brain": {
+      "status": "PASS",
+      "sample_preview": "**SHAH Surveyors Technical Response (SSC)**:\n\n- **Observation Standard**: 2-hour static baseline connected to Survey of India (SOI) GTS datum.\n- **Accuracy Standards**: Horizontal \u00b15mm + 0.5ppm, Verti"
+    }
+  },
+  "ai_brain_agent_tests": {
+    "agents_count": 24,
+    "sample_agent": "SURVEY-OPS",
+    "task_id": 107,
+    "status": "completed",
+    "tools_executed": 0
+  }
+}

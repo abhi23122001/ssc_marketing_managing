@@ -1,0 +1,109 @@
+{
+  "baseline_all_10_entities": {
+    "leads": {
+      "status": "PASS",
+      "total_count": 37,
+      "results_count": 10
+    },
+    "clients": {
+      "status": "PASS",
+      "total_count": 21,
+      "results_count": 10
+    },
+    "sites": {
+      "status": "PASS",
+      "total_count": 36,
+      "results_count": 10
+    },
+    "estimates": {
+      "status": "PASS",
+      "total_count": 8,
+      "results_count": 8
+    },
+    "quotations": {
+      "status": "PASS",
+      "total_count": 8,
+      "results_count": 8
+    },
+    "workorders": {
+      "status": "PASS",
+      "total_count": 8,
+      "results_count": 8
+    },
+    "invoices": {
+      "status": "PASS",
+      "total_count": 8,
+      "results_count": 8
+    },
+    "claims": {
+      "status": "PASS",
+      "total_count": 25,
+      "results_count": 10
+    },
+    "tasks": {
+      "status": "PASS",
+      "total_count": 42,
+      "results_count": 10
+    },
+    "logs": {
+      "status": "PASS",
+      "total_count": 9,
+      "results_count": 9
+    }
+  },
+  "search_filtering": {
+    "leads": {
+      "status": "PASS",
+      "q": "Vikramaditya",
+      "returned": 8
+    },
+    "clients": {
+      "status": "PASS",
+      "q": "Vikramaditya",
+      "returned": 8
+    },
+    "sites": {
+      "status": "PASS",
+      "q": "SITE",
+      "returned": 20
+    },
+    "tasks": {
+      "status": "PASS",
+      "q": "Alignment",
+      "returned": 15
+    }
+  },
+  "workspace_scoping_variation": {
+    "leads": {
+      "ssc_count": 20,
+      "infra_count": 3,
+      "is_disjoint": true
+    },
+    "sites": {
+      "ssc_count": 20,
+      "infra_count": 3,
+      "is_disjoint": true
+    },
+    "tasks": {
+      "ssc_count": 20,
+      "infra_count": 0,
+      "is_disjoint": true
+    }
+  },
+  "empty_results_handling": {
+    "status": "PASS",
+    "count": 0
+  },
+  "pagination": {
+    "status": "PASS",
+    "page1_ids": [
+      39,
+      35
+    ],
+    "page2_ids": [
+      33,
+      30
+    ],
+    "disjoint_pages": true
+  }
+}
