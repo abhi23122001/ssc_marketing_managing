@@ -362,6 +362,34 @@ class Handler(BaseHTTPRequestHandler):
             elif path.startswith("/api/content/"):
                 self._json_err("not found", 404)
                 return
+            elif path.startswith("/api/media/download/"):
+                parts = [x for x in path.split("/") if x]
+                if len(parts) >= 4 and parts[3].isdigit():
+                    aid = int(parts[3])
+                    asset = self.store.fetchone("SELECT * FROM social_media_assets WHERE id=?", (aid,))
+                    if not asset:
+                        self._json_err("media asset not found", 404)
+                        return
+                    fname = asset["filename"]
+                    from foundation.config import project_root
+                    p = Path(project_root()) / fname if not os.path.isabs(fname) else Path(fname)
+                    if not p.exists():
+                        p = Path(os.getcwd()) / "data" / "m19_output" / os.path.basename(fname)
+                    if not p.exists():
+                        self._json_err("media file not found on disk", 404)
+                        return
+                    with open(p, "rb") as mf:
+                        b = mf.read()
+                    ctype = "video/mp4" if p.name.endswith(".mp4") else ("image/png" if p.name.endswith(".png") else "application/octet-stream")
+                    self.send_response(200)
+                    self.send_header("Content-Type", ctype)
+                    self.send_header("Content-Length", str(len(b)))
+                    self.send_header("Content-Disposition", f'inline; filename="{p.name}"')
+                    self.end_headers()
+                    self.wfile.write(b)
+                    return
+                self._json_err("invalid media download request", 400)
+                return
             elif path.startswith("/api/media/"):
                 parts = [x for x in path.split("/") if x]
                 if len(parts) < 3 or parts[1] != "media":
@@ -478,6 +506,15 @@ class Handler(BaseHTTPRequestHandler):
                 return
             elif path.startswith("/api/intelligence"):
                 self._handle_intelligence_route(path, user)
+                return
+            elif path.startswith("/api/studio"):
+                self._handle_studio_route(path, user)
+                return
+            elif path.startswith("/api/tasks"):
+                self._handle_tasks_route(path, user)
+                return
+            elif path.startswith("/api/filter"):
+                self._handle_filter_route(path, user)
                 return
             else:
                 self._json_err("not found", 404)
@@ -1451,6 +1488,34 @@ class Handler(BaseHTTPRequestHandler):
             elif path.startswith("/api/content/"):
                 self._json_err("not found", 404)
                 return
+            elif path.startswith("/api/media/download/"):
+                parts = [x for x in path.split("/") if x]
+                if len(parts) >= 4 and parts[3].isdigit():
+                    aid = int(parts[3])
+                    asset = self.store.fetchone("SELECT * FROM social_media_assets WHERE id=?", (aid,))
+                    if not asset:
+                        self._json_err("media asset not found", 404)
+                        return
+                    fname = asset["filename"]
+                    from foundation.config import project_root
+                    p = Path(project_root()) / fname if not os.path.isabs(fname) else Path(fname)
+                    if not p.exists():
+                        p = Path(os.getcwd()) / "data" / "m19_output" / os.path.basename(fname)
+                    if not p.exists():
+                        self._json_err("media file not found on disk", 404)
+                        return
+                    with open(p, "rb") as mf:
+                        b = mf.read()
+                    ctype = "video/mp4" if p.name.endswith(".mp4") else ("image/png" if p.name.endswith(".png") else "application/octet-stream")
+                    self.send_response(200)
+                    self.send_header("Content-Type", ctype)
+                    self.send_header("Content-Length", str(len(b)))
+                    self.send_header("Content-Disposition", f'inline; filename="{p.name}"')
+                    self.end_headers()
+                    self.wfile.write(b)
+                    return
+                self._json_err("invalid media download request", 400)
+                return
             elif path.startswith("/api/media/"):
                 parts = [x for x in path.split("/") if x]
                 if len(parts) < 3 or parts[1] != "media":
@@ -1580,6 +1645,15 @@ class Handler(BaseHTTPRequestHandler):
                 return
             elif path.startswith("/api/intelligence"):
                 self._handle_intelligence_route(path, user)
+                return
+            elif path.startswith("/api/studio"):
+                self._handle_studio_route(path, user)
+                return
+            elif path.startswith("/api/tasks"):
+                self._handle_tasks_route(path, user)
+                return
+            elif path.startswith("/api/filter"):
+                self._handle_filter_route(path, user)
                 return
             else:
                 self._json_err("not found", 404)
@@ -2496,7 +2570,231 @@ class Handler(BaseHTTPRequestHandler):
             self._json_ok({"knowledge": rows})
             return
 
+        # 8. Hermes Integration Status & Live Query
+        if path == "/api/intelligence/hermes/status":
+            from foundation.domains import hermes_bridge
+            self._json_ok(hermes_bridge.get_hermes_status(self.store))
+            return
+
+        if path == "/api/intelligence/hermes/query":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            prompt = data.get("prompt", "").strip()
+            if not prompt:
+                self._json_err("prompt required", 400)
+                return
+            from foundation.domains import hermes_bridge
+            res = hermes_bridge.query_hermes(
+                self.store,
+                prompt,
+                system_prompt=data.get("system_prompt", ""),
+                workspace_id=ws,
+                force_model=data.get("model"),
+                force_cli=data.get("use_cli", False)
+            )
+            self._json_ok(res)
+            return
+
+        # 9. Real Live Internet Research
+        if path == "/api/intelligence/research/live":
+            from foundation.domains import internet_research
+            q = data.get("query") if self.command == "POST" else qs.get("query", [""])[0]
+            if not q:
+                self._json_err("query required", 400)
+                return
+            cat = data.get("category", "survey_tech") if self.command == "POST" else qs.get("category", ["survey_tech"])[0]
+            rep = internet_research.conduct_live_internet_research(self.store, q, ws, cat)
+            self._json_ok(rep)
+            return
+
         self._json_err("intelligence endpoint not found", 404)
+
+    def _handle_studio_route(self, path: str, user: dict) -> None:
+        if user is None:
+            self._json_err("authentication required", 401)
+            return
+        from foundation.domains import creative_studio
+        parsed = urllib.parse.urlparse(self.path)
+        qs = urllib.parse.parse_qs(parsed.query)
+        data = _read_json(self) if self.command == "POST" else {}
+        ws = user.get("workspace_id") or "SSC"
+        uid = int(user.get("id") or user.get("user_id") or 1)
+        if user.get("role") == "Owner":
+            ws = qs.get("workspace", [None])[0] or data.get("workspace") or ws
+
+        if path == "/api/studio/templates":
+            self._json_ok({"templates": creative_studio.list_studio_templates(self.store, ws)})
+            return
+
+        if path == "/api/studio/projects":
+            if self.command == "POST":
+                proj = creative_studio.save_studio_project(self.store, ws, uid, data)
+                self._json_ok({"project": proj})
+                return
+            ptype = qs.get("type", [None])[0]
+            self._json_ok({"projects": creative_studio.list_studio_projects(self.store, ws, ptype)})
+            return
+
+        if path.startswith("/api/studio/projects/"):
+            parts = [x for x in path.split("/") if x]
+            pid = int(parts[3])
+            proj = creative_studio.get_studio_project(self.store, pid)
+            if not proj:
+                self._json_err("project not found", 404)
+                return
+            self._json_ok({"project": proj})
+            return
+
+        if path == "/api/studio/render":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            pid = int(data.get("project_id", 0))
+            if not pid:
+                self._json_err("project_id required", 400)
+                return
+            res = creative_studio.render_studio_reel(self.store, uid, pid, data)
+            self._json_ok(res)
+            return
+
+        if path == "/api/studio/export-canvas":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            pid = int(data.get("project_id", 0))
+            b64 = data.get("image_b64", "")
+            slide_idx = int(data.get("slide_index", 1))
+            res = creative_studio.export_canvas_image(self.store, uid, pid, b64, slide_idx)
+            self._json_ok(res)
+            return
+
+        self._json_err("studio endpoint not found", 404)
+
+    def _handle_tasks_route(self, path: str, user: dict) -> None:
+        if user is None:
+            self._json_err("authentication required", 401)
+            return
+        from foundation.domains import task_management
+        parsed = urllib.parse.urlparse(self.path)
+        qs = urllib.parse.parse_qs(parsed.query)
+        data = _read_json(self) if self.command == "POST" else {}
+        ws = user.get("workspace_id") or "SSC"
+        uid = int(user.get("id") or user.get("user_id") or 1)
+        if user.get("role") == "Owner":
+            ws = qs.get("workspace", [None])[0] or data.get("workspace") or ws
+
+        if path == "/api/tasks":
+            if self.command == "POST":
+                t = task_management.create_employee_task(self.store, ws, uid, data)
+                self._json_ok({"task": t}, 201)
+                return
+            ftype = qs.get("filter_type", ["all"])[0]
+            status = qs.get("status", [None])[0]
+            priority = qs.get("priority", [None])[0]
+            pid = qs.get("project_id", [None])[0]
+            tasks = task_management.list_employee_tasks(
+                self.store, ws, uid, user.get("role", "Owner"),
+                filter_type=ftype, status=status, priority=priority, project_id=pid
+            )
+            self._json_ok({"tasks": tasks})
+            return
+
+        if path == "/api/tasks/workload":
+            self._json_ok(task_management.get_admin_workload_summary(self.store, ws))
+            return
+
+        if path == "/api/tasks/notifications":
+            if self.command == "POST":
+                nid = int(data.get("notification_id", 0))
+                task_management.mark_notification_read(self.store, nid, uid)
+                self._json_ok({"ok": True})
+                return
+            unread = qs.get("unread", ["0"])[0] == "1"
+            notifs = task_management.list_user_notifications(self.store, uid, unread_only=unread)
+            self._json_ok({"notifications": notifs})
+            return
+
+        parts = [x for x in path.split("/") if x]
+        if len(parts) >= 3 and parts[2].isdigit():
+            tid = int(parts[2])
+            if len(parts) == 3:
+                t = task_management.get_employee_task(self.store, tid)
+                if not t:
+                    self._json_err("task not found", 404)
+                    return
+                self._json_ok({"task": t})
+                return
+            action = parts[3]
+            if action == "accept":
+                self._json_ok({"task": task_management.accept_task(self.store, tid, uid)})
+                return
+            if action == "progress":
+                pct = int(data.get("progress_pct", 0))
+                note = data.get("note", "")
+                self._json_ok({"task": task_management.update_task_progress(self.store, tid, uid, pct, note)})
+                return
+            if action == "proof":
+                proof_text = data.get("proof_text", "")
+                proof_url = data.get("proof_url", "")
+                self._json_ok({"task": task_management.submit_task_work_proof(self.store, tid, uid, proof_text, proof_url)})
+                return
+            if action == "review":
+                decision = data.get("decision", "approve")
+                notes = data.get("notes", "")
+                self._json_ok({"task": task_management.review_task(self.store, tid, uid, decision, notes)})
+                return
+            if action == "comments":
+                if self.command == "POST":
+                    c = task_management.add_task_comment(self.store, tid, uid, data.get("comment_text", ""))
+                    self._json_ok({"comment": c})
+                    return
+                self._json_ok({"comments": task_management.list_task_comments(self.store, tid)})
+                return
+
+        self._json_err("tasks endpoint not found", 404)
+
+    def _handle_filter_route(self, path: str, user: dict) -> None:
+        if user is None:
+            self._json_err("authentication required", 401)
+            return
+        from foundation.domains import filter_system
+        parsed = urllib.parse.urlparse(self.path)
+        qs = urllib.parse.parse_qs(parsed.query)
+        data = _read_json(self) if self.command == "POST" else {}
+        ws = user.get("workspace_id") or "SSC"
+        if user.get("role") == "Owner":
+            ws = qs.get("workspace", [None])[0] or data.get("workspace") or ws
+
+        parts = [x for x in path.split("/") if x]
+        if len(parts) < 3:
+            self._json_err("filter entity required", 400)
+            return
+        entity = parts[2]
+        
+        # Combine query params and POST body for flexible filtering
+        filters = dict(data)
+        for k, v in qs.items():
+            if k not in filters and v:
+                filters[k] = v[0]
+
+        if len(parts) >= 4 and parts[3] == "export":
+            csv_text, fname = filter_system.export_filtered_csv(self.store, entity, ws, filters)
+            b = csv_text.encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "text/csv; charset=utf-8")
+            self.send_header("Content-Disposition", f'attachment; filename="{fname}"')
+            self.send_header("Content-Length", str(len(b)))
+            self.end_headers()
+            self.wfile.write(b)
+            return
+
+        page = int(filters.get("page", 1))
+        limit = int(filters.get("limit", 20))
+        sort_by = filters.get("sort_by")
+        sort_dir = filters.get("sort_dir", "DESC")
+        res = filter_system.query_filtered_records(self.store, entity, ws, filters, page, limit, sort_by, sort_dir)
+        self._json_ok(res)
 
     def log_message(self, fmt, *args):  # quieter request logging
         pass

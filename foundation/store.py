@@ -253,6 +253,12 @@ class Store:
         create_m19_tables(self.conn)
         from .domains.ai_intelligence import ensure_ai_intelligence_schema
         ensure_ai_intelligence_schema(self.conn)
+        from .domains.hermes_bridge import ensure_hermes_schema
+        ensure_hermes_schema(self.conn)
+        from .domains.creative_studio import ensure_studio_schema
+        ensure_studio_schema(self.conn)
+        from .domains.task_management import ensure_tasks_schema
+        ensure_tasks_schema(self.conn)
         self.conn.commit()
 
     def _seed_roles(self) -> None:
