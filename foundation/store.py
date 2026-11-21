@@ -16,6 +16,7 @@ import os
 import secrets
 import re
 import sqlite3
+import threading
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -24,6 +25,92 @@ from . import config as foundation_config
 from .approval import require_approver
 
 _PBKD = 100_000  # pbkdf2 iterations (local dev, swappable to bcrypt later)
+
+
+class _ThreadSafeCursor:
+    def __init__(self, cur: sqlite3.Cursor, lock: threading.RLock):
+        self._cur = cur
+        self._lock = lock
+
+    def fetchone(self):
+        with self._lock:
+            return self._cur.fetchone()
+
+    def fetchall(self):
+        with self._lock:
+            return self._cur.fetchall()
+
+    def fetchmany(self, size=None):
+        with self._lock:
+            return self._cur.fetchmany(size) if size is not None else self._cur.fetchmany()
+
+    def __iter__(self):
+        with self._lock:
+            return iter(self._cur.fetchall())
+
+    def __getattr__(self, name: str):
+        return getattr(self._cur, name)
+
+
+class _ThreadSafeConnection:
+    def __init__(self, conn: sqlite3.Connection):
+        self._raw_conn = conn
+        self._lock = threading.RLock()
+
+    @property
+    def row_factory(self):
+        return self._raw_conn.row_factory
+
+    @row_factory.setter
+    def row_factory(self, val):
+        with self._lock:
+            self._raw_conn.row_factory = val
+
+    def execute(self, *args, **kwargs):
+        with self._lock:
+            cur = self._raw_conn.execute(*args, **kwargs)
+            return _ThreadSafeCursor(cur, self._lock)
+
+    def executemany(self, *args, **kwargs):
+        with self._lock:
+            cur = self._raw_conn.executemany(*args, **kwargs)
+            return _ThreadSafeCursor(cur, self._lock)
+
+    def executescript(self, *args, **kwargs):
+        with self._lock:
+            cur = self._raw_conn.executescript(*args, **kwargs)
+            return _ThreadSafeCursor(cur, self._lock)
+
+    def cursor(self, *args, **kwargs):
+        with self._lock:
+            cur = self._raw_conn.cursor(*args, **kwargs)
+            return _ThreadSafeCursor(cur, self._lock)
+
+    def commit(self):
+        with self._lock:
+            return self._raw_conn.commit()
+
+    def rollback(self):
+        with self._lock:
+            return self._raw_conn.rollback()
+
+    def close(self):
+        with self._lock:
+            return self._raw_conn.close()
+
+    def __getattr__(self, name: str):
+        return getattr(self._raw_conn, name)
+
+    def __enter__(self):
+        self._lock.acquire()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        try:
+            return self._raw_conn.__exit__(exc_type, exc_val, exc_tb)
+        finally:
+            self._lock.release()
+
 
 
 def json_dumps(obj: Any) -> str:
@@ -71,9 +158,10 @@ class Store:
         self._connect()
 
     def _connect(self) -> None:
-        self.conn = sqlite3.connect(str(self.db_path), timeout=10, check_same_thread=False)
-        self.conn.row_factory = sqlite3.Row
-        self.conn.execute("PRAGMA journal_mode=WAL")
+        raw = sqlite3.connect(str(self.db_path), timeout=10, check_same_thread=False)
+        raw.row_factory = sqlite3.Row
+        raw.execute("PRAGMA journal_mode=WAL")
+        self.conn = _ThreadSafeConnection(raw)
         self._migrate()
 
     def close(self) -> None:
@@ -199,13 +287,9 @@ class Store:
 
     # -- convenience ---------------------------------------------------------
     def fetchall(self, sql: str, params=()) -> list[dict[str, Any]]:
-        if self.conn.row_factory != sqlite3.Row:
-            self.conn.row_factory = sqlite3.Row
         return [dict(r) for r in self.conn.execute(sql, params).fetchall()]
 
     def fetchone(self, sql: str, params=()) -> dict[str, Any] | None:
-        if self.conn.row_factory != sqlite3.Row:
-            self.conn.row_factory = sqlite3.Row
         row = self.conn.execute(sql, params).fetchone()
         return dict(row) if row else None
 

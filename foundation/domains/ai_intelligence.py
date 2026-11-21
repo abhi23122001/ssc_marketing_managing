@@ -17,6 +17,7 @@ import json
 import os
 import re
 import sqlite3
+import threading
 import time
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
@@ -26,6 +27,9 @@ from ..store import Store
 
 # Local timezone helper (Asia/Kolkata, UTC+5:30)
 KOLKATA_TZ = timezone(timedelta(hours=5, minutes=30))
+
+_SCHEMA_LOCK = threading.Lock()
+_AI_INTELLIGENCE_SCHEMA_INITIALIZED = False
 
 
 def now_kolkata() -> datetime:
@@ -41,7 +45,13 @@ def now_iso() -> str:
 # -----------------------------------------------------------------------------
 def ensure_ai_intelligence_schema(conn: sqlite3.Connection) -> None:
     """Creates persistent tables for Autonomous AI Brain operations."""
-    conn.executescript("""
+    global _AI_INTELLIGENCE_SCHEMA_INITIALIZED
+    if _AI_INTELLIGENCE_SCHEMA_INITIALIZED:
+        return
+    with _SCHEMA_LOCK:
+        if _AI_INTELLIGENCE_SCHEMA_INITIALIZED:
+            return
+        conn.executescript("""
     CREATE TABLE IF NOT EXISTS ai_research_items (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         workspace_id TEXT NOT NULL,
@@ -144,6 +154,7 @@ def ensure_ai_intelligence_schema(conn: sqlite3.Connection) -> None:
     conn.commit()
     seed_default_scheduler_jobs(conn)
     seed_initial_knowledge_base(conn)
+    _AI_INTELLIGENCE_SCHEMA_INITIALIZED = True
 
 
 def seed_default_scheduler_jobs(conn: sqlite3.Connection) -> None:
