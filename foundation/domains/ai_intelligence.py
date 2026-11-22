@@ -273,19 +273,31 @@ def ask_anything(store: Store, query: str, workspace_id: str = "SSC", user_role:
         }
 
     # 2. FINANCIAL P&L & OUTSTANDINGS
-    if any(k in q_lower for k in ["profit", "मुनाफा", "revenue", "kamai", "loss", "pl", "p&l", "margins"]):
+    if any(k in q_lower for k in ["profit", "मुनाफा", "revenue", "kamai", "loss", "margins", "balance sheet", "net operating profit"]) or re.search(r"\b(pl|p&l|p/l)\b", q_lower):
         from . import business_ops
         pl = business_ops.get_profit_loss_summary(store.conn, workspace_id)
-        ans = (
-            f"**Factual P&L Financial Report for {workspace_id} (As of {calc_date})**:\n\n"
-            f"- **Total Taxable Invoiced**: INR {pl['total_invoiced_inr']:,.2f}\n"
-            f"- **Realized Collections**: INR {pl['total_collected_inr']:,.2f}\n"
-            f"- **Operational Outflows/Claims**: INR {pl['total_expenses_inr']:,.2f}\n"
-            f"- **Net Operating Profit**: INR {pl['net_operating_profit_inr']:,.2f}\n"
-            f"- **Outstanding Receivables**: INR {pl['outstanding_receivables_inr']:,.2f}\n"
-            f"- **Statutory GST Collected**: INR {pl.get('total_gst_collected_inr', 0.0):,.2f}\n\n"
-            f"*Data Source: Authoritative records from `business_invoices`, `business_payments`, and `expense_claims`.*"
-        )
+        if pl.get("total_invoiced_inr", 0.0) == 0.0 and pl.get("total_collected_inr", 0.0) == 0.0 and pl.get("total_expenses_inr", 0.0) == 0.0:
+            ans = (
+                f"**Factual P&L Financial Report for {workspace_id} (As of {calc_date})**:\n\n"
+                f"- **Total Taxable Invoiced**: INR 0.00\n"
+                f"- **Realized Collections**: INR 0.00\n"
+                f"- **Operational Outflows/Claims**: INR 0.00\n"
+                f"- **Net Operating Profit**: INR 0.00\n"
+                f"- **Outstanding Receivables**: INR 0.00\n"
+                f"- **Statutory GST Collected**: INR 0.00\n\n"
+                f"*Notice: No financial transactions, invoices, or expense claims recorded yet for workspace `{workspace_id}`.*"
+            )
+        else:
+            ans = (
+                f"**Factual P&L Financial Report for {workspace_id} (As of {calc_date})**:\n\n"
+                f"- **Total Taxable Invoiced**: INR {pl['total_invoiced_inr']:,.2f}\n"
+                f"- **Realized Collections**: INR {pl['total_collected_inr']:,.2f}\n"
+                f"- **Operational Outflows/Claims**: INR {pl['total_expenses_inr']:,.2f}\n"
+                f"- **Net Operating Profit**: INR {pl['net_operating_profit_inr']:,.2f}\n"
+                f"- **Outstanding Receivables**: INR {pl['outstanding_receivables_inr']:,.2f}\n"
+                f"- **Statutory GST Collected**: INR {pl.get('total_gst_collected_inr', 0.0):,.2f}\n\n"
+                f"*Data Source: Authoritative records from `business_invoices`, `business_payments`, and `expense_claims`.*"
+            )
         return {
             "query": query,
             "intent": "BUSINESS_DATA",
@@ -299,11 +311,11 @@ def ask_anything(store: Store, query: str, workspace_id: str = "SSC", user_role:
     # Outstanding Payments / Unpaid Invoices
     if any(k in q_lower for k in ["payment", "baki", "baqi", "outstanding", "receivable", "lena baki", "unpaid"]):
         rows = store.fetchall(
-            "SELECT invoice_number, client_name, total_amount, paid_amount, status FROM business_invoices "
-            "WHERE workspace_id=? AND status != 'paid' ORDER BY id DESC LIMIT 10", (workspace_id,))
+            "SELECT invoice_number, client_id, total_amount, amount_paid, payment_status, status FROM business_invoices "
+            "WHERE workspace_id=? AND (status != 'paid' AND payment_status != 'paid') ORDER BY id DESC LIMIT 10", (workspace_id,))
         if rows:
-            lines = [f"- **{r['client_name']}** ({r['invoice_number']}): Total INR {r['total_amount']:,.2f} | Baki: INR {(r['total_amount'] - (r['paid_amount'] or 0)):,.2f} (Status: `{r['status']}`)" for r in rows]
-            total_baki = sum((r['total_amount'] - (r['paid_amount'] or 0)) for r in rows)
+            lines = [f"- Invoice **{r['invoice_number']}** (Client ID: `{r['client_id']}`): Total INR {r['total_amount']:,.2f} | Baki: INR {(r['total_amount'] - (r['amount_paid'] or 0)):,.2f} (Status: `{r['status']}`)" for r in rows]
+            total_baki = sum((r['total_amount'] - (r['amount_paid'] or 0)) for r in rows)
             ans = f"**Pending Inward Payments ({workspace_id}) — Total Outstanding: INR {total_baki:,.2f}**:\n\n" + "\n".join(lines)
         else:
             ans = f"**Sabhi client invoices settled hain!** Koi bhi outstanding payment pending nahi hai ({workspace_id})."
@@ -324,16 +336,25 @@ def ask_anything(store: Store, query: str, workspace_id: str = "SSC", user_role:
             won_leads = store.fetchone("SELECT count(*) as cnt FROM social_leads WHERE workspace_id=? AND lead_status='won'", (workspace_id,))["cnt"]
             recent = store.fetchall("SELECT lead_name, company, platform, service_interest, lead_status FROM social_leads WHERE workspace_id=? ORDER BY id DESC LIMIT 5", (workspace_id,))
             
-            lines = [f"- **{r['lead_name']}** ({r['company'] or 'Direct'}): `{r.get('service_interest', 'Survey')}` | Platform: `{r.get('platform', 'Direct')}` | Status: `{r['lead_status']}`" for r in recent]
-            ans = (
-                f"**CRM Leads Summary for {workspace_id} ({calc_date})**:\n\n"
-                f"- **Total Inquiries/Leads**: {total_leads}\n"
-                f"- **New / Unattended Leads**: {new_leads}\n"
-                f"- **Won / Converted Clients**: {won_leads}\n\n"
-                f"**Recent Pipeline Opportunities**:\n" + "\n".join(lines)
-            )
+            if total_leads == 0:
+                ans = (
+                    f"**CRM Leads Summary for {workspace_id} ({calc_date})**:\n\n"
+                    f"- **Total Inquiries/Leads**: 0\n"
+                    f"- **New / Unattended Leads**: 0\n"
+                    f"- **Won / Converted Clients**: 0\n\n"
+                    f"*Abhi workspace `{workspace_id}` me koi active lead ya inquiry registered nahi hai. Aap CRM section me jakar '+ New Lead' add kar sakte hain.*"
+                )
+            else:
+                lines = [f"- **{r['lead_name']}** ({r['company'] or 'Direct'}): `{r.get('service_interest', 'Survey')}` | Platform: `{r.get('platform', 'Direct')}` | Status: `{r['lead_status']}`" for r in recent]
+                ans = (
+                    f"**CRM Leads Summary for {workspace_id} ({calc_date})**:\n\n"
+                    f"- **Total Inquiries/Leads**: {total_leads}\n"
+                    f"- **New / Unattended Leads**: {new_leads}\n"
+                    f"- **Won / Converted Clients**: {won_leads}\n\n"
+                    f"**Recent Pipeline Opportunities**:\n" + "\n".join(lines)
+                )
         except Exception as e:
-            ans = f"**CRM Leads Overview ({workspace_id})**:\n- 40 enterprise leads registered.\n- 23 new inquiries across Drone LiDAR, DGPS Highway Surveys, and Cadastral mapping."
+            ans = f"**CRM Leads Overview ({workspace_id})**:\n- Query error or table not found: {str(e)}"
         return {
             "query": query,
             "intent": "BUSINESS_DATA",
@@ -347,16 +368,24 @@ def ask_anything(store: Store, query: str, workspace_id: str = "SSC", user_role:
     if any(k in q_lower for k in ["project", "projects", "site", "sites", "kaam", "survey site", "dpr"]):
         try:
             total_sites = store.fetchone("SELECT count(*) as cnt FROM sites WHERE workspace_id=?", (workspace_id,))["cnt"]
-            recent = store.fetchall("SELECT name, code, address, status FROM sites WHERE workspace_id=? ORDER BY id DESC LIMIT 5", (workspace_id,))
-            lines = [f"- **{r['name']}** (Code: `{r['code']}`): {r['address']} | Status: `{r['status'].strip()}`" for r in recent]
-            ans = (
-                f"**Active Projects & Site Overview ({workspace_id})**:\n\n"
-                f"- **Total Survey Sites & Projects Registered**: {total_sites}\n"
-                f"- **Field Operations Status**: Active DGPS, Drone & Photogrammetry deployment\n\n"
-                f"**Latest Project Sites**:\n" + "\n".join(lines)
-            )
-        except Exception:
-            ans = f"**Projects & Operations ({workspace_id})**:\n- Total 40 active project sites registered across Maharashtra, Gujarat, and MP corridor works."
+            recent = store.fetchall("SELECT name, code, address, geofence_radius_m FROM sites WHERE workspace_id=? ORDER BY id DESC LIMIT 5", (workspace_id,))
+            if total_sites == 0:
+                ans = (
+                    f"**Active Projects & Site Overview ({workspace_id})**:\n\n"
+                    f"- **Total Survey Sites & Projects Registered**: 0\n"
+                    f"- **Field Operations Status**: No active field sites currently assigned to workspace `{workspace_id}`.\n\n"
+                    f"*Aap Projects & Operations section me jakar naya project/site register kar sakte hain.*"
+                )
+            else:
+                lines = [f"- **{r['name']}** (Code: `{r['code']}`): {r['address']} | Geofence: `{r.get('geofence_radius_m', 500)}m`" for r in recent]
+                ans = (
+                    f"**Active Projects & Site Overview ({workspace_id})**:\n\n"
+                    f"- **Total Survey Sites & Projects Registered**: {total_sites}\n"
+                    f"- **Field Operations Status**: Active DGPS, Drone & Photogrammetry deployment\n\n"
+                    f"**Latest Project Sites**:\n" + "\n".join(lines)
+                )
+        except Exception as e:
+            ans = f"**Projects & Operations ({workspace_id})**:\n- Query error: {str(e)}"
         return {
             "query": query,
             "intent": "BUSINESS_DATA",
@@ -371,15 +400,22 @@ def ask_anything(store: Store, query: str, workspace_id: str = "SSC", user_role:
         try:
             total_emp = store.fetchone("SELECT count(*) as cnt FROM employees WHERE workspace_id=?", (workspace_id,))["cnt"]
             users = store.fetchall("SELECT name, designation, status, employee_id FROM employees WHERE workspace_id=? ORDER BY id ASC LIMIT 8", (workspace_id,))
-            lines = [f"- **{u['name']}** (`{u['employee_id']}`) — {u['designation']} (Status: `{u['status'].strip()}`)" for u in users]
-            ans = (
-                f"**Team & Staff Roster for {workspace_id} ({calc_date})**:\n\n"
-                f"- **Total Staff Members**: {total_emp}\n\n"
-                f"**Key Engineering & Field Personnel**:\n" + "\n".join(lines) + "\n\n"
-                f"*Attendance note: GPS Geofenced check-in is active across all 40 field sites.*"
-            )
-        except Exception:
-            ans = f"**Team & Staff ({workspace_id})**:\n- 27 technical personnel, surveyors, GIS engineers, and operators deployed."
+            if total_emp == 0:
+                ans = (
+                    f"**Team & Staff Roster for {workspace_id} ({calc_date})**:\n\n"
+                    f"- **Total Staff Members**: 0\n\n"
+                    f"*Workspace `{workspace_id}` me koi staff record registered nahi hai.*"
+                )
+            else:
+                lines = [f"- **{u['name']}** (`{u['employee_id']}`) — {u['designation']} (Status: `{u['status'].strip()}`)" for u in users]
+                ans = (
+                    f"**Team & Staff Roster for {workspace_id} ({calc_date})**:\n\n"
+                    f"- **Total Staff Members**: {total_emp}\n\n"
+                    f"**Key Engineering & Field Personnel**:\n" + "\n".join(lines) + "\n\n"
+                    f"*Attendance note: GPS Geofenced check-in is enabled for registered field staff.*"
+                )
+        except Exception as e:
+            ans = f"**Team & Staff ({workspace_id})**:\n- Query error: {str(e)}"
         return {
             "query": query,
             "intent": "BUSINESS_DATA",
@@ -391,14 +427,22 @@ def ask_anything(store: Store, query: str, workspace_id: str = "SSC", user_role:
 
     # 6. INVOICES & BILLING
     if any(k in q_lower for k in ["invoice", "invoices", "bill", "billing", "tax invoice", "chalan"]):
-        rows = store.fetchall("SELECT invoice_number, client_name, total_amount, status, created_at FROM business_invoices WHERE workspace_id=? ORDER BY id DESC LIMIT 5", (workspace_id,))
-        lines = [f"- **{r['invoice_number']}** ({r['client_name']}): INR {r['total_amount']:,.2f} | Status: `{r['status']}` | Date: {r['created_at'][:10]}" for r in rows]
-        ans = (
-            f"**GST Tax Invoices Register ({workspace_id})**:\n\n"
-            f"All invoices comply strictly with GST Rule 46 (HSN/SAC 998315 for surveying).\n\n"
-            f"**Recent Tax Invoices**:\n" + "\n".join(lines) + "\n\n"
-            f"*Tip: Go to Finance & Billing > GST Invoices to view or print formal PDF letterheads.*"
-        )
+        rows = store.fetchall("SELECT invoice_number, client_id, total_amount, status, created_at FROM business_invoices WHERE workspace_id=? ORDER BY id DESC LIMIT 5", (workspace_id,))
+        if not rows:
+            ans = (
+                f"**GST Tax Invoices Register ({workspace_id})**:\n\n"
+                f"No tax invoices have been created yet for workspace `{workspace_id}`.\n"
+                f"All future invoices comply strictly with GST Rule 46 (HSN/SAC 998315 for surveying).\n\n"
+                f"*Tip: Go to Finance & Billing > GST Invoices to generate a new tax invoice.*"
+            )
+        else:
+            lines = [f"- Invoice **{r['invoice_number']}** (Client ID: `{r['client_id']}`): INR {r['total_amount']:,.2f} | Status: `{r['status']}` | Date: {r['created_at'][:10]}" for r in rows]
+            ans = (
+                f"**GST Tax Invoices Register ({workspace_id})**:\n\n"
+                f"All invoices comply strictly with GST Rule 46 (HSN/SAC 998315 for surveying).\n\n"
+                f"**Recent Tax Invoices**:\n" + "\n".join(lines) + "\n\n"
+                f"*Tip: Go to Finance & Billing > GST Invoices to view or print formal PDF letterheads.*"
+            )
         return {
             "query": query,
             "intent": "BUSINESS_DATA",
@@ -410,17 +454,27 @@ def ask_anything(store: Store, query: str, workspace_id: str = "SSC", user_role:
 
     # 7. QUOTATIONS & ESTIMATES
     if any(k in q_lower for k in ["quotation", "quotations", "estimate", "estimates", "rate analysis", "quote"]):
-        rows = store.fetchall("SELECT quotation_number, client_name, total_amount, status FROM business_quotations WHERE workspace_id=? ORDER BY id DESC LIMIT 5", (workspace_id,))
-        lines = [f"- **{r['quotation_number']}** ({r['client_name']}): INR {r['total_amount']:,.2f} | Status: `{r['status']}`" for r in rows]
-        ans = (
-            f"**Quotations & Estimates Register ({workspace_id})**:\n\n"
-            f"**Latest Quotations Generated**:\n" + "\n".join(lines) + "\n\n"
-            f"**How to Create a New Quotation**:\n"
-            f"1. Navigate to **Finance & Accounting > Quotations**.\n"
-            f"2. Click **+ New Quotation**.\n"
-            f"3. Select Client, add survey items (BOQ), enter rates, and 18% GST (CGST/SGST/IGST) is computed automatically.\n"
-            f"4. Click **Print / Preview** to download formal stamped PDF or click **Convert to Invoice** upon approval."
-        )
+        rows = store.fetchall("SELECT quotation_number, project_name, total_amount, status FROM business_quotations WHERE workspace_id=? ORDER BY id DESC LIMIT 5", (workspace_id,))
+        if not rows:
+            ans = (
+                f"**Quotations & Estimates Register ({workspace_id})**:\n\n"
+                f"No quotations have been created yet for workspace `{workspace_id}`.\n\n"
+                f"**How to Create a New Quotation**:\n"
+                f"1. Navigate to **Finance & Accounting > Quotations**.\n"
+                f"2. Click **+ New Quotation**.\n"
+                f"3. Select Client, add survey items (BOQ), enter rates, and 18% GST (CGST/SGST/IGST) is computed automatically."
+            )
+        else:
+            lines = [f"- **{r['quotation_number']}** ({r['project_name'] or 'General'}): INR {r['total_amount']:,.2f} | Status: `{r['status']}`" for r in rows]
+            ans = (
+                f"**Quotations & Estimates Register ({workspace_id})**:\n\n"
+                f"**Latest Quotations Generated**:\n" + "\n".join(lines) + "\n\n"
+                f"**How to Create a New Quotation**:\n"
+                f"1. Navigate to **Finance & Accounting > Quotations**.\n"
+                f"2. Click **+ New Quotation**.\n"
+                f"3. Select Client, add survey items (BOQ), enter rates, and 18% GST (CGST/SGST/IGST) is computed automatically.\n"
+                f"4. Click **Print / Preview** to download formal stamped PDF or click **Convert to Invoice** upon approval."
+            )
         return {
             "query": query,
             "intent": "BUSINESS_DATA",
@@ -462,7 +516,7 @@ def ask_anything(store: Store, query: str, workspace_id: str = "SSC", user_role:
                 f"**Payroll Processing & Salary Slips Guide**:\n\n"
                 f"1. Sidebar me **Finance & Accounting** par click karein.\n"
                 f"2. **Salary Slips** subtab select karein.\n"
-                f"3. Sabhi 245 historical payslips dekhne ke liye list browse karein.\n"
+                f"3. Sabhi historical payslips dekhne ke liye list browse karein.\n"
                 f"4. Naye month ke liye **'Process Monthly Payroll'** button dabayein.\n"
                 f"5. Kisi bhi employee ke record par **'View Payslip'** click karke formal printable salary slip print ya PDF save karein."
             )

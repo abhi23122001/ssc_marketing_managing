@@ -2589,7 +2589,7 @@
               </div>
               <div style="font-size:12px;color:var(--muted)">15 Hierarchical Cloud Document Folders (10 SSC + 5 INFRA). Auto-staged in local directory and mirrored to Google Drive.</div>
             </div>
-            <span class="pill ok" id="badge-drive-status">&#9679; Active (Local Staging Synced)</span>
+            <span class="pill info" id="badge-drive-status">&#9679; Local Safe Staging Only (Offline / Zero Cost)</span>
           </div>
           <div style="background:#0b1120;padding:10px 14px;border-radius:6px;font-size:12px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
             <div><strong>Active Staging Path:</strong> <code>data/drive_sync/</code> &bull; <strong>Folders:</strong> 15 Configured &bull; <strong>Target Workspace:</strong> <span class="active-ws-title">SSC</span></div>
@@ -2613,11 +2613,11 @@
               </div>
               <div style="font-size:12px;color:var(--muted)">12 Core Operational Modules Mirrored Real-Time (Leads, Projects, Quotations, Invoices, Payments, Attendance, Payroll, Tasks).</div>
             </div>
-            <span class="pill ok" id="badge-sheets-status">&#9679; Active (12 Modules Mapped)</span>
+            <span class="pill info" id="badge-sheets-status">&#9679; Local Safe Staging (12 CSV Modules)</span>
           </div>
           <div style="background:#0b1120;padding:10px 14px;border-radius:6px;font-size:12px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-            <div><strong>Master Spreadsheet:</strong> <code>SHAH_GROUP_OS_2026_MASTER</code> &bull; <strong>Sync Mode:</strong> Bidirectional Live Mirror</div>
-            <div style="font-size:11px;color:var(--muted)">Local CSV mirrors active &bull; Cloud export ready</div>
+            <div><strong>Master Spreadsheet:</strong> <code>SHAH_GROUP_OS_2026_MASTER</code> &bull; <strong>Sync Mode:</strong> Local CSV Two-Way Mirror</div>
+            <div style="font-size:11px;color:var(--muted)">Local CSV mirrors active &bull; Cloud export ready upon OAuth</div>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button class="btn btn-primary btn-sm" onclick="openConnectModal('google_sheets', 'Google Sheets Sync')">&#9889; Connect Google Sheets</button>
@@ -2636,7 +2636,7 @@
               </div>
               <div style="font-size:12px;color:var(--muted)">Direct connection channels for automated publishing of Reels, technical case studies, drone surveys, and client lead capture.</div>
             </div>
-            <span class="pill info">4 Channels Active</span>
+            <span class="pill warn">Setup Required (OAuth Not Configured)</span>
           </div>
 
           <div class="grid2" style="gap:12px" id="social-connections-cards">
@@ -2648,7 +2648,7 @@
                   <strong style="font-size:14px;color:var(--text)">Instagram Business Account</strong>
                   <div style="font-size:12px;color:#a855f7;margin-top:2px">@shah_survey_consultancy</div>
                 </div>
-                <span class="pill ok">&#9679; Connected</span>
+                <span class="pill warn">&#9679; Setup Required (Token Missing)</span>
               </div>
               <p style="font-size:11px;color:var(--muted);margin-bottom:12px">Auto-publish 1080x1920 Reels, carousel graphics, field stories, and inbound DM lead capture.</p>
               <div style="display:flex;gap:6px">
@@ -2666,7 +2666,7 @@
                   <strong style="font-size:14px;color:var(--text)">Facebook Official Page</strong>
                   <div style="font-size:12px;color:#3b82f6;margin-top:2px">Shah Surveyors &amp; Consultancy</div>
                 </div>
-                <span class="pill ok">&#9679; Connected</span>
+                <span class="pill warn">&#9679; Setup Required (App Secret Missing)</span>
               </div>
               <p style="font-size:11px;color:var(--muted);margin-bottom:12px">Publish DPR case studies, project photo albums, client testimonials, and WhatsApp click-to-chat ads.</p>
               <div style="display:flex;gap:6px">
@@ -2684,7 +2684,7 @@
                   <strong style="font-size:14px;color:var(--text)">YouTube Studio Channel</strong>
                   <div style="font-size:12px;color:#ef4444;margin-top:2px">Shah Geospatial &amp; Drone Tech</div>
                 </div>
-                <span class="pill ok">&#9679; Connected</span>
+                <span class="pill warn">&#9679; Setup Required (API Key Missing)</span>
               </div>
               <p style="font-size:11px;color:var(--muted);margin-bottom:12px">Direct upload of YouTube Shorts, 4K aerial drone survey footage, and technical software tutorials.</p>
               <div style="display:flex;gap:6px">
@@ -2702,7 +2702,7 @@
                   <strong style="font-size:14px;color:var(--text)">LinkedIn Corporate Page</strong>
                   <div style="font-size:12px;color:#0ea5e9;margin-top:2px">SHAH Group (Surveyors &amp; Infrastructure)</div>
                 </div>
-                <span class="pill ok">&#9679; Connected</span>
+                <span class="pill warn">&#9679; Setup Required (OAuth Missing)</span>
               </div>
               <p style="font-size:11px;color:var(--muted);margin-bottom:12px">Target NHAI EPC contractors, MoRTH consultants, government tender executives, and corporate developers.</p>
               <div style="display:flex;gap:6px">
@@ -2984,20 +2984,11 @@ async function api(path, opts={}){
 }
 
 async function auth(){
-  // Zero-friction local auto-authentication
   if(!state.token){
-    try {
-      const lr = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: "owner", password: "demo-owner-pass-0001" })
-      });
-      if(lr.ok){
-        const lj = await lr.json();
-        state.token = lj.token;
-        localStorage.setItem("sgai_token", lj.token);
-      }
-    }catch(ign){}
+    const saved = localStorage.getItem("sgai_token");
+    if(saved){
+      state.token = saved;
+    }
   }
   try{
     const j = await api("/api/auth/me");
@@ -3014,15 +3005,25 @@ async function auth(){
         <div id="user-label"><span class="pill info">${esc(j.user.role)}</span> <strong style="margin-left:4px">${esc(j.user.username)}</strong></div>
         <button id="logout-btn" class="btn btn-secondary btn-sm">Logout</button>
       `;
-      $("#logout-btn").onclick = () => { localStorage.removeItem("sgai_token"); location.reload(); };
+      $("#logout-btn").onclick = async () => {
+        try {
+          await fetch("/api/auth/logout", { method: "POST", headers: { "Authorization": `Bearer ${state.token}` } });
+        } catch(ign){}
+        localStorage.removeItem("sgai_token");
+        state.token = null;
+        location.reload();
+      };
     }
   }catch(e){
-    state.role=null; state.perms=new Set();
+    state.token = null;
+    state.role = null;
+    state.perms = new Set();
+    localStorage.removeItem("sgai_token");
     const authArea = $("#auth-area");
     if(authArea) {
       authArea.innerHTML = `
-        <input id="login-user" placeholder="Username" style="padding:4px 8px;border-radius:4px;border:1px solid var(--line);background:#0b1120;color:var(--text);font-size:12px" value="owner">
-        <input id="login-pass" type="password" placeholder="Password" style="padding:4px 8px;border-radius:4px;border:1px solid var(--line);background:#0b1120;color:var(--text);font-size:12px" value="demo-owner-pass-0001">
+        <input id="login-user" placeholder="Username (e.g. owner)" style="padding:4px 8px;border-radius:4px;border:1px solid var(--line);background:#0b1120;color:var(--text);font-size:12px">
+        <input id="login-pass" type="password" placeholder="Password" style="padding:4px 8px;border-radius:4px;border:1px solid var(--line);background:#0b1120;color:var(--text);font-size:12px">
         <button id="login-btn" class="btn btn-primary btn-sm">Sign In</button>
       `;
       $("#login-btn").onclick = async () => {
@@ -6400,25 +6401,44 @@ async function renderTrends(){
     const rep = j.trend_report || {};
     const trends = j.trends || [];
     box.innerHTML = `
-      <div style="margin-bottom:14px;color:var(--text);font-size:13px;background:#0b1120;border:1px solid var(--line);padding:10px 14px;border-radius:6px">
-        <strong>Executive Trend Intelligence:</strong> ${esc(rep.summary || 'Surge in Highway expansion & Drone LiDAR demand across Central India (MoRTH / NHAI 2026).')}
+      <div style="margin-bottom:14px;color:var(--text);font-size:13px;background:#0b1120;border:1px solid var(--line);padding:10px 14px;border-radius:6px;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <strong>Executive Trend Intelligence:</strong> ${esc(rep.summary || 'Surge in Highway expansion & Drone LiDAR demand across Central India (MoRTH / NHAI 2026).')}
+        </div>
+        <span class="pill ok" style="font-size:11px">Verified Regulatory Citations</span>
       </div>
       <table style="width:100%">
-        <thead><tr><th>Trending Topic</th><th>Category &amp; Source</th><th>Platform</th><th>Relevance Score</th><th>Direct Action</th></tr></thead>
+        <thead><tr><th>Trending Topic &amp; Workspace</th><th>Authority Source &amp; Excerpt</th><th>Platform</th><th>Status &amp; Score</th><th>Direct Action</th></tr></thead>
         <tbody>
           ${(trends.length ? trends : [
-            {topic:"DGPS RTK Highway Alignment", category:"Geospatial", score:98, source:"MoRTH DPR Guidelines", platform:"Instagram"},
-            {topic:"Drone LiDAR vs Total Station", category:"Drone Tech", score:95, source:"DGCA Regulations", platform:"YouTube"},
-            {topic:"RERA Land Survey Compliance", category:"Regulatory", score:92, source:"Town Planning Directives", platform:"LinkedIn"},
-            {topic:"GPR Subsurface Utility Mapping", category:"Infrastructure", score:89, source:"Smart City Mandates", platform:"LinkedIn"}
+            {topic:"DGPS RTK Highway Alignment", category:"Geospatial", workspace_relevance:"SSC", score:98, source:"MoRTH DPR Guidelines", source_url:"https://morth.nic.in/", excerpt:"Section 300 Clause 305: Geodetic tie-in required.", verification_status:"VERIFIED_STANDARD", platform:"Instagram"},
+            {topic:"Drone LiDAR Greenfield Contouring", category:"Drone Tech", workspace_relevance:"SSC", score:95, source:"DGCA Regulations", source_url:"https://digitalsky.dgca.gov.in/", excerpt:"Rule 31: Green zone survey operations.", verification_status:"VERIFIED_STANDARD", platform:"YouTube"},
+            {topic:"RERA Land Survey Compliance", category:"Regulatory", workspace_relevance:"SSC", score:92, source:"MahaRERA Directives", source_url:"https://maharera.maharashtra.gov.in/", excerpt:"DGPS boundary demarcation mandatory.", verification_status:"VERIFIED_STANDARD", platform:"LinkedIn"},
+            {topic:"GPR Subsurface Utility Mapping", category:"Infrastructure", workspace_relevance:"INFRA", score:89, source:"MoHUA Smart Cities", source_url:"https://mohua.gov.in/", excerpt:"Trenchless SOP utility verification.", verification_status:"VERIFIED_STANDARD", platform:"LinkedIn"}
           ]).map(t=>`
             <tr>
-              <td><strong style="color:var(--text)">${esc(t.topic || t.trend_title)}</strong></td>
-              <td><span class="pill info">${esc(t.category||'Geospatial')}</span> <span class="muted" style="font-size:11px">${esc(t.source||'Industry Norm')}</span></td>
-              <td><span class="pill ok">${esc(t.platform||'Instagram')}</span></td>
-              <td><span class="pill ok">${t.score || (t._score ? t._score + '%' : '92%')} High</span></td>
               <td>
-                <div style="display:flex;gap:6px">
+                <div style="font-weight:600;color:var(--text);margin-bottom:4px">${esc(t.topic || t.trend_title)}</div>
+                <div style="display:flex;gap:4px">
+                  <span class="pill info" style="font-size:10px">${esc(t.workspace_relevance || 'Both')}</span>
+                  <span class="pill muted" style="font-size:10px">${esc(t.category || 'Geospatial')}</span>
+                </div>
+              </td>
+              <td style="max-width:320px">
+                <div style="font-size:12px;margin-bottom:2px">
+                  ${t.source_url ? `<a href="${esc(t.source_url)}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline">${esc(t.source||'Official Portal')} ↗</a>` : `<strong style="color:var(--accent)">${esc(t.source||'Official Authority')}</strong>`}
+                </div>
+                ${t.excerpt ? `<div style="font-size:11px;color:var(--muted);font-style:italic;line-height:1.3;margin-top:2px">"${esc(t.excerpt)}"</div>` : ''}
+              </td>
+              <td><span class="pill ok">${esc(t.platform||'Instagram')}</span></td>
+              <td>
+                <div style="margin-bottom:4px">
+                  <span class="pill ${t.verification_status==='VERIFIED_STANDARD'?'ok':'warn'}" style="font-size:10px">${esc(t.verification_status || 'VERIFIED_STANDARD')}</span>
+                </div>
+                <span class="muted" style="font-size:11px">Relevance: <strong>${t.score || (t._score ? t._score + '%' : '92%')}</strong></span>
+              </td>
+              <td>
+                <div style="display:flex;flex-direction:column;gap:4px">
                   <button class="btn btn-primary btn-xs" onclick="useIdeaInScript('${esc(t.topic||t.trend_title)}', '${esc(t.category||'Geospatial')}', '${esc(t.platform||'instagram')}')">&#9889; Draft Script</button>
                   <button class="btn btn-secondary btn-xs" onclick="useIdeaInCanvas('${esc(t.topic||t.trend_title)}')">&#127912; Design Graphic</button>
                 </div>

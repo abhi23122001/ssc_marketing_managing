@@ -1,0 +1,383 @@
+{
+  "suite_name": "SHAH GROUP AI OS \u2014 Real-World Functional Acceptance",
+  "timestamp": "2026-11-22T23:02:35.129796",
+  "tests": [
+    {
+      "id": "SEC-01",
+      "category": "RBAC",
+      "name": "Unauthenticated /api/auth/me rejected",
+      "status": "PASS",
+      "details": "Returned HTTP 401 as expected without token.",
+      "evidence": {
+        "status_code": 401
+      }
+    },
+    {
+      "id": "AUTH-OWNER",
+      "category": "Authentication",
+      "name": "Explicit login for Owner",
+      "status": "PASS",
+      "details": "Session token issued successfully for owner.",
+      "evidence": {
+        "user": "owner",
+        "role": "Owner"
+      }
+    },
+    {
+      "id": "AUTH-VIEWER",
+      "category": "Authentication",
+      "name": "Explicit login for Viewer",
+      "status": "PASS",
+      "details": "Session token issued successfully for viewer.",
+      "evidence": {
+        "user": "viewer",
+        "role": "Viewer"
+      }
+    },
+    {
+      "id": "AUTH-EMPLOYEE",
+      "category": "Authentication",
+      "name": "Explicit login for Employee",
+      "status": "PASS",
+      "details": "Session token issued successfully for employee.",
+      "evidence": {
+        "user": "employee",
+        "role": "Employee"
+      }
+    },
+    {
+      "id": "AUTH-FINANCE",
+      "category": "Authentication",
+      "name": "Explicit login for Finance",
+      "status": "PASS",
+      "details": "Session token issued successfully for finance.",
+      "evidence": {
+        "user": "finance",
+        "role": "Finance"
+      }
+    },
+    {
+      "id": "RBAC-01",
+      "category": "RBAC Security",
+      "name": "Viewer forbidden from /api/payroll/runs",
+      "status": "PASS",
+      "details": "Viewer correctly received HTTP 403 Forbidden.",
+      "evidence": {
+        "status_code": 403,
+        "response": {
+          "error": "payroll access restricted to Owner, HR Manager, and Finance Manager"
+        }
+      }
+    },
+    {
+      "id": "RBAC-02",
+      "category": "RBAC Security",
+      "name": "Employee forbidden from /api/payroll/runs",
+      "status": "PASS",
+      "details": "Employee correctly received HTTP 403 Forbidden.",
+      "evidence": {
+        "status_code": 403,
+        "response": {
+          "error": "payroll access restricted to Owner, HR Manager, and Finance Manager"
+        }
+      }
+    },
+    {
+      "id": "RBAC-03",
+      "category": "RBAC Security",
+      "name": "Owner authorized for /api/payroll/runs",
+      "status": "PASS",
+      "details": "Owner received HTTP 200 with 14 payroll runs.",
+      "evidence": {
+        "count": 14
+      }
+    },
+    {
+      "id": "RBAC-04",
+      "category": "RBAC Security",
+      "name": "Viewer forbidden from creating invoices",
+      "status": "PASS",
+      "details": "Viewer correctly received HTTP 403 Forbidden on POST /api/invoices.",
+      "evidence": {
+        "status_code": 403
+      }
+    },
+    {
+      "id": "RBAC-05",
+      "category": "RBAC Security",
+      "name": "Employee forbidden from creating invoices",
+      "status": "PASS",
+      "details": "Employee correctly received HTTP 403 Forbidden on POST /api/invoices.",
+      "evidence": {
+        "status_code": 403
+      }
+    },
+    {
+      "id": "RBAC-06",
+      "category": "RBAC Security",
+      "name": "Viewer forbidden from creating quotations",
+      "status": "PASS",
+      "details": "Viewer correctly received HTTP 403 Forbidden on POST /api/quotations.",
+      "evidence": {
+        "status_code": 403
+      }
+    },
+    {
+      "id": "AST-01",
+      "category": "Universal Assistant",
+      "name": "Staff query keyword isolation",
+      "status": "PASS",
+      "details": "Query 'employees' returned authoritative, factual answer.",
+      "evidence": {
+        "query": "employees",
+        "workspace": "SSC",
+        "answer_snippet": "**Team & Staff Roster for SSC (22 November 2026, 11:02 PM IST)**:\n\n- **Total Staff Members**: 27\n\n**Key Engineering & Fi"
+      }
+    },
+    {
+      "id": "AST-02",
+      "category": "Universal Assistant",
+      "name": "P&L financial summary",
+      "status": "PASS",
+      "details": "Query 'pl summary' returned authoritative, factual answer.",
+      "evidence": {
+        "query": "pl summary",
+        "workspace": "SSC",
+        "answer_snippet": "**Factual P&L Financial Report for SSC (As of 22 November 2026, 11:02 PM IST)**:\n\n- **Total Taxable Invoiced**: INR 2,54"
+      }
+    },
+    {
+      "id": "AST-03",
+      "category": "Universal Assistant",
+      "name": "Hinglish outstanding receivables",
+      "status": "PASS",
+      "details": "Query 'baki payment kitna hai' returned authoritative, factual answer.",
+      "evidence": {
+        "query": "baki payment kitna hai",
+        "workspace": "SSC",
+        "answer_snippet": "**Sabhi client invoices settled hain!** Koi bhi outstanding payment pending nahi hai (SSC)."
+      }
+    },
+    {
+      "id": "AST-04",
+      "category": "Universal Assistant",
+      "name": "CRM leads tenant isolation (INFRA)",
+      "status": "PASS",
+      "details": "Query 'leads status' returned authoritative, factual answer.",
+      "evidence": {
+        "query": "leads status",
+        "workspace": "INFRA",
+        "answer_snippet": "**CRM Leads Summary for INFRA (22 November 2026, 11:02 PM IST)**:\n\n- **Total Inquiries/Leads**: 3\n- **New / Unattended L"
+      }
+    },
+    {
+      "id": "AST-05",
+      "category": "Universal Assistant",
+      "name": "Empty workspace sites handling",
+      "status": "PASS",
+      "details": "Query 'sites overview' returned authoritative, factual answer.",
+      "evidence": {
+        "query": "sites overview",
+        "workspace": "NONEXISTENT",
+        "answer_snippet": "**Active Projects & Site Overview (NONEXISTENT)**:\n\n- **Total Survey Sites & Projects Registered**: 0\n- **Field Operatio"
+      }
+    },
+    {
+      "id": "AST-06",
+      "category": "Universal Assistant",
+      "name": "DGPS & RTK Survey of India standards",
+      "status": "PASS",
+      "details": "Query 'dgps rtk accuracy standards' returned authoritative, factual answer.",
+      "evidence": {
+        "query": "dgps rtk accuracy standards",
+        "workspace": "SSC",
+        "answer_snippet": "**DGPS & RTK Precision Standards (Survey of India GTS Tie-In)**:\n\n1. **Base Station Positioning**: Static observation on"
+      }
+    },
+    {
+      "id": "AST-07",
+      "category": "Universal Assistant",
+      "name": "DGCA Drone Regulations & GSD specs",
+      "status": "PASS",
+      "details": "Query 'drone lidar guidelines' returned authoritative, factual answer.",
+      "evidence": {
+        "query": "drone lidar guidelines",
+        "workspace": "SSC",
+        "answer_snippet": "**Drone Photogrammetry & Aerial LiDAR SOP (DGCA & Survey of India Compliant)**:\n\n1. **Flight Overlap**: Minimum 75% forw"
+      }
+    },
+    {
+      "id": "AST-08",
+      "category": "Universal Assistant",
+      "name": "MoRTH Section 300 compaction norms",
+      "status": "PASS",
+      "details": "Query 'morth compaction specifications' returned authoritative, factual answer.",
+      "evidence": {
+        "query": "morth compaction specifications",
+        "workspace": "INFRA",
+        "answer_snippet": "**MoRTH Section 300 & IRC Quality Specifications for Highways**:\n\n1. **Subgrade & Earthen Shoulders**: Must achieve mini"
+      }
+    },
+    {
+      "id": "AST-09",
+      "category": "Universal Assistant",
+      "name": "GeM & GFR 2017 public procurement rules",
+      "status": "PASS",
+      "details": "Query 'gem tender emd rules' returned authoritative, factual answer.",
+      "evidence": {
+        "query": "gem tender emd rules",
+        "workspace": "SSC",
+        "answer_snippet": "**Government Procurement & GeM Tender Guidelines**:\n\n1. **GeM Portal Qualification**: Ensure valid Udyam MSME Registrati"
+      }
+    },
+    {
+      "id": "AST-10",
+      "category": "Universal Assistant",
+      "name": "How-to software navigation guide",
+      "status": "PASS",
+      "details": "Query 'google drive kaise connect kare' returned authoritative, factual answer.",
+      "evidence": {
+        "query": "google drive kaise connect kare",
+        "workspace": "SSC",
+        "answer_snippet": "**Google Drive Connection Guide**:\n\n1. Sidebar me **Integration & Sync** par click karein.\n2. Top tabs me **Google Drive"
+      }
+    },
+    {
+      "id": "AST-11",
+      "category": "Universal Assistant",
+      "name": "GST Rule 46 invoices inquiry",
+      "status": "PASS",
+      "details": "Query 'recent tax invoices dikhao' returned authoritative, factual answer.",
+      "evidence": {
+        "query": "recent tax invoices dikhao",
+        "workspace": "SSC",
+        "answer_snippet": "**GST Tax Invoices Register (SSC)**:\n\nAll invoices comply strictly with GST Rule 46 (HSN/SAC 998315 for surveying).\n\n**R"
+      }
+    },
+    {
+      "id": "AST-12",
+      "category": "Universal Assistant",
+      "name": "Hindi greeting response",
+      "status": "PASS",
+      "details": "Query 'namaste kaise ho' returned authoritative, factual answer.",
+      "evidence": {
+        "query": "namaste kaise ho",
+        "workspace": "SSC",
+        "answer_snippet": "**Namaste! Main SHAH Group AI Assistant hoon.**\n\nMain aapke business operations, live projects, finances aur technical e"
+      }
+    },
+    {
+      "id": "TRD-01",
+      "category": "Industry Trends",
+      "name": "Live Grounded Trend Citations",
+      "status": "PASS",
+      "details": "8/8 trends contain verified government portal URLs, excerpts, and statuses.",
+      "evidence": {
+        "trends_count": 8,
+        "sample_source": "MoRTH Specifications for Road and Bridge Works (5th Rev)",
+        "sample_url": "https://morth.nic.in/"
+      }
+    },
+    {
+      "id": "INT-01",
+      "category": "Integrations",
+      "name": "Honest Google Account Status",
+      "status": "PASS",
+      "details": "Google Account correctly reports Cloud OAuth: Not Connected (Setup Required).",
+      "evidence": {
+        "id": "google_account",
+        "name": "Google Account (Core Auth)",
+        "icon": "\ud83c\udf10",
+        "status": "setup_required",
+        "status_label": "Cloud OAuth: Not Connected (Setup Required)",
+        "account_identifier": "Local Safe Staging Only (Offline / Zero Cost)",
+        "required_scopes": [
+          "https://www.googleapis.com/auth/userinfo.email",
+          "https://www.googleapis.com/auth/drive.file"
+        ],
+        "last_sync": "2026-11-22 23:02",
+        "troubleshooting": "Download client_secret.json from Google Cloud Console into credentials/ directory to activate live cloud OAuth."
+      }
+    },
+    {
+      "id": "INT-02",
+      "category": "Integrations",
+      "name": "Honest Google Drive Staging Status",
+      "status": "PASS",
+      "details": "Google Drive honestly labeled as Local Safe Staging Only (Offline / Zero Cost).",
+      "evidence": {
+        "id": "google_drive",
+        "name": "Google Drive (Cloud Storage)",
+        "icon": "\ud83d\udcc1",
+        "status": "setup_required",
+        "status_label": "Local Safe Staging Only (Offline / Zero Cost)",
+        "account_identifier": "SHAH GROUP AI OS / SSC (10 folders)",
+        "required_scopes": [
+          "https://www.googleapis.com/auth/drive.file"
+        ],
+        "last_sync": "2026-11-22 23:02",
+        "troubleshooting": "Files are staged locally in data/drive_sync/ and automatically mirrored upon cloud connection."
+      }
+    },
+    {
+      "id": "INT-03",
+      "category": "Integrations",
+      "name": "Honest Instagram Status",
+      "status": "PASS",
+      "details": "Instagram honestly reports token required when unconfigured.",
+      "evidence": {
+        "id": "instagram",
+        "name": "Instagram Professional",
+        "icon": "\ud83d\udcf7",
+        "status": "setup_required",
+        "status_label": "Cloud OAuth: Not Connected (Setup Required)",
+        "account_identifier": "@shah_surveyors (SSC) / @shah_infra (INFRA)",
+        "required_scopes": [
+          "instagram_basic",
+          "instagram_content_publish",
+          "instagram_manage_insights"
+        ],
+        "last_sync": "2026-11-22 23:02",
+        "troubleshooting": "Add INSTAGRAM_ACCESS_TOKEN to environment to enable live direct publishing."
+      }
+    },
+    {
+      "id": "INT-04",
+      "category": "Integrations",
+      "name": "Zero Paid Billing Enforced",
+      "status": "PASS",
+      "details": "Integration engine confirms zero paid billing mode active.",
+      "evidence": {}
+    },
+    {
+      "id": "FE-01",
+      "category": "Frontend Security",
+      "name": "No Hardcoded Credentials in HTML",
+      "status": "PASS",
+      "details": "Auto-login script and pre-filled password inputs completely eliminated.",
+      "evidence": {}
+    },
+    {
+      "id": "FE-02",
+      "category": "Frontend UX",
+      "name": "Dedicated Integration Hub by Connection Name",
+      "status": "PASS",
+      "details": "Connection cards for Google Drive, Sheets, and Social Accounts rendered with honest staging badges.",
+      "evidence": {}
+    },
+    {
+      "id": "FE-03",
+      "category": "Frontend UX",
+      "name": "ChatGPT-Style Universal Assistant UI",
+      "status": "PASS",
+      "details": "ChatGPT conversational layout, session controls, and input dock present.",
+      "evidence": {}
+    }
+  ],
+  "summary": {
+    "PASS": 31,
+    "PARTIAL": 0,
+    "BLOCKED": 0,
+    "FAIL": 0
+  }
+}

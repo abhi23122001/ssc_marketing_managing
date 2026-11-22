@@ -1,0 +1,93 @@
+{
+  "project": "SHAH GROUP AI OS",
+  "project_path": "C:\\Users\\HP\\Desktop\\ssc_marketing_managing",
+  "application_url": "http://127.0.0.1:8899/",
+  "audit_timestamp": "2026-11-22T23:05:00+05:30",
+  "baseline_commit": "bb32adc",
+  "backup_directory": "C:\\Users\\HP\\Desktop\\ssc_marketing_managing_backup_bb32adc_20261122",
+  "daemon_process": {
+    "port": 8899,
+    "entrypoint": "foundation/api.py",
+    "health_endpoint": "http://127.0.0.1:8899/health",
+    "status": "RUNNING"
+  },
+  "acceptance_summary": {
+    "total_tests": 31,
+    "pass": 31,
+    "partial": 0,
+    "blocked": 0,
+    "fail": 0,
+    "browser_console_errors": 0,
+    "zero_paid_billing_enforced": true
+  },
+  "remediated_defects": [
+    {
+      "id": "DEF-01",
+      "module": "foundation/domains/ai_intelligence.py",
+      "issue": "Substring collision on 'pl' caused employees query to route to financial P&L",
+      "resolution": "Applied regex word-boundary matching: re.search(r'\\b(pl|p&l|p/l)\\b', q_lower)",
+      "status": "VERIFIED_FIXED"
+    },
+    {
+      "id": "DEF-02",
+      "module": "foundation/domains/ai_intelligence.py",
+      "issue": "Hardcoded numbers (40 leads, 40 sites, 27 staff) in exception fallbacks",
+      "resolution": "Removed simulated fallbacks; accurately returns 0 records and guided message for empty datasets",
+      "status": "VERIFIED_FIXED"
+    },
+    {
+      "id": "DEF-03",
+      "module": "foundation/domains/ai_intelligence.py",
+      "issue": "SQL OperationalError: no such column status on sites and client_name on business_invoices",
+      "resolution": "Updated queries to use exact schema columns: geofence_radius_m for sites, client_id and amount_paid for business_invoices",
+      "status": "VERIFIED_FIXED"
+    },
+    {
+      "id": "DEF-04",
+      "module": "foundation/dashboard/dashboard.html",
+      "issue": "Insecure auto-login script on page load and hardcoded credentials in login inputs",
+      "resolution": "Eliminated auto-login fetch and cleared prefilled values from inputs; secure explicit login now required",
+      "status": "VERIFIED_FIXED"
+    },
+    {
+      "id": "DEF-05",
+      "module": "foundation/api.py",
+      "issue": "Unprivileged roles (Viewer/Employee) could view confidential payroll runs at /api/payroll/runs",
+      "resolution": "Added strict role verification: restricted to Owner, HR Manager, Finance Manager (HTTP 403 on Viewer/Employee)",
+      "status": "VERIFIED_FIXED"
+    },
+    {
+      "id": "DEF-06",
+      "module": "foundation/api.py",
+      "issue": "Missing permission checks on POST /api/invoices and POST /api/quotations",
+      "resolution": "Enforced server-side role gating returning HTTP 403 Forbidden for unauthorized mutation attempts",
+      "status": "VERIFIED_FIXED"
+    },
+    {
+      "id": "DEF-07",
+      "module": "foundation/domains/m19_core.py",
+      "issue": "Industry trends lacked verifiable sources, excerpts, and government portal URLs",
+      "resolution": "Enriched all 8 trends with real government URLs (MoRTH, DGCA, MahaRERA, SOI, IBM, GeM), excerpts, and verification flags",
+      "status": "VERIFIED_FIXED"
+    },
+    {
+      "id": "DEF-08",
+      "module": "foundation/domains/integrations_center.py",
+      "issue": "Misleading 'Connected' badges when external OAuth credentials or tokens are unconfigured",
+      "resolution": "Honestly reports 'Cloud OAuth: Not Connected (Setup Required)' and 'Local Safe Staging Only (Offline / Zero Cost)'",
+      "status": "VERIFIED_FIXED"
+    }
+  ],
+  "verification_artifacts": {
+    "test_runner": "scripts/run_real_world_acceptance.py",
+    "test_results_raw": "scripts/acceptance_results.json",
+    "cdp_browser_verification": "scripts/verify_all_fixes.js",
+    "acceptance_report": "SHAH_GROUP_AI_OS_REAL_WORLD_ACCEPTANCE_REPORT.md",
+    "assistant_verification": "SHAH_GROUP_AI_OS_ASSISTANT_VERIFICATION.md",
+    "marketing_verification": "SHAH_GROUP_AI_OS_MARKETING_STUDIO_VERIFICATION.md",
+    "google_integration_status": "SHAH_GROUP_AI_OS_GOOGLE_INTEGRATION_STATUS.md",
+    "security_verification": "SHAH_GROUP_AI_OS_SECURITY_VERIFICATION.md",
+    "regression_matrix_csv": "SHAH_GROUP_AI_OS_REGRESSION_TEST_MATRIX.csv",
+    "remaining_blockers": "SHAH_GROUP_AI_OS_REMAINING_BLOCKERS.md"
+  }
+}

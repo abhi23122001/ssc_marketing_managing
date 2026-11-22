@@ -1,0 +1,32 @@
+Test ID,Category,Test Description,Expected Result,Actual Result,Status,Verification Date
+SEC-01,RBAC Security,Unauthenticated /api/auth/me rejected,HTTP 401 Unauthorized,HTTP 401 Returned,PASS,2026-11-22
+AUTH-OWNER,Authentication,Explicit login for Owner role,HTTP 200 with session token,Session token issued,PASS,2026-11-22
+AUTH-VIEWER,Authentication,Explicit login for Viewer role,HTTP 200 with session token,Session token issued,PASS,2026-11-22
+AUTH-EMPLOYEE,Authentication,Explicit login for Employee role,HTTP 200 with session token,Session token issued,PASS,2026-11-22
+AUTH-FINANCE,Authentication,Explicit login for Finance role,HTTP 200 with session token,Session token issued,PASS,2026-11-22
+RBAC-01,RBAC Security,Viewer forbidden from /api/payroll/runs,HTTP 403 Forbidden,HTTP 403 Returned,PASS,2026-11-22
+RBAC-02,RBAC Security,Employee forbidden from /api/payroll/runs,HTTP 403 Forbidden,HTTP 403 Returned,PASS,2026-11-22
+RBAC-03,RBAC Security,Owner authorized for /api/payroll/runs,HTTP 200 with runs count,HTTP 200 with 14 runs,PASS,2026-11-22
+RBAC-04,RBAC Security,Viewer forbidden from creating invoices,HTTP 403 Forbidden on POST /api/invoices,HTTP 403 Returned,PASS,2026-11-22
+RBAC-05,RBAC Security,Employee forbidden from creating invoices,HTTP 403 Forbidden on POST /api/invoices,HTTP 403 Returned,PASS,2026-11-22
+RBAC-06,RBAC Security,Viewer forbidden from creating quotations,HTTP 403 Forbidden on POST /api/quotations,HTTP 403 Returned,PASS,2026-11-22
+AST-01,Universal Assistant,Staff query keyword isolation (employees vs pl),Employee roster displayed without P&L,Team & Staff roster returned,PASS,2026-11-22
+AST-02,Universal Assistant,Factual P&L financial summary,Accurate computation from invoices/expenses,Factual P&L returned,PASS,2026-11-22
+AST-03,Universal Assistant,Hinglish outstanding receivables,Accurate unpaid invoices report,Pending inward payments returned,PASS,2026-11-22
+AST-04,Universal Assistant,CRM leads tenant isolation (INFRA vs SSC),Zero leads reported for empty INFRA,Factually reports 0 leads,PASS,2026-11-22
+AST-05,Universal Assistant,Empty workspace project sites handling,Zero sites reported for NONEXISTENT,Factually reports 0 sites,PASS,2026-11-22
+AST-06,Universal Assistant,DGPS & RTK Survey of India standards,Cite GTS baseline tolerances and PDOP,Survey of India specs returned,PASS,2026-11-22
+AST-07,Universal Assistant,DGCA Drone LiDAR regulations & GSD specs,Cite DGCA Drone Rules and GSD limits,DGCA guidelines returned,PASS,2026-11-22
+AST-08,Universal Assistant,MoRTH Section 300 compaction specifications,Cite 97% MDD and IRC:SP:19 straight-edge,MoRTH Section 300 returned,PASS,2026-11-22
+AST-09,Universal Assistant,GeM & GFR 2017 public procurement rules,Cite Rule 170 MSME EMD exemptions,GeM / GFR guidelines returned,PASS,2026-11-22
+AST-10,Universal Assistant,Software how-to navigation guide,Step-by-step Drive connection guide,Connection steps returned,PASS,2026-11-22
+AST-11,Universal Assistant,GST Rule 46 tax invoices inquiry,Cite GST Rule 46 and query invoices,GST invoice register returned,PASS,2026-11-22
+AST-12,Universal Assistant,Multilingual Hindi greeting response,Natural Hindi conversation introduction,Namaste greeting returned,PASS,2026-11-22
+TRD-01,Industry Trends,Grounded regulatory trend citations,8/8 trends contain URLs and excerpts,All 8 trends verified with links,PASS,2026-11-22
+INT-01,Integrations,Honest Google Account status badging,Reports unconfigured OAuth honestly,Cloud OAuth: Not Connected shown,PASS,2026-11-22
+INT-02,Integrations,Honest Google Drive staging badging,Reports local safe staging honestly,Local Safe Staging Only shown,PASS,2026-11-22
+INT-03,Integrations,Honest Instagram token badging,Reports token required honestly,Setup Required (Token Missing) shown,PASS,2026-11-22
+INT-04,Integrations,Zero Paid Billing mode enforcement,zero_paid_billing flag true,Flag verified True,PASS,2026-11-22
+FE-01,Frontend Security,No hardcoded credentials in HTML,Auto-login and default values removed,Zero hardcoded secrets found,PASS,2026-11-22
+FE-02,Frontend UX,Dedicated integration hub by connection name,Dedicated sections for Drive Sheets Social,Connection sections verified,PASS,2026-11-22
+FE-03,Frontend UX,ChatGPT-Style Universal Assistant UI,Docked input and conversation container,ChatGPT layout verified,PASS,2026-11-22

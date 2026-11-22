@@ -874,12 +874,16 @@ class Handler(BaseHTTPRequestHandler):
             self._json_err(err, 403)
             return
         parts = [x for x in path.split("/") if x]
+        role = user.get("role") or ""
         if len(parts) == 2 and parts[1] == "quotations":
             if self.command == "GET":
                 quotations = self.store.list_quotations(ws)
                 self._json_ok({"quotations": quotations, "count": len(quotations)})
                 return
             if self.command == "POST":
+                if role not in ("Owner", "Manager", "Project Manager", "Finance Manager"):
+                    self._json_err("quotation creation restricted to Owner and Managers", 403)
+                    return
                 data = _read_json(self)
                 q = self.store.create_quotation(ws, data)
                 self._json_ok({"quotation": q}, 201)
@@ -894,6 +898,9 @@ class Handler(BaseHTTPRequestHandler):
                 self._json_ok({"quotation": q})
                 return
         if len(parts) == 4 and parts[1] == "quotations" and parts[3] in ("status", "accept") and self.command == "POST":
+            if role not in ("Owner", "Manager", "Project Manager", "Finance Manager"):
+                self._json_err("quotation modification restricted to Owner and Managers", 403)
+                return
             qid = int(parts[2])
             data = _read_json(self) if (self.headers.get("Content-Length") and int(self.headers.get("Content-Length", 0)) > 0) else {}
             status = data.get("status", "accepted") if parts[3] != "accept" else "accepted"
@@ -950,12 +957,16 @@ class Handler(BaseHTTPRequestHandler):
             self._json_err(err, 403)
             return
         parts = [x for x in path.split("/") if x]
+        role = user.get("role") or ""
         if len(parts) == 2 and parts[1] == "invoices":
             if self.command == "GET":
                 invs = self.store.list_invoices(ws)
                 self._json_ok({"invoices": invs, "count": len(invs)})
                 return
             if self.command == "POST":
+                if role not in ("Owner", "Finance Manager", "Manager"):
+                    self._json_err("invoice creation restricted to Owner and Finance Manager", 403)
+                    return
                 data = _read_json(self)
                 inv = self.store.create_invoice(ws, data)
                 self._json_ok({"invoice": inv}, 201)
@@ -970,6 +981,9 @@ class Handler(BaseHTTPRequestHandler):
                 self._json_ok({"invoice": inv})
                 return
         if len(parts) == 4 and parts[1] == "invoices" and parts[3] == "payment" and self.command == "POST":
+            if role not in ("Owner", "Finance Manager", "Manager"):
+                self._json_err("recording payment restricted to Owner and Finance Manager", 403)
+                return
             inv_id = int(parts[2])
             data = _read_json(self)
             updated = self.store.record_payment(ws, inv_id, data)
@@ -1145,8 +1159,9 @@ class Handler(BaseHTTPRequestHandler):
         if user is None:
             self._json_err("authentication required", 401)
             return
-        if not self._has(user, ("resource:read", "hr:manage", "finance:read")):
-            self._json_err("resource:read not permitted", 403)
+        role = user.get("role") or ""
+        if role not in ("Owner", "HR Manager", "Finance Manager"):
+            self._json_err("payroll access restricted to Owner, HR Manager, and Finance Manager", 403)
             return
         ws = user.get("workspace_id") or "SSC"
         actor_id = user.get("user_id") or user.get("id") or 1
@@ -1171,8 +1186,8 @@ class Handler(BaseHTTPRequestHandler):
         # /api/payroll/run (execute run & create payslips)
         if len(parts) == 3 and parts[2] == "run":
             if self.command == "POST":
-                if not self._has(user, ("resource:create", "hr:manage", "workspace:manage")):
-                    self._json_err("permission denied", 403)
+                if role not in ("Owner", "HR Manager"):
+                    self._json_err("permission denied: HR Manager or Owner required to execute payroll run", 403)
                     return
                 data = _read_json(self)
                 from datetime import datetime
@@ -1611,8 +1626,12 @@ class Handler(BaseHTTPRequestHandler):
                     return
                 if len(parts) == 2:
                     self._handle_publish_create(user)
-                elif len(parts) >= 3 and parts[2] == "reconcile":
+                elif len(parts) == 4 and parts[3] == "reconcile":
                     self._handle_publish_reconcile(user, parts[2])
+                elif len(parts) == 3 and parts[2] == "reconcile":
+                    data = _read_json(self) if (self.headers.get("Content-Length") and int(self.headers.get("Content-Length", 0)) > 0) else {}
+                    pid = data.get("job_id") or data.get("id") or 1
+                    self._handle_publish_reconcile(user, pid)
                 elif len(parts) >= 3:
                     self._handle_publish_detail(user, parts[2])
                 else:
@@ -2054,6 +2073,10 @@ class Handler(BaseHTTPRequestHandler):
         if status not in ("approved", "rejected", "withdrawn"):
             self._json_err("status must be approved/rejected/withdrawn", 400)
             return
+        if status in ("approved", "rejected"):
+            if not self._has(user, "approval:approve"):
+                self._json_err("permission denied: approval:approve required", 403)
+                return
         user_actor_id = user.get("user_id") if user.get("user_id") is not None else user.get("id")
         if user_actor_id is None:
             self._json_err("missing actor identity", 401)
@@ -2244,13 +2267,21 @@ class Handler(BaseHTTPRequestHandler):
             return
         self._json_ok({"job": row})
 
-    def _handle_publish_reconcile(self, user: dict, pid: str) -> None:
+    def _handle_publish_reconcile(self, user: dict, pid: Any) -> None:
         """Reconcile a publish outcome."""
         from foundation.domains import m19_workflow
         try:
-            job = m19_workflow.reconcile_publish(self.store, int(pid))
+            job_id = int(pid)
+        except (ValueError, TypeError):
+            self._json_err(f"invalid publish job id: {pid}", 400)
+            return
+        try:
+            job = m19_workflow.reconcile_publish(self.store, job_id)
         except LookupError as e:
             self._json_err(str(e), 404)
+            return
+        except Exception as e:
+            self._json_err(str(e), 400)
             return
         self._json_ok({"job": job})
 
@@ -2492,7 +2523,7 @@ class Handler(BaseHTTPRequestHandler):
         # Workspace resolution: Owner can query any workspace specified via query param / body or session;
         # other roles are strictly bound to their assigned workspace.
         assigned_ws = user.get("workspace_id") or "SSC"
-        req_ws = qs.get("workspace", [None])[0] or data.get("workspace")
+        req_ws = qs.get("workspace", [None])[0] or qs.get("workspace_id", [None])[0] or data.get("workspace") or data.get("workspace_id")
         if user.get("role") == "Owner" and req_ws:
             ws = req_ws
         else:
@@ -2507,7 +2538,7 @@ class Handler(BaseHTTPRequestHandler):
             if not q:
                 self._json_err("query required", 400)
                 return
-            body_ws = data.get("workspace")
+            body_ws = data.get("workspace") or data.get("workspace_id")
             target_ws = body_ws if (user.get("role") == "Owner" and body_ws) else ws
             ans = ai_intelligence.ask_anything(self.store, q, target_ws, user.get("role", "Owner"))
             self._json_ok({"answer": ans})
@@ -2829,7 +2860,7 @@ class Handler(BaseHTTPRequestHandler):
         from foundation.domains import google_sheets_sync, integrations_center
 
         # Central Health Monitor
-        if path == "/api/integrations/center/health":
+        if path in ("/api/integrations/center/health", "/api/integrations/status"):
             self._json_ok(integrations_center.get_integration_health_monitor(self.store, ws))
             return
 
