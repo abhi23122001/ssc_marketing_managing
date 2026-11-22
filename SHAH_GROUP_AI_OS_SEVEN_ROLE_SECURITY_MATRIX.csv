@@ -1,0 +1,8 @@
+Role,Seat,Assigned_Workspace,Workspace_Scope,Permissions_Granted,Can_Approve_Quotations,Can_Manage_Invoices,Can_Manage_HR,Can_Log_Attendance,Can_View_Financials,Can_Query_AI_Brain
+Owner,owner,SSC | INFRA | OTHER,Global Cross-Workspace,*,YES,YES,YES,YES,YES,YES
+Manager,manager,SSC,Workspace Isolated (SSC),"workspace:list, workspace:read, workspace:manage, resource:*, approval:*, audit:list, report:*, ai:brain:query, employees:read, attendance:read, expense:read, payroll:read, leads:*, clients:*, sites:*, tasks:*, quotations:*, invoices:read, finance:read, social:*, integrations:read",YES,NO (Read Only),YES (Audit Only),YES,YES,YES
+Project Manager,pm,INFRA,Workspace Isolated (INFRA),"workspace:read, resource:read/create/edit, approval:create/comment, report:read, ai:brain:query, sites:*, tasks:*, attendance:*, employees:read, leads:read, quotations:read",NO (Submit Only),NO,NO,YES,NO,YES
+Finance Manager,finance,INFRA,Workspace Isolated (INFRA),"workspace:read, resource:read, approval:*, report:*, ai:brain:query, quotations:*, invoices:*, finance:*, expense:*, payroll:*",YES,YES,NO,YES,YES,YES
+HR Manager,hr,OTHER,Workspace Isolated (OTHER),"workspace:read, resource:read, approval:create/comment, report:read, ai:brain:query, employees:*, attendance:*, expense:read, payroll:read",NO,NO,YES,YES,NO,YES
+Employee,employee,SSC,Workspace Isolated (SSC),"workspace:read, resource:read, approval:create/comment, report:read, ai:brain:query, tasks:manage, attendance:manage, expense:read",NO,NO,NO,YES,NO,YES
+Viewer,viewer,INFRA,Workspace Isolated (INFRA),"workspace:read, resource:read, report:read, ai:brain:query",NO,NO,NO,NO,NO,YES

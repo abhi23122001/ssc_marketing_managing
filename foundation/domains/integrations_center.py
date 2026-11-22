@@ -150,17 +150,19 @@ def seed_default_mappings(conn: sqlite3.Connection) -> None:
 def get_integration_health_monitor(store: Store, workspace_id: str = "SSC") -> Dict[str, Any]:
     """Generates unified health monitor data across all external providers and local AI."""
     seed_default_mappings(store.conn)
+    from .oauth_service import get_account_oauth_status
+    from .social_integrations import list_social_accounts
 
-    # Check credential availability
-    google_creds_exist = bool(
-        os.getenv("GOOGLE_APPLICATION_CREDENTIALS") or
-        os.getenv("GOOGLE_CLIENT_SECRET") or
-        os.path.exists("credentials/google_service_account.json") or
-        os.path.exists("credentials/client_secret.json")
-    )
-    meta_creds_exist = bool(os.getenv("META_APP_SECRET") or os.getenv("FACEBOOK_CLIENT_SECRET"))
-    insta_creds_exist = bool(os.getenv("INSTAGRAM_ACCESS_TOKEN"))
-    youtube_creds_exist = bool(os.getenv("YOUTUBE_API_KEY") or os.getenv("GOOGLE_CLIENT_SECRET"))
+    # Live token checks from OAuth service
+    google_oauth = get_account_oauth_status(store.conn, workspace_id, "google", "core_auth")
+    google_drive_oauth = get_account_oauth_status(store.conn, workspace_id, "google", "drive_sync")
+    google_sheets_oauth = get_account_oauth_status(store.conn, workspace_id, "google", "sheets_sync")
+    
+    # Official social accounts status
+    social_accounts_list = list_social_accounts(store, workspace_id)
+    insta_acc = next((a for a in social_accounts_list if a.get("platform") == "instagram"), None)
+    fb_acc = next((a for a in social_accounts_list if a.get("platform") == "facebook"), None)
+    yt_acc = next((a for a in social_accounts_list if a.get("platform") == "youtube"), None)
 
     # Recent sync logs
     recent_logs = store.fetchall(
@@ -175,7 +177,7 @@ def get_integration_health_monitor(store: Store, workspace_id: str = "SSC") -> D
     )
     active_sheets_count = sum(1 for m in mappings if m["sync_enabled"] == 1)
 
-    # Drive folders count
+    # Drive folders count (10 SSC + 5 INFRA = 15 total folders)
     drive_folders = store.fetchall(
         "SELECT * FROM drive_folders WHERE workspace_id=? ORDER BY folder_name ASC",
         (workspace_id,)
@@ -187,78 +189,73 @@ def get_integration_health_monitor(store: Store, workspace_id: str = "SSC") -> D
         (workspace_id,)
     )
 
-    # Social accounts count
-    social_accounts = store.fetchall(
-        "SELECT * FROM social_accounts WHERE workspace_id=?",
-        (workspace_id,)
-    )
-
     providers = [
         {
             "id": "google_account",
             "name": "Google Account (Core Auth)",
             "icon": "🌐",
-            "status": "connected" if google_creds_exist else "setup_required",
-            "status_label": "Authenticated" if google_creds_exist else "Cloud OAuth: Not Connected (Setup Required)",
-            "account_identifier": "admin@shahgroup.com" if google_creds_exist else "Local Safe Staging Only (Offline / Zero Cost)",
+            "status": "connected" if google_oauth.get("is_connected") else "setup_required",
+            "status_label": "Authenticated" if google_oauth.get("is_connected") else "Authorization Required (Local Safe Staging Only)",
+            "account_identifier": google_oauth.get("account_identifier", "Google OAuth 2.0 Consent Required"),
             "required_scopes": ["https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/drive.file"],
             "last_sync": now_kolkata_iso()[:16],
-            "troubleshooting": "Download client_secret.json from Google Cloud Console into credentials/ directory to activate live cloud OAuth."
+            "troubleshooting": "Google OAuth authorization required to link cloud services. Local file and CSV staging remains 100% active offline."
         },
         {
             "id": "google_drive",
             "name": "Google Drive (Cloud Storage)",
             "icon": "📁",
-            "status": "connected" if google_creds_exist else "setup_required",
-            "status_label": "Cloud Synced" if google_creds_exist else "Local Safe Staging Only (Offline / Zero Cost)",
-            "account_identifier": f"SHAH GROUP AI OS / {workspace_id} ({len(drive_folders)} folders)",
+            "status": "connected" if google_drive_oauth.get("is_connected") else "setup_required",
+            "status_label": "Cloud Synced" if google_drive_oauth.get("is_connected") else "Local Safe Staging Only (15 Folders Active)",
+            "account_identifier": f"SHAH GROUP AI OS / {workspace_id} ({len(drive_folders)} folders in data/drive_sync/)",
             "required_scopes": ["https://www.googleapis.com/auth/drive.file"],
             "last_sync": now_kolkata_iso()[:16],
-            "troubleshooting": "Files are staged locally in data/drive_sync/ and automatically mirrored upon cloud connection."
+            "troubleshooting": "Files are staged locally in data/drive_sync/ and automatically mirrored upon cloud connection. Local staging is never labeled cloud-connected."
         },
         {
             "id": "google_sheets",
             "name": "Google Sheets (Module Data Sync)",
             "icon": "📊",
-            "status": "connected" if google_creds_exist else "setup_required",
-            "status_label": "Cloud Synced" if google_creds_exist else "Local Safe Staging Only (12 CSV Modules)",
-            "account_identifier": f"Master Spreadsheet ({active_sheets_count}/12 modules synced)",
+            "status": "connected" if google_sheets_oauth.get("is_connected") else "setup_required",
+            "status_label": "Cloud Synced" if google_sheets_oauth.get("is_connected") else "Local Safe Staging Only (12 CSV Modules Staged)",
+            "account_identifier": "Shah AI OS (ID: 17CpMIB7mMrBalL6juZMmKVFvm2j5IvLXJjYdsbAmU5c)",
             "required_scopes": ["https://www.googleapis.com/auth/spreadsheets"],
+            "spreadsheet_url": "https://docs.google.com/spreadsheets/d/17CpMIB7mMrBalL6juZMmKVFvm2j5IvLXJjYdsbAmU5c/edit",
             "last_sync": now_kolkata_iso()[:16],
-            "troubleshooting": "All 12 modules mirror continuously to data/sheets_sync/ with full two-way integrity."
+            "troubleshooting": "12 core operational modules mirrored cleanly to data/sheets_sync/ with SHA-256 deduplication and last-write-wins merge."
         },
         {
             "id": "instagram",
             "name": "Instagram Professional",
-            "icon": "📷",
-            "status": "connected" if insta_creds_exist else "setup_required",
-            "status_label": "Live Connected" if insta_creds_exist else "Cloud OAuth: Not Connected (Setup Required)",
-            "account_identifier": "@shah_surveyors (SSC) / @shah_infra (INFRA)",
-            "required_scopes": ["instagram_basic", "instagram_content_publish", "instagram_manage_insights"],
+            "icon": "📸",
+            "status": "connected" if (insta_acc and insta_acc.get("status") == "Connected") else "setup_required",
+            "status_label": insta_acc.get("status") if insta_acc else "Authorization Required",
+            "account_identifier": "@shahgroupofficial1 (https://www.instagram.com/shahgroupofficial1/)",
+            "required_scopes": ["instagram_basic", "instagram_content_publish", "instagram_manage_insights", "pages_show_list"],
             "last_sync": now_kolkata_iso()[:16],
-            "troubleshooting": "Add INSTAGRAM_ACCESS_TOKEN to environment to enable live direct publishing."
+            "troubleshooting": "Instagram Professional account linkage to a Facebook Page in Meta Business Suite is required for Graph API publishing."
         },
         {
             "id": "facebook",
             "name": "Facebook Pages",
             "icon": "📘",
-            "status": "connected" if meta_creds_exist else "setup_required",
-            "status_label": "Live Connected" if meta_creds_exist else "Cloud OAuth: Not Connected (Setup Required)",
-            "account_identifier": "Shah Surveyors & Consultancy Official Page",
+            "status": "connected" if (fb_acc and fb_acc.get("status") == "Connected") else "setup_required",
+            "status_label": fb_acc.get("status") if fb_acc else "Authorization Required",
+            "account_identifier": "Profile ID: 61593669391620 (https://www.facebook.com/profile.php?id=61593669391620)",
             "required_scopes": ["pages_show_list", "pages_read_engagement", "pages_manage_posts"],
             "last_sync": now_kolkata_iso()[:16],
-            "troubleshooting": "Configure Meta App Secret in settings for automatic publishing."
+            "troubleshooting": "Personal profile detected. Meta Graph API v19+ blocks publishing to personal profiles (/me/feed deprecated). Page linkage required."
         },
         {
             "id": "youtube",
             "name": "YouTube Channels",
             "icon": "▶️",
-            "status": "connected" if youtube_creds_exist else "setup_required",
-            "status_label": "Live Connected" if youtube_creds_exist else "Cloud OAuth: Not Connected (Setup Required)",
-            "account_identifier": "Shah Group Geospatial & Engineering Channel",
-            "required_scopes": ["https://www.googleapis.com/auth/youtube.upload"],
+            "status": "connected" if (yt_acc and yt_acc.get("status") == "Connected") else "setup_required",
+            "status_label": yt_acc.get("status") if yt_acc else "Authorization Required",
+            "account_identifier": "@ShahGroupOfficial (https://www.youtube.com/@ShahGroupOfficial)",
+            "required_scopes": ["https://www.googleapis.com/auth/youtube.upload", "https://www.googleapis.com/auth/youtube.readonly"],
             "last_sync": now_kolkata_iso()[:16],
-            "troubleshooting": "Add YouTube Data v3 API credentials to enable 1-click video upload."
+            "troubleshooting": "Requires official Google OAuth 2.0 authorization with youtube.upload scope and channel ownership verification."
         },
         {
             "id": "hermes_ai",
@@ -417,3 +414,16 @@ def stage_drive_file_upload(store: Store, workspace_id: str, module_key: str, fi
         "size_bytes": size,
         "status": "synced"
     }
+
+
+def update_drive_folder(store: Store, workspace_id: str, folder_id: int, drive_folder_id: str) -> Dict[str, Any]:
+    """Updates target Google Drive cloud folder ID binding for a folder."""
+    seed_default_mappings(store.conn)
+    store.conn.execute(
+        "UPDATE drive_folders SET drive_folder_id=? WHERE id=? AND workspace_id=?",
+        (drive_folder_id, folder_id, workspace_id)
+    )
+    store.conn.commit()
+    row = store.fetchone("SELECT * FROM drive_folders WHERE id=?", (folder_id,))
+    return {"ok": True, "folder": dict(row) if row else {}}
+

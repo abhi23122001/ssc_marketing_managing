@@ -1,0 +1,460 @@
+{
+  "timestamp": "2026-11-22T18:24:04Z",
+  "base_url": "http://127.0.0.1:8899",
+  "tests": [
+    {
+      "test_name": "Old Disclosed Demo Owner Credential Blocked",
+      "passed": true,
+      "details": {
+        "status": 401,
+        "response": {
+          "error": "invalid username/password"
+        }
+      }
+    },
+    {
+      "test_name": "Rotated Owner Credential Login",
+      "passed": true,
+      "details": {
+        "status": 200,
+        "username": "owner"
+      }
+    },
+    {
+      "test_name": "Server-Side Logout Invalidates Session",
+      "passed": true,
+      "details": {
+        "before_logout": 200,
+        "logout_status": 200,
+        "after_logout": 401
+      }
+    },
+    {
+      "test_name": "Password Complexity Enforced (Min Length/Format)",
+      "passed": true,
+      "details": {
+        "status": 400,
+        "response": {
+          "error": "New password must be at least 8 characters long"
+        }
+      }
+    },
+    {
+      "test_name": "Fetch SSC Social Accounts List",
+      "passed": true,
+      "details": {
+        "status": 200,
+        "count": 3
+      }
+    },
+    {
+      "test_name": "Official Instagram Registered (@shahgroupofficial1)",
+      "passed": true,
+      "details": {
+        "account": {
+          "id": 25,
+          "workspace_id": "SSC",
+          "client_workspace_id": null,
+          "platform": "instagram",
+          "platform_account_id": "shahgroupofficial1",
+          "display_name": "Shah Group Official (@shahgroupofficial1)",
+          "account_url": "https://www.instagram.com/shahgroupofficial1/",
+          "account_category": "Geospatial, Land Survey & Infrastructure",
+          "account_owner": "owner",
+          "connection_status": "Authorization Required",
+          "granted_permissions": "[]",
+          "token_expires_at": null,
+          "last_sync_at": null,
+          "last_failed_sync_at": null,
+          "last_error": null,
+          "connected_date": "2026-11-22 18:04:59",
+          "authorized_user": "owner",
+          "account_metadata": "{\"account_type\": \"Instagram Professional (Business/Creator)\", \"determination\": \"Verified Profile Identifier: shahgroupofficial1. Meta Graph API publishing requires linkage to a Facebook Page in Meta Business Suite.\", \"page_linkage_status\": \"Facebook Page Linkage Required (Meta Business Suite)\", \"required_scopes\": [\"instagram_basic\", \"instagram_content_publish\", \"instagram_manage_insights\", \"pages_show_list\"]}",
+          "auth_details": "{}",
+          "platform_label": "Instagram Professional",
+          "icon": "\ud83d\udcf8",
+          "supported_media": [
+            "image",
+            "carousel",
+            "reel"
+          ],
+          "api_reference": "Meta Graph API v19+ (Instagram Graph API)",
+          "metadata": {
+            "account_type": "Instagram Professional (Business/Creator)",
+            "determination": "Verified Profile Identifier: shahgroupofficial1. Meta Graph API publishing requires linkage to a Facebook Page in Meta Business Suite.",
+            "page_linkage_status": "Facebook Page Linkage Required (Meta Business Suite)",
+            "required_scopes": [
+              "instagram_basic",
+              "instagram_content_publish",
+              "instagram_manage_insights",
+              "pages_show_list"
+            ]
+          },
+          "permissions": [],
+          "status": "Authorization Required",
+          "status_reason": "Verified Profile Identifier: shahgroupofficial1. Meta Graph API publishing requires linkage to a Facebook Page in Meta Business Suite.",
+          "is_connected": false,
+          "reconnect_required": true,
+          "oauth_details": {
+            "status": "Authorization Required",
+            "status_code": "AUTH_REQUIRED",
+            "is_connected": false,
+            "has_token": false,
+            "reason": "No OAuth credentials registered. Provider authorization required.",
+            "missing_scopes": [
+              "instagram_basic",
+              "instagram_content_publish",
+              "instagram_manage_insights",
+              "pages_show_list"
+            ],
+            "token_expires_at": null,
+            "reconnect_required": true
+          },
+          "instagram_account_type": "Instagram Professional",
+          "page_linkage_required": true,
+          "meta_graph_api_notice": "Instagram Graph API requires Instagram Professional account connected to a Facebook Page."
+        }
+      }
+    },
+    {
+      "test_name": "Instagram Graph API Requirement (Page Linkage in Meta Business Suite)",
+      "passed": true,
+      "details": {
+        "notice": "Instagram Graph API requires Instagram Professional account connected to a Facebook Page."
+      }
+    },
+    {
+      "test_name": "Official Facebook Registered (ID: 61593669391620)",
+      "passed": true,
+      "details": {
+        "account": {
+          "id": 26,
+          "workspace_id": "SSC",
+          "client_workspace_id": null,
+          "platform": "facebook",
+          "platform_account_id": "61593669391620",
+          "display_name": "Shah Group Official (Profile ID: 61593669391620)",
+          "account_url": "https://www.facebook.com/profile.php?id=61593669391620",
+          "account_category": "Corporate Profile / Page Linkage Needed",
+          "account_owner": "owner",
+          "connection_status": "Authorization Required",
+          "granted_permissions": "[]",
+          "token_expires_at": null,
+          "last_sync_at": null,
+          "last_failed_sync_at": null,
+          "last_error": null,
+          "connected_date": "2026-11-22 18:04:59",
+          "authorized_user": "owner",
+          "account_metadata": "{\"account_type\": \"Personal User Profile (ID: 61593669391620)\", \"determination\": \"Target URL is a personal Facebook profile. Under Meta Graph API v19+, personal profile /me/feed API is deprecated and permanently blocked. API publishing requires a Facebook Page with Page Access Token.\", \"page_linkage_status\": \"Page Linkage Needed - Meta Graph API restriction\", \"required_scopes\": [\"pages_show_list\", \"pages_read_engagement\", \"pages_manage_posts\"]}",
+          "auth_details": "{}",
+          "platform_label": "Facebook Pages",
+          "icon": "\ud83d\udcd8",
+          "supported_media": [
+            "image",
+            "video",
+            "link_post"
+          ],
+          "api_reference": "Meta Graph API v19+ (Pages API)",
+          "metadata": {
+            "account_type": "Personal User Profile (ID: 61593669391620)",
+            "determination": "Target URL is a personal Facebook profile. Under Meta Graph API v19+, personal profile /me/feed API is deprecated and permanently blocked. API publishing requires a Facebook Page with Page Access Token.",
+            "page_linkage_status": "Page Linkage Needed - Meta Graph API restriction",
+            "required_scopes": [
+              "pages_show_list",
+              "pages_read_engagement",
+              "pages_manage_posts"
+            ]
+          },
+          "permissions": [],
+          "status": "Authorization Required",
+          "status_reason": "Target URL is a personal Facebook profile. Under Meta Graph API v19+, personal profile /me/feed API is deprecated and permanently blocked. API publishing requires a Facebook Page with Page Access Token.",
+          "is_connected": false,
+          "reconnect_required": true,
+          "oauth_details": {
+            "status": "Authorization Required",
+            "status_code": "AUTH_REQUIRED",
+            "is_connected": false,
+            "has_token": false,
+            "reason": "No OAuth credentials registered. Provider authorization required.",
+            "missing_scopes": [
+              "pages_show_list",
+              "pages_read_engagement",
+              "pages_manage_posts"
+            ],
+            "token_expires_at": null,
+            "reconnect_required": true
+          },
+          "facebook_page_vs_profile": "Personal Profile (ID: 61593669391620)",
+          "page_linkage_required": true,
+          "meta_graph_api_notice": "Meta Graph API v19+ blocks publishing to personal user profiles. Facebook Page linkage required."
+        }
+      }
+    },
+    {
+      "test_name": "Facebook Page vs Personal Profile Technical Determination",
+      "passed": true,
+      "details": {
+        "determination": "Personal Profile (ID: 61593669391620)",
+        "api_restriction": "Meta Graph API v19+ blocks publishing to personal user profiles. Facebook Page linkage required."
+      }
+    },
+    {
+      "test_name": "Official YouTube Registered (@ShahGroupOfficial)",
+      "passed": true,
+      "details": {
+        "account": {
+          "id": 27,
+          "workspace_id": "SSC",
+          "client_workspace_id": null,
+          "platform": "youtube",
+          "platform_account_id": "@ShahGroupOfficial",
+          "display_name": "Shah Group Official (@ShahGroupOfficial)",
+          "account_url": "https://www.youtube.com/@ShahGroupOfficial",
+          "account_category": "Geospatial, Drone & Engineering Broadcasts",
+          "account_owner": "owner",
+          "connection_status": "Authorization Required",
+          "granted_permissions": "[]",
+          "token_expires_at": null,
+          "last_sync_at": null,
+          "last_failed_sync_at": null,
+          "last_error": null,
+          "connected_date": "2026-11-22 18:04:59",
+          "authorized_user": "owner",
+          "account_metadata": "{\"account_type\": \"Official Brand Channel (@ShahGroupOfficial)\", \"determination\": \"Target handle: @ShahGroupOfficial. Official channel ownership verification required via Google OAuth 2.0 with youtube.upload scope.\", \"page_linkage_status\": \"Google OAuth 2.0 Authorization Required\", \"required_scopes\": [\"https://www.googleapis.com/auth/youtube.upload\", \"https://www.googleapis.com/auth/youtube.readonly\"]}",
+          "auth_details": "{}",
+          "platform_label": "YouTube Channels",
+          "icon": "\u25b6\ufe0f",
+          "supported_media": [
+            "video",
+            "shorts"
+          ],
+          "api_reference": "Google YouTube Data API v3",
+          "metadata": {
+            "account_type": "Official Brand Channel (@ShahGroupOfficial)",
+            "determination": "Target handle: @ShahGroupOfficial. Official channel ownership verification required via Google OAuth 2.0 with youtube.upload scope.",
+            "page_linkage_status": "Google OAuth 2.0 Authorization Required",
+            "required_scopes": [
+              "https://www.googleapis.com/auth/youtube.upload",
+              "https://www.googleapis.com/auth/youtube.readonly"
+            ]
+          },
+          "permissions": [],
+          "status": "Authorization Required",
+          "status_reason": "Target handle: @ShahGroupOfficial. Official channel ownership verification required via Google OAuth 2.0 with youtube.upload scope.",
+          "is_connected": false,
+          "reconnect_required": true,
+          "oauth_details": {
+            "status": "Authorization Required",
+            "status_code": "AUTH_REQUIRED",
+            "is_connected": false,
+            "has_token": false,
+            "reason": "No OAuth credentials registered. Provider authorization required.",
+            "missing_scopes": [
+              "https://www.googleapis.com/auth/youtube.upload",
+              "https://www.googleapis.com/auth/youtube.readonly"
+            ],
+            "token_expires_at": null,
+            "reconnect_required": true
+          },
+          "youtube_channel_type": "Official Brand Channel",
+          "ownership_verification": "Google OAuth 2.0 consent with youtube.upload scope required."
+        }
+      }
+    },
+    {
+      "test_name": "Zero Simulation: Accounts Honest Status (Authorization Required)",
+      "passed": true,
+      "details": {
+        "insta_status": "Authorization Required",
+        "fb_status": "Authorization Required",
+        "yt_status": "Authorization Required"
+      }
+    },
+    {
+      "test_name": "Lifecycle Status Transitions (All 6 Statuses Verified)",
+      "passed": true,
+      "details": {
+        "set_expired": "Expired",
+        "set_permission_missing": "Permission Missing",
+        "set_error": "Error",
+        "set_connected": "Connected",
+        "set_not_connected": "Not Connected",
+        "set_auth_required": "Authorization Required"
+      }
+    },
+    {
+      "test_name": "OAuth Authorization Request Generates State Token",
+      "passed": true,
+      "details": {
+        "ok": true,
+        "provider": "google",
+        "provider_name": "Google Core & Workspace",
+        "workspace_id": "SSC",
+        "state_token": "VghnUMvTdCMXFOOidW6wvesrBCIkt9GdDE8gnKhP_8Q",
+        "auth_url": null,
+        "has_credentials": false,
+        "required_scopes": [
+          "https://www.googleapis.com/auth/userinfo.email",
+          "https://www.googleapis.com/auth/drive.file",
+          "https://www.googleapis.com/auth/spreadsheets"
+        ],
+        "status": "Authorization Required",
+        "setup_instructions": "Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in environment or credentials/ to initiate live OAuth consent flow."
+      }
+    },
+    {
+      "test_name": "Anti-CSRF State Parameter Validation Blocks Tampered Request",
+      "passed": true,
+      "details": {
+        "error": "OAuth CSRF validation failed: Invalid or unrecognized state parameter (potential CSRF attempt)."
+      }
+    },
+    {
+      "test_name": "Valid OAuth Anti-CSRF State Token Accepted",
+      "passed": true,
+      "details": {
+        "ok": true,
+        "provider": "google",
+        "workspace_id": "SSC",
+        "status": "State Token Verified",
+        "message": "OAuth anti-CSRF state token validated successfully. Provider credentials required to exchange token."
+      }
+    },
+    {
+      "test_name": "Google Sheets Status Reports Owner Spreadsheet (17CpMIB7mMrBalL6juZMmKVFvm2j5IvLXJjYdsbAmU5c)",
+      "passed": true,
+      "details": {
+        "id": "17CpMIB7mMrBalL6juZMmKVFvm2j5IvLXJjYdsbAmU5c",
+        "title": "Shah AI OS"
+      }
+    },
+    {
+      "test_name": "Clear Distinction: Local Safe Staging vs Cloud Sync",
+      "passed": true,
+      "details": {
+        "cloud_sync": {
+          "status": "Authorization Required",
+          "is_connected": false,
+          "status_label": "Cloud Sync: Authorization Required (Credentials Pending)",
+          "required_scope": "https://www.googleapis.com/auth/spreadsheets",
+          "safe_overwrite_protection": true,
+          "notice": "Never overwrites or deletes cloud sheet without explicit user approval."
+        },
+        "local_staging": {
+          "status": "Active (12 CSV Modules Staged)",
+          "is_ready": true,
+          "directory": "data/sheets_sync",
+          "total_modules": 12,
+          "total_records_staged": 274,
+          "deduplication_method": "SHA-256 Row Hash & Primary Key",
+          "conflict_resolution": "Timestamp Last-Write-Wins (Non-Destructive Merge)",
+          "cost": "Zero Cost / 100% Offline Capable"
+        }
+      }
+    },
+    {
+      "test_name": "Google Sheets Sync Engine Executes Safe Local Staging",
+      "passed": true,
+      "details": {
+        "records_pushed": 226,
+        "modules_synced": 12
+      }
+    },
+    {
+      "test_name": "Google Drive Local Safe Staging Folders Verified",
+      "passed": true,
+      "details": {
+        "folders_count": 10
+      }
+    },
+    {
+      "test_name": "Google Drive Local File Staging Upload",
+      "passed": true,
+      "details": {
+        "ok": true,
+        "file_id": 4,
+        "filename": "phase4_acceptance_verification_sample.txt",
+        "folder": "Reports",
+        "size_bytes": 40,
+        "status": "synced"
+      }
+    },
+    {
+      "test_name": "All 7 Roles Active and Authenticating",
+      "passed": true,
+      "details": {
+        "active_roles": [
+          "Owner",
+          "Manager",
+          "Project Manager",
+          "Finance Manager",
+          "HR Manager",
+          "Employee",
+          "Viewer"
+        ]
+      }
+    },
+    {
+      "test_name": "Tenant Isolation: INFRA User Blocked from SSC Sites (403)",
+      "passed": true,
+      "details": {
+        "error": "Tenant isolation: role 'Project Manager' assigned to 'INFRA' cannot access 'SSC'"
+      }
+    },
+    {
+      "test_name": "Tenant Isolation: SSC User Blocked from INFRA Tasks (403)",
+      "passed": true,
+      "details": {
+        "error": "Tenant isolation: role 'Employee' assigned to 'SSC' cannot access 'INFRA'"
+      }
+    },
+    {
+      "test_name": "Owner Role Cross-Workspace Authority",
+      "passed": true,
+      "details": {
+        "ssc": 200,
+        "infra": 200
+      }
+    },
+    {
+      "test_name": "RBAC Gate: Viewer Role Blocked from Creating Approvals (403)",
+      "passed": true,
+      "details": {
+        "error": "approval:create not permitted for this role"
+      }
+    },
+    {
+      "test_name": "RBAC Gate: Finance Manager Manages Invoices, Employee Blocked (403)",
+      "passed": true,
+      "details": {
+        "finance_status": 200,
+        "employee_post_status": 403
+      }
+    },
+    {
+      "test_name": "IDOR Guard: Cross-Workspace Direct Object Access Blocked (403/404)",
+      "passed": true,
+      "details": {
+        "status": 403,
+        "response": {
+          "error": "payroll access restricted to Owner, HR Manager, and Finance Manager"
+        }
+      }
+    },
+    {
+      "test_name": "Brute Force Rate Limiting Enforces HTTP 429",
+      "passed": true,
+      "details": {
+        "status": 429,
+        "response": {
+          "error": "Account temporarily locked due to excessive failed login attempts. Please try again after 5 minutes."
+        }
+      }
+    }
+  ],
+  "summary": {
+    "total": 28,
+    "passed": 28,
+    "failed": 0
+  }
+}

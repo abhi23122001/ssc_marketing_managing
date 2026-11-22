@@ -64,47 +64,82 @@ DEFAULT_CONFIG = {
         "report:generate": "Generate reports from workspace data",
         "ai:brain:query": "Query the shared AI Brain",
         "employees:read": "Read employees in workspace",
+        "employees:manage": "Manage employees and designations",
         "attendance:read": "Read attendance logs",
+        "attendance:manage": "Log and approve attendance",
         "expense:read": "Read expense claims",
+        "expense:manage": "Submit and approve expense claims",
         "payroll:read": "Read payroll runs",
+        "payroll:manage": "Execute and approve payroll runs",
+        "leads:read": "View CRM and inbound leads",
+        "leads:manage": "Create and edit CRM leads",
+        "clients:read": "View client accounts",
+        "clients:manage": "Manage client profiles and contracts",
+        "sites:read": "View survey and project sites",
+        "sites:manage": "Create and update project sites",
+        "tasks:read": "View project tasks and assignments",
+        "tasks:manage": "Assign and update tasks",
+        "quotations:read": "View commercial quotations",
+        "quotations:manage": "Create and approve commercial quotations",
+        "invoices:read": "View GST invoices",
+        "invoices:manage": "Create and process GST invoices",
+        "finance:read": "View payments and banking records",
+        "finance:manage": "Manage financial payments",
+        "social:read": "View social channels and scheduled content",
+        "social:manage": "Manage social channels and publishing",
+        "integrations:read": "View integration status and health",
+        "integrations:manage": "Configure integrations and OAuth",
+        "security:manage": "User administration and security policies"
     },
     "roles_permissions": {
         "Owner": ["*"],
         "Manager": [
             "workspace:list", "workspace:read", "workspace:manage",
             "resource:list", "resource:read", "resource:create", "resource:edit", "resource:delete",
-            "approval:list", "approval:read", "approval:approve", "approval:comment",
-            "audit:list", "report:list", "report:read", "ai:brain:query",
+            "approval:list", "approval:read", "approval:approve", "approval:comment", "approval:create",
+            "audit:list", "report:list", "report:read", "report:generate", "ai:brain:query",
+            "employees:read", "attendance:read", "expense:read", "payroll:read",
+            "leads:read", "leads:manage", "clients:read", "clients:manage",
+            "sites:read", "sites:manage", "tasks:read", "tasks:manage",
+            "quotations:read", "quotations:manage", "invoices:read", "finance:read",
+            "social:read", "social:manage", "integrations:read"
         ],
         "Project Manager": [
             "workspace:read", "resource:list", "resource:read", "resource:create", "resource:edit",
-            "approval:list", "approval:read", "approval:comment",
+            "approval:list", "approval:read", "approval:comment", "approval:create",
             "report:list", "report:read", "ai:brain:query",
+            "sites:read", "sites:manage", "tasks:read", "tasks:manage",
+            "attendance:read", "attendance:manage", "employees:read", "leads:read", "quotations:read"
         ],
         "Finance Manager": [
             "workspace:read", "resource:list", "resource:read",
-            "approval:list", "approval:read", "approval:approve", "approval:comment",
-            "report:list", "report:read", "ai:brain:query",
+            "approval:list", "approval:read", "approval:approve", "approval:comment", "approval:create",
+            "report:list", "report:read", "report:generate", "ai:brain:query",
+            "quotations:read", "quotations:manage", "invoices:read", "invoices:manage",
+            "finance:read", "finance:manage", "expense:read", "expense:manage", "payroll:read", "payroll:manage"
         ],
         "HR Manager": [
             "workspace:read", "resource:list", "resource:read",
-            "approval:list", "approval:read", "approval:comment",
+            "approval:list", "approval:read", "approval:comment", "approval:create",
             "report:list", "report:read", "ai:brain:query",
+            "employees:read", "employees:manage", "attendance:read", "attendance:manage",
+            "expense:read", "payroll:read"
         ],
         "Employee": [
             "workspace:read", "resource:list", "resource:read",
             "approval:list", "approval:read", "approval:comment",
             "report:list", "report:read", "ai:brain:query",
+            "tasks:read", "tasks:manage", "attendance:read", "attendance:manage", "expense:read"
         ],
         "Viewer": [
-            "workspace:read", "resource:list", "resource:read", "ai:brain:query",
-        ],
+            "workspace:read", "resource:list", "resource:read", "report:list", "report:read", "ai:brain:query"
+        ]
     },
     # Demo accounts used by the testing guide. These are plain-text placeholders
     # for local development only; KNOWN-ISSUES.md requires the owner to rotate
     # them before any internal or client-facing use.
     "demo_users": [
-        {"username": "owner", "password": "demo-owner-pass-0001", "name": "Owner Person",
+        {"username": "owner", "password": "ShahGroup_Owner_Secured_2026!#", "name": "Owner Person",
          "workspace": "SSC", "role": "Owner"},
         {"username": "manager", "password": "demo-manager-pass-0001", "name": "Manager Person",
          "workspace": "SSC", "role": "Manager"},

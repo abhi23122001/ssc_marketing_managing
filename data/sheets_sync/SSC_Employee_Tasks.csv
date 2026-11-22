@@ -41,3 +41,9 @@ id,workspace_id,title,description,category,assigned_to,priority,deadline_date,st
 40,SSC,Beta Highway Alignment QC,MoRTH Section 300 checks,site_qc,1,low,2026-11-28,assigned,0,2026-11-21T13:29:45+0530
 41,SSC,DGPS Control Benchmark Calibration,Establish 2-hr static baseline connected to Survey of India GTS datum.,field_survey,3,urgent,2026-11-25,approved,100,2026-11-21T13:31:27+0530
 42,SSC,Live API Inspection Task,Verify sensor leveling on total station.,field_survey,2,high,2026-11-26,assigned,0,2026-11-21T13:32:10+0530
+43,SSC,[AI Directive] - **For SSC**: Integrate DGPS RTK static base observati...,"Source Recommendation:
+- **For SSC**: Integrate DGPS RTK static base observations with Survey of India GTS pillars before commencing field work.
+
+Context Query: DGPS survey accuracy tolerances Survey of India drone guidelines
+Domain Category: survey_tech
+Generated via: Autonomous Daily AI Research Engine",operations,1,high,2026-11-22,assigned,0,2026-11-22T01:10:45+0530

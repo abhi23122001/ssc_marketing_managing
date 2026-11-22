@@ -73,3 +73,48 @@ def require_user(store: Store, token: str | None) -> dict[str, any]:
     if user is None:
         raise PermissionError("authentication required")
     return user
+
+
+def invalidate_session(store: Store, token: str | None) -> bool:
+    """Invalidates/revokes a session token server-side upon logout."""
+    if not token:
+        return False
+    if isinstance(token, str) and token.startswith(TOKEN_PREFIX):
+        token = token[len(TOKEN_PREFIX):].strip()
+    cur = store.conn.execute("DELETE FROM sessions WHERE token=?", (token,))
+    store.conn.commit()
+    return cur.rowcount > 0
+
+
+def revoke_user_sessions(store: Store, user_id: int) -> int:
+    """Revokes all active sessions for a user (e.g. after password change or deactivation)."""
+    cur = store.conn.execute("DELETE FROM sessions WHERE user_id=?", (user_id,))
+    store.conn.commit()
+    return cur.rowcount
+
+
+def change_user_password(
+    store: Store, user_id: int, old_password: str, new_password: str
+) -> tuple[bool, str]:
+    """Securely rotates user password with complexity validation and session invalidation."""
+    u = store.get_user_by_id(user_id)
+    if not u:
+        return False, "User not found"
+
+    # Verify old password
+    from .store import _verify, _pbkdf2
+    if not _verify(old_password, u["password_hash"]):
+        return False, "Current password verification failed"
+
+    # Complexity check: min 8 chars, at least 1 digit or special character
+    if len(new_password) < 8:
+        return False, "New password must be at least 8 characters long"
+    if not any(c.isdigit() or not c.isalnum() for c in new_password):
+        return False, "New password must contain at least one digit or special character"
+
+    # Update hash
+    store.update_user(user_id, password=new_password)
+    # Revoke sessions
+    revoke_user_sessions(store, user_id)
+    return True, "Password rotated successfully. All active sessions invalidated."
+

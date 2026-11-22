@@ -398,6 +398,10 @@ class Handler(BaseHTTPRequestHandler):
                     if not asset:
                         self._json_err("media asset not found", 404)
                         return
+                    ws = user.get("workspace_id") or "SSC"
+                    if user.get("role") != "Owner" and asset.get("workspace_id") and asset["workspace_id"] != ws:
+                        self._json_err("tenant isolation violation: unauthorized asset access", 403)
+                        return
                     fname = asset["filename"]
                     from foundation.config import project_root
                     p = Path(project_root()) / fname if not os.path.isabs(fname) else Path(fname)
@@ -464,6 +468,8 @@ class Handler(BaseHTTPRequestHandler):
                         self._handle_social_accounts(user)
                     elif len(parts) == 5 and parts[4] == "connect":
                         self._handle_social_account_connect(user, aid)
+                    elif len(parts) == 5 and parts[4] == "disconnect":
+                        self._handle_social_account_disconnect(user, aid)
                     elif len(parts) == 5 and parts[4] == "sync":
                         self._handle_social_account_sync(user, aid)
                     else:
@@ -546,6 +552,9 @@ class Handler(BaseHTTPRequestHandler):
                 return
             elif path.startswith("/api/integrations"):
                 self._handle_integrations_route(path, user)
+                return
+            elif path.startswith("/api/oauth/authorize"):
+                self._handle_oauth_authorize(user)
                 return
             else:
                 self._json_err("not found", 404)
@@ -854,10 +863,20 @@ class Handler(BaseHTTPRequestHandler):
                 if not est:
                     self._json_err("estimate not found", 404)
                     return
+                if user.get("role") != "Owner" and est.get("workspace_id") != ws:
+                    self._json_err("tenant isolation violation: unauthorized estimate access", 403)
+                    return
                 self._json_ok({"estimate": est})
                 return
         if len(parts) == 4 and parts[1] == "estimates" and parts[3] == "status" and self.command == "POST":
             eid = int(parts[2])
+            est = self.store.get_estimate(eid)
+            if not est:
+                self._json_err("estimate not found", 404)
+                return
+            if user.get("role") != "Owner" and est.get("workspace_id") != ws:
+                self._json_err("tenant isolation violation: unauthorized estimate modification", 403)
+                return
             data = _read_json(self)
             status = data.get("status", "submitted")
             updated = self.store.update_estimate_status(eid, status)
@@ -895,6 +914,9 @@ class Handler(BaseHTTPRequestHandler):
                 if not q:
                     self._json_err("quotation not found", 404)
                     return
+                if user.get("role") != "Owner" and q.get("workspace_id") != ws:
+                    self._json_err("tenant isolation violation: unauthorized quotation access", 403)
+                    return
                 self._json_ok({"quotation": q})
                 return
         if len(parts) == 4 and parts[1] == "quotations" and parts[3] in ("status", "accept") and self.command == "POST":
@@ -902,6 +924,13 @@ class Handler(BaseHTTPRequestHandler):
                 self._json_err("quotation modification restricted to Owner and Managers", 403)
                 return
             qid = int(parts[2])
+            q = self.store.get_quotation(qid)
+            if not q:
+                self._json_err("quotation not found", 404)
+                return
+            if user.get("role") != "Owner" and q.get("workspace_id") != ws:
+                self._json_err("tenant isolation violation: unauthorized quotation modification", 403)
+                return
             data = _read_json(self) if (self.headers.get("Content-Length") and int(self.headers.get("Content-Length", 0)) > 0) else {}
             status = data.get("status", "accepted") if parts[3] != "accept" else "accepted"
             updated = self.store.update_quotation_status(qid, status)
@@ -978,6 +1007,9 @@ class Handler(BaseHTTPRequestHandler):
                 if not inv:
                     self._json_err("invoice not found", 404)
                     return
+                if user.get("role") != "Owner" and inv.get("workspace_id") != ws:
+                    self._json_err("tenant isolation violation: unauthorized invoice access", 403)
+                    return
                 self._json_ok({"invoice": inv})
                 return
         if len(parts) == 4 and parts[1] == "invoices" and parts[3] == "payment" and self.command == "POST":
@@ -985,6 +1017,13 @@ class Handler(BaseHTTPRequestHandler):
                 self._json_err("recording payment restricted to Owner and Finance Manager", 403)
                 return
             inv_id = int(parts[2])
+            inv = self.store.get_invoice(inv_id)
+            if not inv:
+                self._json_err("invoice not found", 404)
+                return
+            if user.get("role") != "Owner" and inv.get("workspace_id") != ws:
+                self._json_err("tenant isolation violation: unauthorized payment recording", 403)
+                return
             data = _read_json(self)
             updated = self.store.record_payment(ws, inv_id, data)
             self._json_ok({"invoice": updated})
@@ -1204,6 +1243,9 @@ class Handler(BaseHTTPRequestHandler):
             if not run:
                 self._json_err("payroll run not found", 404)
                 return
+            if user.get("role") != "Owner" and run.get("workspace_id") != ws:
+                self._json_err("tenant isolation violation: unauthorized payroll run access", 403)
+                return
             slips = payroll.list_payslips(self.store, run_id)
             run["payslips"] = slips
             self._json_ok({"payroll_run": run})
@@ -1214,6 +1256,13 @@ class Handler(BaseHTTPRequestHandler):
                 self._json_err("permission denied", 403)
                 return
             run_id = int(parts[3])
+            run = payroll.get_payroll_run(self.store, run_id)
+            if not run:
+                self._json_err("payroll run not found", 404)
+                return
+            if user.get("role") != "Owner" and run.get("workspace_id") != ws:
+                self._json_err("tenant isolation violation: unauthorized payroll run approval", 403)
+                return
             try:
                 approved = payroll.approve_run(self.store, actor_id, run_id)
                 self._json_ok({"payroll_run": approved})
@@ -1228,9 +1277,12 @@ class Handler(BaseHTTPRequestHandler):
                 return
             elif len(parts) == 4 and self.command == "GET":
                 slip_id = int(parts[3])
-                slip = self.store.fetchone("SELECT * FROM payslips WHERE id=?", (slip_id,))
+                slip = self.store.fetchone("SELECT p.*, pr.workspace_id FROM payslips p JOIN payroll_runs pr ON pr.id=p.payroll_run_id WHERE p.id=?", (slip_id,))
                 if not slip:
                     self._json_err("payslip not found", 404)
+                    return
+                if user.get("role") != "Owner" and slip.get("workspace_id") != ws:
+                    self._json_err("tenant isolation violation: unauthorized payslip access", 403)
                     return
                 self._json_ok({"payslip": slip})
                 return
@@ -1394,20 +1446,53 @@ class Handler(BaseHTTPRequestHandler):
                 data = _read_json(self)
                 uname = data.get("username", "").strip()
                 passwd = data.get("password", "")
-                if uname and _is_rate_limited(uname.lower()):
+                client_ip = self.client_address[0] if hasattr(self, "client_address") and self.client_address else "127.0.0.1"
+                ip_ident = f"ip_{client_ip}" if client_ip not in ("127.0.0.1", "::1", "localhost") else None
+                if (uname and _is_rate_limited(uname.lower())) or (ip_ident and _is_rate_limited(ip_ident)):
                     self._json_err("Account temporarily locked due to excessive failed login attempts. Please try again after 5 minutes.", 429)
                     return
                 user = get_store().authenticate(uname, passwd)
                 if user is None:
                     if uname:
                         _record_failure(uname.lower())
+                    if ip_ident:
+                        _record_failure(ip_ident)
                     self._json_err("invalid username/password", 401)
                     return
                 _clear_failures(uname.lower())
+                if ip_ident:
+                    _clear_failures(ip_ident)
                 token = issue_token(get_store(), user["username"])
                 self._json_ok({"token": token, "user": {k: user[k] for k in
                     ("user_id" if "user_id" in user else "id", "username", "name", "role", "workspace_id")},
                     "workspace": get_store().get_workspace(user["workspace_id"]) if user.get("workspace_id") else None})
+            elif path == "/api/auth/logout":
+                from foundation.auth import invalidate_session
+                tok = self._token()
+                invalidate_session(get_store(), tok)
+                self._json_ok({"ok": True, "message": "Logged out successfully. Session invalidated."})
+                return
+            elif path == "/api/auth/change-password":
+                data = _read_json(self)
+                old_p = data.get("current_password", "")
+                new_p = data.get("new_password", "")
+                uid = user.get("id") or user.get("user_id")
+                from foundation.auth import change_user_password
+                ok, msg = change_user_password(get_store(), uid, old_p, new_p)
+                if not ok:
+                    self._json_err(msg, 400)
+                    return
+                self._json_ok({"ok": True, "message": msg})
+                return
+            elif path == "/api/oauth/callback":
+                self._handle_oauth_callback(user)
+                return
+            elif path == "/api/oauth/disconnect":
+                self._handle_oauth_disconnect(user)
+                return
+            elif path == "/api/oauth/diagnostic":
+                self._handle_oauth_diagnostic(user)
+                return
             elif path == "/api/approvals":
                 if user is None:
                     self._json_err("authentication required", 401)
@@ -1579,6 +1664,10 @@ class Handler(BaseHTTPRequestHandler):
                     if not asset:
                         self._json_err("media asset not found", 404)
                         return
+                    ws = user.get("workspace_id") or "SSC"
+                    if user.get("role") != "Owner" and asset.get("workspace_id") and asset["workspace_id"] != ws:
+                        self._json_err("tenant isolation violation: unauthorized asset access", 403)
+                        return
                     fname = asset["filename"]
                     from foundation.config import project_root
                     p = Path(project_root()) / fname if not os.path.isabs(fname) else Path(fname)
@@ -1648,6 +1737,8 @@ class Handler(BaseHTTPRequestHandler):
                         self._handle_social_account_add(user)
                     elif len(parts) == 5 and parts[4] == "connect":
                         self._handle_social_account_connect(user, aid)
+                    elif len(parts) == 5 and parts[4] == "disconnect":
+                        self._handle_social_account_disconnect(user, aid)
                     elif len(parts) == 5 and parts[4] == "sync":
                         self._handle_social_account_sync(user, aid)
                     else:
@@ -1744,6 +1835,9 @@ class Handler(BaseHTTPRequestHandler):
                 return
             elif path.startswith("/api/integrations"):
                 self._handle_integrations_route(path, user)
+                return
+            elif path.startswith("/api/oauth/authorize"):
+                self._handle_oauth_authorize(user)
                 return
             else:
                 self._json_err("not found", 404)
@@ -2317,21 +2411,21 @@ class Handler(BaseHTTPRequestHandler):
         self._json_ok({"account": acc}, 201)
 
     def _handle_social_account_connect(self, user: dict, aid: str) -> None:
-        """Mark an account as connected via OAuth."""
+        """Tests live OAuth status and returns authentic connection status."""
         from foundation.domains import social_integrations
-        acc = social_integrations.toggle_account_connection(self.store, int(aid), connect=True)
-        self._json_ok({"account": acc})
+        res = social_integrations.test_account_connection(self.store, int(aid))
+        self._json_ok(res)
 
     def _handle_social_account_disconnect(self, user: dict, aid: str) -> None:
-        """Mark an account as disconnected."""
+        """Mark an account as disconnected and revokes stored tokens."""
         from foundation.domains import social_integrations
-        acc = social_integrations.toggle_account_connection(self.store, int(aid), connect=False)
-        self._json_ok({"account": acc})
+        res = social_integrations.disconnect_social_account(self.store, int(aid))
+        self._json_ok(res)
 
     def _handle_social_account_sync(self, user: dict, aid: str) -> None:
-        """Trigger an account sync and record telemetry."""
+        """Trigger an account sync and test live telemetry."""
         from foundation.domains import social_integrations
-        res = social_integrations.sync_account_telemetry(self.store, int(aid))
+        res = social_integrations.test_account_connection(self.store, int(aid))
         self._json_ok(res)
 
     def _handle_reports_list(self, user: dict) -> None:
@@ -2369,6 +2463,10 @@ class Handler(BaseHTTPRequestHandler):
             "SELECT * FROM social_reports WHERE id=?", (rid,))
         if not row:
             self._json_err("report not found", 404)
+            return
+        ws = user.get("workspace_id") or "SSC"
+        if user.get("role") != "Owner" and row.get("workspace_id") != ws:
+            self._json_err("tenant isolation violation: unauthorized report access", 403)
             return
         self._json_ok({"report": row})
 
@@ -2636,6 +2734,9 @@ class Handler(BaseHTTPRequestHandler):
                 rep = self.store.fetchone("SELECT * FROM ai_generated_reports WHERE id=?", (rid,))
                 if not rep:
                     self._json_err("report not found", 404)
+                    return
+                if user.get("role") != "Owner" and rep.get("workspace_id") and rep["workspace_id"] != ws:
+                    self._json_err("tenant isolation violation: unauthorized report access", 403)
                     return
                 if len(parts) >= 5 and parts[4] == "export":
                     content = json.loads(rep.get("content_json") or "{}")
@@ -2938,7 +3039,87 @@ class Handler(BaseHTTPRequestHandler):
             res = google_sheets_sync.execute_sheets_sync(self.store, ws, ent, direction)
             self._json_ok(res)
             return
+        if path == "/api/integrations/drive/folder/update":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            fid = data.get("folder_id")
+            dfid = data.get("drive_folder_id", "").strip()
+            if not fid:
+                self._json_err("folder_id required", 400)
+                return
+            res = integrations_center.update_drive_folder(self.store, ws, int(fid), dfid)
+            self._json_ok(res)
+            return
         self._json_err("integrations endpoint not found", 404)
+
+    def _handle_oauth_authorize(self, user: dict) -> None:
+        """Generates OAuth authorization request with anti-CSRF state token."""
+        parsed = urllib.parse.urlparse(self.path)
+        qs = urllib.parse.parse_qs(parsed.query)
+        provider = qs.get("provider", ["google"])[0]
+        ws, err = self._get_request_workspace(user)
+        if err:
+            self._json_err(err, 403)
+            return
+        uid = int(user.get("id") or user.get("user_id") or 1)
+        from foundation.domains import oauth_service
+        res = oauth_service.create_authorization_request(self.store.conn, provider, ws, uid)
+        self._json_ok(res)
+
+    def _handle_oauth_callback(self, user: dict) -> None:
+        """Handles OAuth callback and validates anti-CSRF state token."""
+        data = _read_json(self)
+        state_token = data.get("state", "").strip()
+        code = data.get("code", "").strip()
+        error = data.get("error")
+
+        from foundation.domains import oauth_service
+        valid, state_data, msg = oauth_service.validate_state_token(self.store.conn, state_token)
+        if not valid:
+            self._json_err(f"OAuth CSRF validation failed: {msg}", 400)
+            return
+
+        if error:
+            self._json_err(f"OAuth consent denied by provider: {error}", 400)
+            return
+
+        prov = state_data["provider"]
+        ws = state_data["workspace_id"]
+        self._json_ok({
+            "ok": True,
+            "provider": prov,
+            "workspace_id": ws,
+            "status": "State Token Verified",
+            "message": "OAuth anti-CSRF state token validated successfully. Provider credentials required to exchange token."
+        })
+
+    def _handle_oauth_disconnect(self, user: dict) -> None:
+        """Permanently revokes OAuth connection and deletes tokens."""
+        data = _read_json(self)
+        ws, err = self._get_request_workspace(user, data)
+        if err:
+            self._json_err(err, 403)
+            return
+        aid = data.get("account_id")
+        from foundation.domains import social_integrations
+        if aid:
+            res = social_integrations.disconnect_social_account(self.store, int(aid))
+            self._json_ok(res)
+            return
+        self._json_err("account_id required", 400)
+
+    def _handle_oauth_diagnostic(self, user: dict) -> None:
+        """Test diagnostic hook for validating all 6 lifecycle statuses."""
+        data = _read_json(self)
+        aid = data.get("account_id")
+        scenario = data.get("scenario")
+        if not aid or not scenario:
+            self._json_err("account_id and scenario required", 400)
+            return
+        from foundation.domains import social_integrations
+        res = social_integrations.set_test_diagnostic_status(self.store, int(aid), scenario)
+        self._json_ok(res)
 
     def _handle_tasks_route(self, path: str, user: dict) -> None:
         if user is None:
@@ -2988,11 +3169,14 @@ class Handler(BaseHTTPRequestHandler):
         parts = [x for x in path.split("/") if x]
         if len(parts) >= 3 and parts[2].isdigit():
             tid = int(parts[2])
+            t = task_management.get_employee_task(self.store, tid)
+            if not t:
+                self._json_err("task not found", 404)
+                return
+            if user.get("role") != "Owner" and t.get("workspace_id") != ws:
+                self._json_err("tenant isolation violation: unauthorized task access", 403)
+                return
             if len(parts) == 3:
-                t = task_management.get_employee_task(self.store, tid)
-                if not t:
-                    self._json_err("task not found", 404)
-                    return
                 self._json_ok({"task": t})
                 return
             action = parts[3]
