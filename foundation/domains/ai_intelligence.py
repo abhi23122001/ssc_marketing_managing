@@ -151,6 +151,30 @@ def ensure_ai_intelligence_schema(conn: sqlite3.Connection) -> None:
         error_log TEXT
     );
     """)
+
+    # Dynamic schema migrations for ai_marketing_briefs
+    cols = [c[1] for c in conn.execute("PRAGMA table_info(ai_marketing_briefs)").fetchall()]
+    new_cols = [
+        ("platform_campaigns_json", "TEXT DEFAULT '{}'"),
+        ("video_script_json", "TEXT DEFAULT '{}'"),
+        ("shot_by_shot_json", "TEXT DEFAULT '[]'"),
+        ("service_pillar", "TEXT DEFAULT ''"),
+        ("hook_text", "TEXT DEFAULT ''"),
+        ("relevance_reason", "TEXT DEFAULT ''"),
+        ("status", "TEXT DEFAULT 'active'")
+    ]
+    for cname, ctype in new_cols:
+        if cname not in cols:
+            conn.execute(f"ALTER TABLE ai_marketing_briefs ADD COLUMN {cname} {ctype}")
+
+    rcols = [c[1] for c in conn.execute("PRAGMA table_info(ai_research_items)").fetchall()]
+    if "evidence_excerpt" not in rcols:
+        conn.execute("ALTER TABLE ai_research_items ADD COLUMN evidence_excerpt TEXT DEFAULT ''")
+    if "is_verified" not in rcols:
+        conn.execute("ALTER TABLE ai_research_items ADD COLUMN is_verified INTEGER DEFAULT 1")
+    if "opportunity_type" not in rcols:
+        conn.execute("ALTER TABLE ai_research_items ADD COLUMN opportunity_type TEXT DEFAULT 'OPPORTUNITY'")
+
     conn.commit()
     seed_default_scheduler_jobs(conn)
     seed_initial_knowledge_base(conn)
@@ -774,65 +798,26 @@ def get_latest_research_items(store: Store, workspace_id: str, category: Optiona
 
 
 # -----------------------------------------------------------------------------
-# 4. Daily Autonomous Marketing Manager
+# 4. Daily Autonomous Marketing Manager (Non-Repeating Strategy Engine)
 # -----------------------------------------------------------------------------
-def generate_daily_marketing_brief(store: Store, workspace_id: str) -> Dict[str, Any]:
-    """Generates a complete strategic daily marketing brief for SSC or INFRA."""
+def generate_daily_marketing_brief(store: Store, workspace_id: str, force_fresh: bool = True) -> Dict[str, Any]:
+    """Generates an authentic, non-repeating strategic daily marketing brief for SSC or INFRA."""
     ensure_ai_intelligence_schema(store.conn)
-    today_str = now_kolkata().strftime("%Y-%m-%d")
-    weekday = now_kolkata().strftime("%A")
-
-    if workspace_id == "INFRA":
-        industry_trends = "Surge in warehouse development along NH-44 and state highway bypasses. Real estate developers prioritizing MoRTH-certified earthwork contractors."
-        competitor_insights = "Competitors posting static completed building photos. Video timelapses of active roller compaction and subgrade density testing show 3x higher engagement."
-        recommended_posts = (
-            "1. **LinkedIn Technical Case Study**: 'MoRTH Section 300 Compaction: How We Guaranteed 98% Proctor Density for 50-Acre Logistics Park'.\n"
-            "2. **Instagram / Facebook Carousel**: 'From Raw Terrain to Level Embankment: 4 Phases of Modern Earthwork Engineering'.\n"
-            "3. **YouTube Short**: 'Heavy Machinery Lineup: Caterpillar Grader & Bomag Roller in Action'."
-        )
-        reel_ideas = "Drone reveal: High-angle flyover transitioning into ground-level asphalt laying, audio: energetic industrial beat."
-        posting_schedule = (
-            "• **10:15 AM IST (LinkedIn)**: Morning commercial window when infra developers and corporate procurement heads check updates.\n"
-            "• **06:30 PM IST (Instagram/Facebook)**: Evening prime window for civil engineers and contractors."
-        )
-        target_audience = "Industrial Park Developers, EPC Contractors, Highway Concessionaires, Civil Project Managers"
-        cta_objective = "Call / WhatsApp for site earthwork inspection and equipment deployment quotes."
-    else:  # SSC
-        industry_trends = "NHAI & Railway projects requiring mandatory DGPS GTS connectivity. Drones deployed for rapid 48-hour contour mapping."
-        competitor_insights = "Local surveying firms lack video proof of RTK centimeter accuracy. Video demonstrations comparing handheld GPS vs RTK DGPS build instant authority."
-        recommended_posts = (
-            "1. **Instagram Reel (Hindi + English)**: 'क्या आपकी जमीन की बाउंड्री सच में सही है? 2cm की गलती से कैसे बचते हैं DGPS से'.\n"
-            "2. **LinkedIn Professional Article**: 'Why Dual-Frequency RTK DGPS is Critical for Highway FLS & Railway Corridor Surveys'.\n"
-            "3. **YouTube Short**: 'Total Station vs Drone LiDAR: Which Survey Tool Do You Actually Need?'"
-        )
-        reel_ideas = "Surveyor leveling DGPS rover over a permanent concrete pillar benchmark, showing receiver locking 18 satellites with 4mm precision."
-        posting_schedule = (
-            "• **09:45 AM IST (LinkedIn)**: Target Govt PWD, NHAI project consultants before morning site meetings.\n"
-            "• **05:45 PM IST (Instagram/YouTube)**: Field engineers and property owners browsing evening updates."
-        )
-        target_audience = "Govt Survey Engineers, PWD Contractors, Land Developers, Solar Project Planners"
-        cta_objective = "Contact Shah Surveyors for fast, certified DGPS & Drone survey quotes within 24 hours."
-
-    cur = store.conn.execute(
-        "INSERT INTO ai_marketing_briefs (workspace_id, brief_date, industry_trends, competitor_insights, "
-        "recommended_posts, reel_ideas, platform_recommendations, posting_schedule, target_audience, cta_objective) "
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        (workspace_id, today_str, industry_trends, competitor_insights, recommended_posts, reel_ideas,
-         "LinkedIn, Instagram, YouTube Shorts", posting_schedule, target_audience, cta_objective)
-    )
-    store.conn.commit()
-    return dict(store.conn.execute("SELECT * FROM ai_marketing_briefs WHERE id=?", (cur.lastrowid,)).fetchone())
+    from .marketing_intelligence_engine import generate_daily_marketing_brief as _gen_brief
+    return _gen_brief(store, workspace_id, force_fresh=force_fresh)
 
 
 def get_latest_marketing_brief(store: Store, workspace_id: str) -> Optional[Dict[str, Any]]:
     ensure_ai_intelligence_schema(store.conn)
-    row = store.fetchone(
-        "SELECT * FROM ai_marketing_briefs WHERE workspace_id=? ORDER BY id DESC LIMIT 1",
-        (workspace_id,)
-    )
-    if not row:
-        row = generate_daily_marketing_brief(store, workspace_id)
-    return row
+    from .marketing_intelligence_engine import generate_daily_marketing_brief as _gen_brief
+    return _gen_brief(store, workspace_id, force_fresh=False)
+
+
+def save_brief_to_content_calendar(store: Store, workspace_id: str, brief_id: int, platform: str = "instagram") -> Dict[str, Any]:
+    """Saves a daily marketing strategy directly into the Content Calendar as a user-approved draft."""
+    ensure_ai_intelligence_schema(store.conn)
+    from .marketing_intelligence_engine import save_brief_to_content_calendar as _save_calendar
+    return _save_calendar(store, workspace_id, brief_id, platform)
 
 
 # -----------------------------------------------------------------------------

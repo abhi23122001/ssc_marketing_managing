@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-22T18:24:04Z",
+  "timestamp": "2026-11-22T18:29:46Z",
   "base_url": "http://127.0.0.1:8899",
   "tests": [
     {
@@ -290,7 +290,7 @@
         "provider": "google",
         "provider_name": "Google Core & Workspace",
         "workspace_id": "SSC",
-        "state_token": "VghnUMvTdCMXFOOidW6wvesrBCIkt9GdDE8gnKhP_8Q",
+        "state_token": "msw6THituB-pQcvC5ZYRg6Jdz12GS801nYI1HnZYjTs",
         "auth_url": null,
         "has_credentials": false,
         "required_scopes": [
@@ -372,7 +372,7 @@
       "passed": true,
       "details": {
         "ok": true,
-        "file_id": 4,
+        "file_id": 5,
         "filename": "phase4_acceptance_verification_sample.txt",
         "folder": "Reports",
         "size_bytes": 40,

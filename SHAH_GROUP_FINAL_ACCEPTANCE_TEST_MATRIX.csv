@@ -1,0 +1,35 @@
+Test_ID,Category,Test_Name,Execution_Type,Expected_Result,Actual_Result,Status
+BE-TEST-01,Backend / API / Security,Owner Authenticated with Rotated Password,Automated Python / HTTP API,Success / Validated State,User: owner,PASSED
+BE-TEST-02,Backend / API / Security,Fresh Reset: Zero Demo Employees,Automated Python / HTTP API,Success / Validated State,Found 0 employees,PASSED
+BE-TEST-03,Backend / API / Security,Fresh Reset: Zero Demo Project Sites,Automated Python / HTTP API,Success / Validated State,Found 0 sites,PASSED
+BE-TEST-04,Backend / API / Security,Fresh Reset: Zero Demo Invoices,Automated Python / HTTP API,Success / Validated State,Found 0 invoices,PASSED
+BE-TEST-05,Backend / API / Security,Fresh Reset: Sheets Local Safe Staging Empty (0 Records),Automated Python / HTTP API,Success / Validated State,Staged: 0,PASSED
+BE-TEST-06,Backend / API / Security,CRUD: Fresh Real Employee Creation,Automated Python / HTTP API,Success / Validated State,Created Employee ID #1,PASSED
+BE-TEST-07,Backend / API / Security,CRUD: Fresh Real Project Site Creation,Automated Python / HTTP API,Success / Validated State,Created Site ID #1,PASSED
+BE-TEST-08,Backend / API / Security,CRUD: Fresh Real Client Profile Creation,Automated Python / HTTP API,Success / Validated State,Created Client ID #1,PASSED
+BE-TEST-09,Backend / API / Security,CRUD: Fresh Task Creation & Assignment,Automated Python / HTTP API,Success / Validated State,Created Task ID #1,PASSED
+BE-TEST-10,Backend / API / Security,AI Marketing: Dynamic Non-Repeating Brief Generated,Automated Python / HTTP API,Success / Validated State,Pillar: HIGHWAY_FLS_ALIGNMENT,PASSED
+BE-TEST-11,Backend / API / Security,AI Marketing: Complete Dual-Language Video Script,Automated Python / HTTP API,Success / Validated State,Hook: हाईवे प्रोजेक्ट्स में टेंडर मिलने के बाद सबसे पहला क्रिटिकल ...,PASSED
+BE-TEST-12,Backend / API / Security,AI Marketing: 4-Part Shot-by-Shot Visual Instructions,Automated Python / HTTP API,Success / Validated State,Shots count: 4,PASSED
+BE-TEST-13,Backend / API / Security,"AI Marketing: Platform-Specific Campaigns (IG, FB, YT Shorts)",Automated Python / HTTP API,Success / Validated State,Multi-platform metadata validated,PASSED
+BE-TEST-14,Backend / API / Security,Content Calendar: Save Strategy as Verified Draft,Automated Python / HTTP API,Success / Validated State,Content ID #1,PASSED
+BE-TEST-15,Backend / API / Security,Google Business Profile: Profile Status & Honest State,Automated Python / HTTP API,Success / Validated State,Status: Authorization Required,PASSED
+BE-TEST-16,Backend / API / Security,Google Business Profile: Core Services Catalog Loaded,Automated Python / HTTP API,Success / Validated State,Services count: 4,PASSED
+BE-TEST-17,Backend / API / Security,Google Business Profile: Draft Local Post / Update,Automated Python / HTTP API,Success / Validated State,Post status: draft,PASSED
+BE-TEST-18,Backend / API / Security,Owner Setup Center: 5 Structured Onboarding Categories,Automated Python / HTTP API,Success / Validated State,"Categories: 5, Tasks: 16",PASSED
+BE-TEST-19,Backend / API / Security,Owner Setup Center: Secure Credential Storage,Automated Python / HTTP API,Success / Validated State,"Saved: ['GOOGLE_REDIRECT_URI', 'OWNER_BUSINESS_GSTIN']",PASSED
+BE-TEST-20,Backend / API / Security,Social Media Registry: Official Accounts Registered,Automated Python / HTTP API,Success / Validated State,"Found: ['instagram', 'facebook', 'youtube']",PASSED
+BE-TEST-21,Backend / API / Security,Social Media Registry: Zero Simulation Honest Status,Automated Python / HTTP API,Success / Validated State,All accounts require genuine OAuth token,PASSED
+BE-TEST-22,Backend / API / Security,Google Sheets: Configured Owner Spreadsheet,Automated Python / HTTP API,Success / Validated State,ID: 17CpMIB7mMrBalL6juZMmKVFvm2j5IvLXJjYdsbAmU5c (Shah AI OS),PASSED
+BE-TEST-23,Backend / API / Security,Google Drive: 10 SSC Staging Folders Active,Automated Python / HTTP API,Success / Validated State,SSC Folders: 10,PASSED
+BE-TEST-24,Backend / API / Security,Seven-Role Matrix: All 7 Roles Authenticated,Automated Python / HTTP API,Success / Validated State,Authenticated 7 roles,PASSED
+BE-TEST-25,Backend / API / Security,Tenant Isolation: INFRA User Blocked from SSC Object,Automated Python / HTTP API,Success / Validated State,HTTP Status: 403,PASSED
+BE-TEST-26,Backend / API / Security,Security: Disclosed Demo Password Permanently Blocked,Automated Python / HTTP API,Success / Validated State,HTTP 401 Unauthorized,PASSED
+BE-TEST-27,Backend / API / Security,Security: Server-Side Logout Session Invalidation,Automated Python / HTTP API,Success / Validated State,Reused revoked token returned HTTP 401,PASSED
+FE-CDP-01,Frontend / Browser CDP / DOM,Owner Login with Rotated Credentials,Headless Chrome CDP Automation,Rendered & Functional / Zero Errors,"{""ok"": true, ""user"": {""id"": 1, ""username"": ""owner"", ""name"": ""Owner Person"", ""role"": ""Owner"", ""workspace_id"": ""SSC""}, ""tokenReceived"": true}",PASSED
+FE-CDP-02,Frontend / Browser CDP / DOM,Executive Overview Display,Headless Chrome CDP Automation,Rendered & Functional / Zero Errors,"{""activeNav"": ""\ud83d\udcca\nExecutive Overview"", ""hasHeader"": true, ""workspace"": null}",PASSED
+FE-CDP-03,Frontend / Browser CDP / DOM,Owner Setup Center,Headless Chrome CDP Automation,Rendered & Functional / Zero Errors,"{""sectionExists"": true, ""sectionVisible"": true, ""progressNum"": ""6 / 16 Tasks"", ""categoriesCount"": 5}",PASSED
+FE-CDP-04,Frontend / Browser CDP / DOM,Integrations & Google Business Profile,Headless Chrome CDP Automation,Rendered & Functional / Zero Errors,"{""integrationsSecVisible"": true, ""gbpPanelExists"": true, ""gbpPanelVisible"": false, ""gbpBannerText"": ""Status: Authorization Required (Google OAuth Pending) | Required Scope: https://www.googleapis.com/auth/business.manage""}",FAILED
+FE-CDP-05,Frontend / Browser CDP / DOM,AI Brain & Intelligence,Headless Chrome CDP Automation,Rendered & Functional / Zero Errors,"{""aiSecVisible"": true, ""hasAiAssistant"": true}",PASSED
+FE-CDP-06,Frontend / Browser CDP / DOM,Social Media Registry SSC Verification,Headless Chrome CDP Automation,Rendered & Functional / Zero Errors,"{""totalAccounts"": 3, ""accounts"": [{""platform"": ""instagram"", ""account_id"": ""shahgroupofficial1"", ""status"": ""Authorization Required""}, {""platform"": ""facebook"", ""account_id"": ""61593669391620"", ""status"": ""Authorization Required""}, {""platform"": ""youtube"", ""account_id"": ""@ShahGroupOfficial"", ""status"": ""Authorization Required""}]}",PASSED
+FE-CDP-08,Frontend / Console Integrity,Zero Console Errors and Zero Page Exceptions,Headless Chrome CDP Event Stream,"0 console errors, 0 page exceptions","0 errors, 0 exceptions",PASSED

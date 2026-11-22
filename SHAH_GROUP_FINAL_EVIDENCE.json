@@ -1,0 +1,563 @@
+{
+  "project": "SHAH GROUP AI OS",
+  "version": "1.0.0-production-handover",
+  "generated_at": "2026-11-23T00:50:52.256864",
+  "base_url": "http://127.0.0.1:8899/",
+  "baseline_git_commit": "1b6c3ee",
+  "rollback_git_commit": "bb32adc",
+  "backup_path": "C:\\Users\\HP\\Desktop\\ssc_marketing_managing_backup_final_1b6c3ee_20261123",
+  "summary": {
+    "total_tests": 34,
+    "passed_tests": 33,
+    "failed_tests": 1,
+    "success_rate": "97.1%",
+    "backend_tests_count": 27,
+    "browser_steps_count": 7,
+    "browser_console_errors": 0,
+    "browser_page_exceptions": 0
+  },
+  "backend_results": {
+    "timestamp": "2026-11-23T00:45:43+0530",
+    "total": 27,
+    "passed": 27,
+    "failed": 0,
+    "tests": [
+      {
+        "name": "Owner Authenticated with Rotated Password",
+        "passed": true,
+        "details": "User: owner"
+      },
+      {
+        "name": "Fresh Reset: Zero Demo Employees",
+        "passed": true,
+        "details": "Found 0 employees"
+      },
+      {
+        "name": "Fresh Reset: Zero Demo Project Sites",
+        "passed": true,
+        "details": "Found 0 sites"
+      },
+      {
+        "name": "Fresh Reset: Zero Demo Invoices",
+        "passed": true,
+        "details": "Found 0 invoices"
+      },
+      {
+        "name": "Fresh Reset: Sheets Local Safe Staging Empty (0 Records)",
+        "passed": true,
+        "details": "Staged: 0"
+      },
+      {
+        "name": "CRUD: Fresh Real Employee Creation",
+        "passed": true,
+        "details": "Created Employee ID #1"
+      },
+      {
+        "name": "CRUD: Fresh Real Project Site Creation",
+        "passed": true,
+        "details": "Created Site ID #1"
+      },
+      {
+        "name": "CRUD: Fresh Real Client Profile Creation",
+        "passed": true,
+        "details": "Created Client ID #1"
+      },
+      {
+        "name": "CRUD: Fresh Task Creation & Assignment",
+        "passed": true,
+        "details": "Created Task ID #1"
+      },
+      {
+        "name": "AI Marketing: Dynamic Non-Repeating Brief Generated",
+        "passed": true,
+        "details": "Pillar: HIGHWAY_FLS_ALIGNMENT"
+      },
+      {
+        "name": "AI Marketing: Complete Dual-Language Video Script",
+        "passed": true,
+        "details": "Hook: \u0939\u093e\u0908\u0935\u0947 \u092a\u094d\u0930\u094b\u091c\u0947\u0915\u094d\u091f\u094d\u0938 \u092e\u0947\u0902 \u091f\u0947\u0902\u0921\u0930 \u092e\u093f\u0932\u0928\u0947 \u0915\u0947 \u092c\u093e\u0926 \u0938\u092c\u0938\u0947 \u092a\u0939\u0932\u093e \u0915\u094d\u0930\u093f\u091f\u093f\u0915\u0932 ..."
+      },
+      {
+        "name": "AI Marketing: 4-Part Shot-by-Shot Visual Instructions",
+        "passed": true,
+        "details": "Shots count: 4"
+      },
+      {
+        "name": "AI Marketing: Platform-Specific Campaigns (IG, FB, YT Shorts)",
+        "passed": true,
+        "details": "Multi-platform metadata validated"
+      },
+      {
+        "name": "Content Calendar: Save Strategy as Verified Draft",
+        "passed": true,
+        "details": "Content ID #1"
+      },
+      {
+        "name": "Google Business Profile: Profile Status & Honest State",
+        "passed": true,
+        "details": "Status: Authorization Required"
+      },
+      {
+        "name": "Google Business Profile: Core Services Catalog Loaded",
+        "passed": true,
+        "details": "Services count: 4"
+      },
+      {
+        "name": "Google Business Profile: Draft Local Post / Update",
+        "passed": true,
+        "details": "Post status: draft"
+      },
+      {
+        "name": "Owner Setup Center: 5 Structured Onboarding Categories",
+        "passed": true,
+        "details": "Categories: 5, Tasks: 16"
+      },
+      {
+        "name": "Owner Setup Center: Secure Credential Storage",
+        "passed": true,
+        "details": "Saved: ['GOOGLE_REDIRECT_URI', 'OWNER_BUSINESS_GSTIN']"
+      },
+      {
+        "name": "Social Media Registry: Official Accounts Registered",
+        "passed": true,
+        "details": "Found: ['instagram', 'facebook', 'youtube']"
+      },
+      {
+        "name": "Social Media Registry: Zero Simulation Honest Status",
+        "passed": true,
+        "details": "All accounts require genuine OAuth token"
+      },
+      {
+        "name": "Google Sheets: Configured Owner Spreadsheet",
+        "passed": true,
+        "details": "ID: 17CpMIB7mMrBalL6juZMmKVFvm2j5IvLXJjYdsbAmU5c (Shah AI OS)"
+      },
+      {
+        "name": "Google Drive: 10 SSC Staging Folders Active",
+        "passed": true,
+        "details": "SSC Folders: 10"
+      },
+      {
+        "name": "Seven-Role Matrix: All 7 Roles Authenticated",
+        "passed": true,
+        "details": "Authenticated 7 roles"
+      },
+      {
+        "name": "Tenant Isolation: INFRA User Blocked from SSC Object",
+        "passed": true,
+        "details": "HTTP Status: 403"
+      },
+      {
+        "name": "Security: Disclosed Demo Password Permanently Blocked",
+        "passed": true,
+        "details": "HTTP 401 Unauthorized"
+      },
+      {
+        "name": "Security: Server-Side Logout Session Invalidation",
+        "passed": true,
+        "details": "Reused revoked token returned HTTP 401"
+      }
+    ]
+  },
+  "browser_results": {
+    "timestamp": "2026-11-22T19:19:18.763Z",
+    "chrome_version": "Google Chrome Latest (Headless)",
+    "base_url": "http://127.0.0.1:8899/",
+    "sections_audited": [
+      {
+        "step": "Owner Login with Rotated Credentials",
+        "passed": true,
+        "details": {
+          "ok": true,
+          "user": {
+            "id": 1,
+            "username": "owner",
+            "name": "Owner Person",
+            "role": "Owner",
+            "workspace_id": "SSC"
+          },
+          "tokenReceived": true
+        }
+      },
+      {
+        "step": "Executive Overview Display",
+        "passed": true,
+        "details": {
+          "activeNav": "\ud83d\udcca\nExecutive Overview",
+          "hasHeader": true,
+          "workspace": null
+        }
+      },
+      {
+        "step": "Owner Setup Center",
+        "passed": true,
+        "details": {
+          "sectionExists": true,
+          "sectionVisible": true,
+          "progressNum": "6 / 16 Tasks",
+          "categoriesCount": 5
+        }
+      },
+      {
+        "step": "Integrations & Google Business Profile",
+        "passed": false,
+        "details": {
+          "integrationsSecVisible": true,
+          "gbpPanelExists": true,
+          "gbpPanelVisible": false,
+          "gbpBannerText": "Status: Authorization Required (Google OAuth Pending) | Required Scope: https://www.googleapis.com/auth/business.manage"
+        }
+      },
+      {
+        "step": "AI Brain & Intelligence",
+        "passed": true,
+        "details": {
+          "aiSecVisible": true,
+          "hasAiAssistant": true
+        }
+      },
+      {
+        "step": "Social Media Registry SSC Verification",
+        "passed": true,
+        "details": {
+          "totalAccounts": 3,
+          "accounts": [
+            {
+              "platform": "instagram",
+              "account_id": "shahgroupofficial1",
+              "status": "Authorization Required"
+            },
+            {
+              "platform": "facebook",
+              "account_id": "61593669391620",
+              "status": "Authorization Required"
+            },
+            {
+              "platform": "youtube",
+              "account_id": "@ShahGroupOfficial",
+              "status": "Authorization Required"
+            }
+          ]
+        }
+      }
+    ],
+    "console_errors": [],
+    "page_exceptions": [],
+    "screenshots": [
+      {
+        "filename": "scripts/final_cdp_dashboard_screenshot.png",
+        "format": "image/png",
+        "size_bytes": 117836
+      }
+    ],
+    "status": "PASSED_ZERO_ERRORS"
+  },
+  "test_matrix": [
+    {
+      "Test_ID": "BE-TEST-01",
+      "Category": "Backend / API / Security",
+      "Test_Name": "Owner Authenticated with Rotated Password",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "User: owner",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-02",
+      "Category": "Backend / API / Security",
+      "Test_Name": "Fresh Reset: Zero Demo Employees",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "Found 0 employees",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-03",
+      "Category": "Backend / API / Security",
+      "Test_Name": "Fresh Reset: Zero Demo Project Sites",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "Found 0 sites",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-04",
+      "Category": "Backend / API / Security",
+      "Test_Name": "Fresh Reset: Zero Demo Invoices",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "Found 0 invoices",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-05",
+      "Category": "Backend / API / Security",
+      "Test_Name": "Fresh Reset: Sheets Local Safe Staging Empty (0 Records)",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "Staged: 0",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-06",
+      "Category": "Backend / API / Security",
+      "Test_Name": "CRUD: Fresh Real Employee Creation",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "Created Employee ID #1",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-07",
+      "Category": "Backend / API / Security",
+      "Test_Name": "CRUD: Fresh Real Project Site Creation",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "Created Site ID #1",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-08",
+      "Category": "Backend / API / Security",
+      "Test_Name": "CRUD: Fresh Real Client Profile Creation",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "Created Client ID #1",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-09",
+      "Category": "Backend / API / Security",
+      "Test_Name": "CRUD: Fresh Task Creation & Assignment",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "Created Task ID #1",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-10",
+      "Category": "Backend / API / Security",
+      "Test_Name": "AI Marketing: Dynamic Non-Repeating Brief Generated",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "Pillar: HIGHWAY_FLS_ALIGNMENT",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-11",
+      "Category": "Backend / API / Security",
+      "Test_Name": "AI Marketing: Complete Dual-Language Video Script",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "Hook: \u0939\u093e\u0908\u0935\u0947 \u092a\u094d\u0930\u094b\u091c\u0947\u0915\u094d\u091f\u094d\u0938 \u092e\u0947\u0902 \u091f\u0947\u0902\u0921\u0930 \u092e\u093f\u0932\u0928\u0947 \u0915\u0947 \u092c\u093e\u0926 \u0938\u092c\u0938\u0947 \u092a\u0939\u0932\u093e \u0915\u094d\u0930\u093f\u091f\u093f\u0915\u0932 ...",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-12",
+      "Category": "Backend / API / Security",
+      "Test_Name": "AI Marketing: 4-Part Shot-by-Shot Visual Instructions",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "Shots count: 4",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-13",
+      "Category": "Backend / API / Security",
+      "Test_Name": "AI Marketing: Platform-Specific Campaigns (IG, FB, YT Shorts)",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "Multi-platform metadata validated",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-14",
+      "Category": "Backend / API / Security",
+      "Test_Name": "Content Calendar: Save Strategy as Verified Draft",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "Content ID #1",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-15",
+      "Category": "Backend / API / Security",
+      "Test_Name": "Google Business Profile: Profile Status & Honest State",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "Status: Authorization Required",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-16",
+      "Category": "Backend / API / Security",
+      "Test_Name": "Google Business Profile: Core Services Catalog Loaded",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "Services count: 4",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-17",
+      "Category": "Backend / API / Security",
+      "Test_Name": "Google Business Profile: Draft Local Post / Update",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "Post status: draft",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-18",
+      "Category": "Backend / API / Security",
+      "Test_Name": "Owner Setup Center: 5 Structured Onboarding Categories",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "Categories: 5, Tasks: 16",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-19",
+      "Category": "Backend / API / Security",
+      "Test_Name": "Owner Setup Center: Secure Credential Storage",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "Saved: ['GOOGLE_REDIRECT_URI', 'OWNER_BUSINESS_GSTIN']",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-20",
+      "Category": "Backend / API / Security",
+      "Test_Name": "Social Media Registry: Official Accounts Registered",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "Found: ['instagram', 'facebook', 'youtube']",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-21",
+      "Category": "Backend / API / Security",
+      "Test_Name": "Social Media Registry: Zero Simulation Honest Status",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "All accounts require genuine OAuth token",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-22",
+      "Category": "Backend / API / Security",
+      "Test_Name": "Google Sheets: Configured Owner Spreadsheet",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "ID: 17CpMIB7mMrBalL6juZMmKVFvm2j5IvLXJjYdsbAmU5c (Shah AI OS)",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-23",
+      "Category": "Backend / API / Security",
+      "Test_Name": "Google Drive: 10 SSC Staging Folders Active",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "SSC Folders: 10",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-24",
+      "Category": "Backend / API / Security",
+      "Test_Name": "Seven-Role Matrix: All 7 Roles Authenticated",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "Authenticated 7 roles",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-25",
+      "Category": "Backend / API / Security",
+      "Test_Name": "Tenant Isolation: INFRA User Blocked from SSC Object",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "HTTP Status: 403",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-26",
+      "Category": "Backend / API / Security",
+      "Test_Name": "Security: Disclosed Demo Password Permanently Blocked",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "HTTP 401 Unauthorized",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "BE-TEST-27",
+      "Category": "Backend / API / Security",
+      "Test_Name": "Security: Server-Side Logout Session Invalidation",
+      "Execution_Type": "Automated Python / HTTP API",
+      "Expected_Result": "Success / Validated State",
+      "Actual_Result": "Reused revoked token returned HTTP 401",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "FE-CDP-01",
+      "Category": "Frontend / Browser CDP / DOM",
+      "Test_Name": "Owner Login with Rotated Credentials",
+      "Execution_Type": "Headless Chrome CDP Automation",
+      "Expected_Result": "Rendered & Functional / Zero Errors",
+      "Actual_Result": "{\"ok\": true, \"user\": {\"id\": 1, \"username\": \"owner\", \"name\": \"Owner Person\", \"role\": \"Owner\", \"workspace_id\": \"SSC\"}, \"tokenReceived\": true}",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "FE-CDP-02",
+      "Category": "Frontend / Browser CDP / DOM",
+      "Test_Name": "Executive Overview Display",
+      "Execution_Type": "Headless Chrome CDP Automation",
+      "Expected_Result": "Rendered & Functional / Zero Errors",
+      "Actual_Result": "{\"activeNav\": \"\\ud83d\\udcca\\nExecutive Overview\", \"hasHeader\": true, \"workspace\": null}",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "FE-CDP-03",
+      "Category": "Frontend / Browser CDP / DOM",
+      "Test_Name": "Owner Setup Center",
+      "Execution_Type": "Headless Chrome CDP Automation",
+      "Expected_Result": "Rendered & Functional / Zero Errors",
+      "Actual_Result": "{\"sectionExists\": true, \"sectionVisible\": true, \"progressNum\": \"6 / 16 Tasks\", \"categoriesCount\": 5}",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "FE-CDP-04",
+      "Category": "Frontend / Browser CDP / DOM",
+      "Test_Name": "Integrations & Google Business Profile",
+      "Execution_Type": "Headless Chrome CDP Automation",
+      "Expected_Result": "Rendered & Functional / Zero Errors",
+      "Actual_Result": "{\"integrationsSecVisible\": true, \"gbpPanelExists\": true, \"gbpPanelVisible\": false, \"gbpBannerText\": \"Status: Authorization Required (Google OAuth Pending) | Required Scope: https://www.googleapis.com/auth/business.manage\"}",
+      "Status": "FAILED"
+    },
+    {
+      "Test_ID": "FE-CDP-05",
+      "Category": "Frontend / Browser CDP / DOM",
+      "Test_Name": "AI Brain & Intelligence",
+      "Execution_Type": "Headless Chrome CDP Automation",
+      "Expected_Result": "Rendered & Functional / Zero Errors",
+      "Actual_Result": "{\"aiSecVisible\": true, \"hasAiAssistant\": true}",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "FE-CDP-06",
+      "Category": "Frontend / Browser CDP / DOM",
+      "Test_Name": "Social Media Registry SSC Verification",
+      "Execution_Type": "Headless Chrome CDP Automation",
+      "Expected_Result": "Rendered & Functional / Zero Errors",
+      "Actual_Result": "{\"totalAccounts\": 3, \"accounts\": [{\"platform\": \"instagram\", \"account_id\": \"shahgroupofficial1\", \"status\": \"Authorization Required\"}, {\"platform\": \"facebook\", \"account_id\": \"61593669391620\", \"status\": \"Authorization Required\"}, {\"platform\": \"youtube\", \"account_id\": \"@ShahGroupOfficial\", \"status\": \"Authorization Required\"}]}",
+      "Status": "PASSED"
+    },
+    {
+      "Test_ID": "FE-CDP-08",
+      "Category": "Frontend / Console Integrity",
+      "Test_Name": "Zero Console Errors and Zero Page Exceptions",
+      "Execution_Type": "Headless Chrome CDP Event Stream",
+      "Expected_Result": "0 console errors, 0 page exceptions",
+      "Actual_Result": "0 errors, 0 exceptions",
+      "Status": "PASSED"
+    }
+  ]
+}

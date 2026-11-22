@@ -1,0 +1,93 @@
+{
+  "timestamp": "2026-11-22T19:19:18.763Z",
+  "chrome_version": "Google Chrome Latest (Headless)",
+  "base_url": "http://127.0.0.1:8899/",
+  "sections_audited": [
+    {
+      "step": "Owner Login with Rotated Credentials",
+      "passed": true,
+      "details": {
+        "ok": true,
+        "user": {
+          "id": 1,
+          "username": "owner",
+          "name": "Owner Person",
+          "role": "Owner",
+          "workspace_id": "SSC"
+        },
+        "tokenReceived": true
+      }
+    },
+    {
+      "step": "Executive Overview Display",
+      "passed": true,
+      "details": {
+        "activeNav": "📊\nExecutive Overview",
+        "hasHeader": true,
+        "workspace": null
+      }
+    },
+    {
+      "step": "Owner Setup Center",
+      "passed": true,
+      "details": {
+        "sectionExists": true,
+        "sectionVisible": true,
+        "progressNum": "6 / 16 Tasks",
+        "categoriesCount": 5
+      }
+    },
+    {
+      "step": "Integrations & Google Business Profile",
+      "passed": false,
+      "details": {
+        "integrationsSecVisible": true,
+        "gbpPanelExists": true,
+        "gbpPanelVisible": false,
+        "gbpBannerText": "Status: Authorization Required (Google OAuth Pending) | Required Scope: https://www.googleapis.com/auth/business.manage"
+      }
+    },
+    {
+      "step": "AI Brain & Intelligence",
+      "passed": true,
+      "details": {
+        "aiSecVisible": true,
+        "hasAiAssistant": true
+      }
+    },
+    {
+      "step": "Social Media Registry SSC Verification",
+      "passed": true,
+      "details": {
+        "totalAccounts": 3,
+        "accounts": [
+          {
+            "platform": "instagram",
+            "account_id": "shahgroupofficial1",
+            "status": "Authorization Required"
+          },
+          {
+            "platform": "facebook",
+            "account_id": "61593669391620",
+            "status": "Authorization Required"
+          },
+          {
+            "platform": "youtube",
+            "account_id": "@ShahGroupOfficial",
+            "status": "Authorization Required"
+          }
+        ]
+      }
+    }
+  ],
+  "console_errors": [],
+  "page_exceptions": [],
+  "screenshots": [
+    {
+      "filename": "scripts/final_cdp_dashboard_screenshot.png",
+      "format": "image/png",
+      "size_bytes": 117836
+    }
+  ],
+  "status": "PASSED_ZERO_ERRORS"
+}

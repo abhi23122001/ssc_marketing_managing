@@ -96,6 +96,18 @@ OAUTH_SPECS = {
         "env_client_secret": "LINKEDIN_CLIENT_SECRET",
         "token_lifetime_days": 60,
     },
+    "google_business_profile": {
+        "name": "Google Business Profile API",
+        "auth_endpoint": "https://accounts.google.com/o/oauth2/v2/auth",
+        "token_endpoint": "https://oauth2.googleapis.com/token",
+        "scopes": [
+            "https://www.googleapis.com/auth/business.manage",
+            "https://www.googleapis.com/auth/userinfo.email",
+        ],
+        "env_client_id": "GOOGLE_CLIENT_ID",
+        "env_client_secret": "GOOGLE_CLIENT_SECRET",
+        "token_lifetime_days": 180,
+    },
 }
 
 def ensure_oauth_schema(conn: sqlite3.Connection) -> None:

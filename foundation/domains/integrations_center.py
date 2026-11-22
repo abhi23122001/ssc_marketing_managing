@@ -157,6 +157,7 @@ def get_integration_health_monitor(store: Store, workspace_id: str = "SSC") -> D
     google_oauth = get_account_oauth_status(store.conn, workspace_id, "google", "core_auth")
     google_drive_oauth = get_account_oauth_status(store.conn, workspace_id, "google", "drive_sync")
     google_sheets_oauth = get_account_oauth_status(store.conn, workspace_id, "google", "sheets_sync")
+    gbp_oauth = get_account_oauth_status(store.conn, workspace_id, "google_business_profile", "gbp_manage")
     
     # Official social accounts status
     social_accounts_list = list_social_accounts(store, workspace_id)
@@ -256,6 +257,17 @@ def get_integration_health_monitor(store: Store, workspace_id: str = "SSC") -> D
             "required_scopes": ["https://www.googleapis.com/auth/youtube.upload", "https://www.googleapis.com/auth/youtube.readonly"],
             "last_sync": now_kolkata_iso()[:16],
             "troubleshooting": "Requires official Google OAuth 2.0 authorization with youtube.upload scope and channel ownership verification."
+        },
+        {
+            "id": "google_business_profile",
+            "name": "Google Business Profile",
+            "icon": "🏢",
+            "status": "connected" if gbp_oauth.get("is_connected") else "setup_required",
+            "status_label": "Business Profile Active" if gbp_oauth.get("is_connected") else "Authorization Required (Local Profile Ready)",
+            "account_identifier": "Shah Surveyors & Consultancy (Nagpur & Central India)",
+            "required_scopes": ["https://www.googleapis.com/auth/business.manage"],
+            "last_sync": now_kolkata_iso()[:16],
+            "troubleshooting": "Google Business Profile API requires OAuth authorization with business.manage scope to sync local reviews, services, and posts."
         },
         {
             "id": "hermes_ai",

@@ -538,7 +538,7 @@ class Handler(BaseHTTPRequestHandler):
             elif path.startswith("/api/ai-brain"):
                 self._handle_ai_brain_route(path, user)
                 return
-            elif path.startswith("/api/intelligence"):
+            elif path.startswith("/api/intelligence") or path.startswith("/api/ai/marketing"):
                 self._handle_intelligence_route(path, user)
                 return
             elif path.startswith("/api/studio"):
@@ -552,6 +552,12 @@ class Handler(BaseHTTPRequestHandler):
                 return
             elif path.startswith("/api/integrations"):
                 self._handle_integrations_route(path, user)
+                return
+            elif path.startswith("/api/gbp"):
+                self._handle_gbp_route(path, user)
+                return
+            elif path.startswith("/api/owner-setup"):
+                self._handle_owner_setup_route(path, user)
                 return
             elif path.startswith("/api/oauth/authorize"):
                 self._handle_oauth_authorize(user)
@@ -1821,7 +1827,7 @@ class Handler(BaseHTTPRequestHandler):
             elif path.startswith("/api/ai-brain"):
                 self._handle_ai_brain_route(path, user)
                 return
-            elif path.startswith("/api/intelligence"):
+            elif path.startswith("/api/intelligence") or path.startswith("/api/ai/marketing"):
                 self._handle_intelligence_route(path, user)
                 return
             elif path.startswith("/api/studio"):
@@ -1835,6 +1841,12 @@ class Handler(BaseHTTPRequestHandler):
                 return
             elif path.startswith("/api/integrations"):
                 self._handle_integrations_route(path, user)
+                return
+            elif path.startswith("/api/gbp"):
+                self._handle_gbp_route(path, user)
+                return
+            elif path.startswith("/api/owner-setup"):
+                self._handle_owner_setup_route(path, user)
                 return
             elif path.startswith("/api/oauth/authorize"):
                 self._handle_oauth_authorize(user)
@@ -2660,17 +2672,33 @@ class Handler(BaseHTTPRequestHandler):
             return
 
         # 3. Daily Marketing Briefs
-        if path == "/api/intelligence/briefs":
+        if path in ("/api/intelligence/briefs", "/api/ai/marketing/brief"):
             brief = ai_intelligence.get_latest_marketing_brief(self.store, ws)
             self._json_ok({"brief": brief})
             return
 
-        if path == "/api/intelligence/briefs/generate":
+        if path in ("/api/intelligence/briefs/generate", "/api/ai/marketing/brief/generate"):
             if self.command != "POST":
                 self._json_err("method not allowed", 405)
                 return
             brief = ai_intelligence.generate_daily_marketing_brief(self.store, ws)
             self._json_ok({"brief": brief})
+            return
+
+        if path in ("/api/intelligence/briefs/save-to-calendar", "/api/ai/marketing/brief/save-to-calendar"):
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            bid = int(data.get("brief_id", 0))
+            platform = data.get("platform", "instagram")
+            if not bid:
+                self._json_err("brief_id required", 400)
+                return
+            try:
+                res = ai_intelligence.save_brief_to_content_calendar(self.store, ws, bid, platform)
+                self._json_ok(res, 201)
+            except Exception as e:
+                self._json_err(str(e), 400)
             return
 
         # 4. Proactive Business Alerts
@@ -2961,7 +2989,7 @@ class Handler(BaseHTTPRequestHandler):
         from foundation.domains import google_sheets_sync, integrations_center
 
         # Central Health Monitor
-        if path in ("/api/integrations/center/health", "/api/integrations/status"):
+        if path in ("/api/integrations", "/api/integrations/summary", "/api/integrations/center/health", "/api/integrations/status"):
             self._json_ok(integrations_center.get_integration_health_monitor(self.store, ws))
             return
 
@@ -3120,6 +3148,82 @@ class Handler(BaseHTTPRequestHandler):
         from foundation.domains import social_integrations
         res = social_integrations.set_test_diagnostic_status(self.store, int(aid), scenario)
         self._json_ok(res)
+
+    def _handle_gbp_route(self, path: str, user: dict) -> None:
+        """First-class Google Business Profile API routes."""
+        if user is None:
+            self._json_err("authentication required", 401)
+            return
+        from foundation.domains import google_business_profile
+        parsed = urllib.parse.urlparse(self.path)
+        qs = urllib.parse.parse_qs(parsed.query)
+        data = _read_json(self) if self.command == "POST" else {}
+        ws, err = self._get_request_workspace(user, data)
+        if err:
+            self._json_err(err, 403)
+            return
+
+        if path == "/api/gbp/profile":
+            self._json_ok(google_business_profile.get_gbp_profile_status(self.store, ws))
+            return
+        if path == "/api/gbp/config":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            self._json_ok(google_business_profile.update_gbp_config(self.store, ws, data))
+            return
+        if path == "/api/gbp/posts":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            try:
+                res = google_business_profile.create_gbp_post(self.store, ws, data)
+                self._json_ok(res, 201)
+            except Exception as e:
+                self._json_err(str(e), 400)
+            return
+        if path == "/api/gbp/reviews/reply":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            rid = data.get("review_id", "").strip()
+            reply = data.get("reply_text", "").strip()
+            if not rid or not reply:
+                self._json_err("review_id and reply_text required", 400)
+                return
+            res = google_business_profile.reply_to_gbp_review(self.store, ws, rid, reply)
+            self._json_ok(res)
+            return
+        self._json_err("gbp endpoint not found", 404)
+
+    def _handle_owner_setup_route(self, path: str, user: dict) -> None:
+        """Interactive Owner Setup Center & Checklist routes."""
+        if user is None:
+            self._json_err("authentication required", 401)
+            return
+        from foundation.domains import owner_setup_wizard
+        parsed = urllib.parse.urlparse(self.path)
+        qs = urllib.parse.parse_qs(parsed.query)
+        data = _read_json(self) if self.command == "POST" else {}
+        ws, err = self._get_request_workspace(user, data)
+        if err:
+            self._json_err(err, 403)
+            return
+
+        if path == "/api/owner-setup/status":
+            self._json_ok(owner_setup_wizard.get_owner_setup_checklist(self.store, ws))
+            return
+        if path == "/api/owner-setup/credentials":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            if user.get("role") != "Owner":
+                self._json_err("Owner role required for credential configuration", 403)
+                return
+            res = owner_setup_wizard.save_stored_credentials(data)
+            self._json_ok(res)
+            return
+        self._json_err("owner setup endpoint not found", 404)
 
     def _handle_tasks_route(self, path: str, user: dict) -> None:
         if user is None:
