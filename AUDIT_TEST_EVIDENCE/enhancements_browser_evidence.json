@@ -1,0 +1,534 @@
+{
+  "timestamp": "2026-11-22T21:02:50.588Z",
+  "tests": [
+    {
+      "name": "Authentication (Owner)",
+      "status": "PASSED",
+      "details": {
+        "token": true,
+        "user": {
+          "token": "kqUh3nVimvHY04TDt0vinfb5smDgihDxSaJeZIfKou8",
+          "user_id": 1,
+          "username": "owner",
+          "name": "Owner Person",
+          "role": "Owner",
+          "workspace_id": "SSC",
+          "active": 1,
+          "expires_at": "1795384975.1197248"
+        },
+        "ws": "SSC"
+      }
+    },
+    {
+      "name": "Dynamic Quotation Module (2, 5, 10, 20 items, live math, edit)",
+      "status": "PASSED",
+      "details": {
+        "count5": 5,
+        "count10": 10,
+        "count20": 20,
+        "mathTest": {
+          "itemCount": 5,
+          "subtotal": 295000,
+          "discount": 7000,
+          "taxable": 288000,
+          "gst": 51840,
+          "total": 339840,
+          "previewTotalText": "",
+          "wordsText": ""
+        },
+        "editLoadTest": {
+          "loadedItemCount": 5,
+          "firstItem": "DGPS Ground Control Point (GCP) Survey"
+        },
+        "quotRowVerification": {
+          "totalRows": 12,
+          "firstRow": "QT-SSC-2026-0012\tMPRDC 4-Lane Highway Detailed Project Survey\tINR 2,95,000.00\tINR 51,840.00\tINR 3,39",
+          "hasEditBtn": true,
+          "hasViewBtn": true
+        }
+      }
+    },
+    {
+      "name": "Survey Sites Lifecycle (16 statuses, travel, equipment, reminders, finances)",
+      "status": "PASSED",
+      "details": {
+        "tabsCheck": [
+          {
+            "tab": "scope",
+            "visible": true
+          },
+          {
+            "tab": "team",
+            "visible": true
+          },
+          {
+            "tab": "finance",
+            "visible": true
+          }
+        ],
+        "createdSiteRes": {
+          "site": {
+            "id": 10,
+            "workspace_id": "SSC",
+            "name": "Nagpur Metro Reach-4 Alignment & Geodetic Control",
+            "code": "SITE-NGP-METRO-02-1379",
+            "address": "Metro Pillar 120 to 240, Wardha Rd, Nagpur 440022",
+            "geofence_radius_m": 150,
+            "field_policy_required": 1,
+            "created_at": "2026-11-23 02:32:59",
+            "status": "active",
+            "client_name": "Maharashtra Metro Rail Corporation (MahaMetro)",
+            "project_location": "Hingna to Subhash Nagar Corridor, Nagpur",
+            "complete_address": "Metro Pillar 120 to 240, Wardha Rd, Nagpur 440022",
+            "coordinates": "21.1458 N, 79.0882 E",
+            "survey_type": "DGPS RTK Geodetic Survey",
+            "scope_of_work": "",
+            "start_date": "2026-11-22",
+            "expected_completion_date": "2026-12-06",
+            "assigned_team": [
+              "Amit Verma",
+              "Vikrant Shah",
+              "Priya Deshmukh"
+            ],
+            "team_leader": "Rajesh Sharma",
+            "equipment_assigned": [
+              "Trimble R12i DGPS Base/Rover",
+              "Leica TS16 Total Station",
+              "Trimble DiNi Digital Level"
+            ],
+            "transport_details": "Bolero Camper MH-31-AG-8899",
+            "estimated_expenses": 25000,
+            "special_instructions": "Strict compliance with MoRTH accuracy tolerances.",
+            "required_documents": "",
+            "site_contact_person": "Er. Deshpande (+91 98220 11223)",
+            "site_contact_phone": "",
+            "survey_status": "Site Scheduled",
+            "status_history": [
+              {
+                "status": "Site Scheduled",
+                "changed_by": "Owner Person",
+                "timestamp": "2026-11-23 02:32:59",
+                "remarks": "Strict compliance with MoRTH accuracy tolerances."
+              }
+            ],
+            "project_value": 450000,
+            "advance_received": 150000,
+            "invoice_generated": "",
+            "total_billed": 450000,
+            "payment_received": 150000,
+            "balance_due": 300000,
+            "payment_due_date": "2026-12-22",
+            "last_followup_date": "",
+            "next_followup_date": "",
+            "payment_status": "Partially Paid",
+            "documents_json": [],
+            "schedule_category": "Overdue Site Visit"
+          }
+        },
+        "filterTests": {
+          "all": 9,
+          "upcoming": 0,
+          "tomorrow": 2,
+          "today": 0,
+          "overdue": 3,
+          "completed": 4,
+          "payment_pending": 2
+        },
+        "statusUpdateFlow": [
+          "Survey In Progress",
+          "Field Survey Completed",
+          "Data Processing",
+          "Report Submitted"
+        ],
+        "paymentUpdateRes": {
+          "val": 450000,
+          "paid": 200000,
+          "balance": 100000,
+          "status": "Partially Paid"
+        }
+      }
+    },
+    {
+      "name": "Non-GST Commercial Bills (Bill of Supply, strictly 0% tax, BILL-YYYY-XXXX)",
+      "status": "PASSED",
+      "details": {
+        "nonGstMath": {
+          "itemCount": 3,
+          "subtotal": 85000,
+          "previewTaxText": "",
+          "previewTotalText": "INR 85,000.00",
+          "wordsText": ""
+        },
+        "createdBillRes": {
+          "invoice": {
+            "id": 7,
+            "workspace_id": "SSC",
+            "invoice_number": "BILL-SSC-2026-0006",
+            "work_order_id": 0,
+            "client_id": 0,
+            "invoice_date": "2026-11-22",
+            "due_date": "2026-12-07",
+            "subtotal": 85000,
+            "cgst_amount": 0,
+            "sgst_amount": 0,
+            "igst_amount": 0,
+            "total_tax": 0,
+            "total_amount": 80000,
+            "items_json": "[{\"item\": \"Boundary Demarcation & Boundary Pillars Fixing\", \"description\": \"Boundary Demarcation & Boundary Pillars Fixing\", \"unit\": \"Pillars\", \"quantity\": 50.0, \"rate\": 800.0, \"amount\": 40000.0}, {\"item\": \"Topographic Ground Level Spot Heights Survey\", \"description\": \"Topographic Ground Level Spot Heights Survey\", \"unit\": \"Acre\", \"quantity\": 25.0, \"rate\": 1200.0, \"amount\": 30000.0}, {\"item\": \"CAD As-Built Drawing Deliverable Compilation\", \"description\": \"CAD As-Built Drawing Deliverable Compilation\", \"unit\": \"Lump Sum\", \"quantity\": 1.0, \"rate\": 15000.0, \"amount\": 15000.0}]",
+            "amount_paid": 0,
+            "payment_status": "Pending",
+            "status": "Issued",
+            "created_at": "2026-11-23 02:33:02",
+            "bill_type": "NON_GST",
+            "bill_number": "BILL-SSC-2026-0006",
+            "client_name": "Vidarbha Agro & Infrastructure Pvt Ltd",
+            "client_address": "Plot 45, MIDC Butibori, Nagpur - 441108",
+            "client_contact": "+91 94221 55667",
+            "description_of_work": "Professional Services Rendered",
+            "discount_amount": 5000,
+            "amount_in_words": "Rupees Eighty Thousand Only",
+            "payment_mode": "NEFT / RTGS",
+            "notes": "Commercial non-taxable supply. Payment via RTGS/NEFT.",
+            "authorized_signature": "For SHAH GROUP",
+            "items": [
+              {
+                "item": "Boundary Demarcation & Boundary Pillars Fixing",
+                "description": "Boundary Demarcation & Boundary Pillars Fixing",
+                "unit": "Pillars",
+                "quantity": 50,
+                "rate": 800,
+                "amount": 40000
+              },
+              {
+                "item": "Topographic Ground Level Spot Heights Survey",
+                "description": "Topographic Ground Level Spot Heights Survey",
+                "unit": "Acre",
+                "quantity": 25,
+                "rate": 1200,
+                "amount": 30000
+              },
+              {
+                "item": "CAD As-Built Drawing Deliverable Compilation",
+                "description": "CAD As-Built Drawing Deliverable Compilation",
+                "unit": "Lump Sum",
+                "quantity": 1,
+                "rate": 15000,
+                "amount": 15000
+              }
+            ]
+          },
+          "bill": {
+            "id": 7,
+            "workspace_id": "SSC",
+            "invoice_number": "BILL-SSC-2026-0006",
+            "work_order_id": 0,
+            "client_id": 0,
+            "invoice_date": "2026-11-22",
+            "due_date": "2026-12-07",
+            "subtotal": 85000,
+            "cgst_amount": 0,
+            "sgst_amount": 0,
+            "igst_amount": 0,
+            "total_tax": 0,
+            "total_amount": 80000,
+            "items_json": "[{\"item\": \"Boundary Demarcation & Boundary Pillars Fixing\", \"description\": \"Boundary Demarcation & Boundary Pillars Fixing\", \"unit\": \"Pillars\", \"quantity\": 50.0, \"rate\": 800.0, \"amount\": 40000.0}, {\"item\": \"Topographic Ground Level Spot Heights Survey\", \"description\": \"Topographic Ground Level Spot Heights Survey\", \"unit\": \"Acre\", \"quantity\": 25.0, \"rate\": 1200.0, \"amount\": 30000.0}, {\"item\": \"CAD As-Built Drawing Deliverable Compilation\", \"description\": \"CAD As-Built Drawing Deliverable Compilation\", \"unit\": \"Lump Sum\", \"quantity\": 1.0, \"rate\": 15000.0, \"amount\": 15000.0}]",
+            "amount_paid": 0,
+            "payment_status": "Pending",
+            "status": "Issued",
+            "created_at": "2026-11-23 02:33:02",
+            "bill_type": "NON_GST",
+            "bill_number": "BILL-SSC-2026-0006",
+            "client_name": "Vidarbha Agro & Infrastructure Pvt Ltd",
+            "client_address": "Plot 45, MIDC Butibori, Nagpur - 441108",
+            "client_contact": "+91 94221 55667",
+            "description_of_work": "Professional Services Rendered",
+            "discount_amount": 5000,
+            "amount_in_words": "Rupees Eighty Thousand Only",
+            "payment_mode": "NEFT / RTGS",
+            "notes": "Commercial non-taxable supply. Payment via RTGS/NEFT.",
+            "authorized_signature": "For SHAH GROUP",
+            "items": [
+              {
+                "item": "Boundary Demarcation & Boundary Pillars Fixing",
+                "description": "Boundary Demarcation & Boundary Pillars Fixing",
+                "unit": "Pillars",
+                "quantity": 50,
+                "rate": 800,
+                "amount": 40000
+              },
+              {
+                "item": "Topographic Ground Level Spot Heights Survey",
+                "description": "Topographic Ground Level Spot Heights Survey",
+                "unit": "Acre",
+                "quantity": 25,
+                "rate": 1200,
+                "amount": 30000
+              },
+              {
+                "item": "CAD As-Built Drawing Deliverable Compilation",
+                "description": "CAD As-Built Drawing Deliverable Compilation",
+                "unit": "Lump Sum",
+                "quantity": 1,
+                "rate": 15000,
+                "amount": 15000
+              }
+            ]
+          }
+        },
+        "billPreviewTest": {
+          "hasBillOfSupply": true,
+          "hasZeroTax": true,
+          "hasSec31": true,
+          "billNum": "BILL-SSC-2026-0006"
+        }
+      }
+    },
+    {
+      "name": "Registered Vendor Management (KYC, MSME, PAN, Bank, Approval)",
+      "status": "PASSED",
+      "details": {
+        "vendorRegRes": {
+          "vendor": {
+            "id": 7,
+            "workspace_id": "SSC",
+            "name": "Trimble Navigation India Pvt Ltd",
+            "category": "Survey Equipment",
+            "contact": "+91 98230 44556",
+            "created_at": "2026-11-23 02:33:03",
+            "company_name": "Trimble Navigation India Pvt Ltd",
+            "contact_person": "Suresh Kulkarni (Regional Sales Head)",
+            "mobile": "+91 98230 44556",
+            "email": "suresh.kulkarni@trimble.com",
+            "address": "Unit 402, Trade Centre, BKC, Bandra East",
+            "city": "Mumbai",
+            "state": "Maharashtra",
+            "pincode": "400051",
+            "gstin": "27AAACT9920M1Z8",
+            "pan": "AAACT9920M",
+            "msme_udyam": "UDYAM-MH-19-0044892",
+            "bank_name": "HDFC Bank Ltd",
+            "bank_account": "50200048192831",
+            "bank_ifsc": "HDFC0000060",
+            "bank_branch": "",
+            "services_supplied": "Trimble R12i RTK GNSS Receiver AMC, Calibration, Base Station CORS correction subscriptions",
+            "registration_date": "2026-11-23",
+            "documents_json": [],
+            "status": "Under Verification",
+            "notes": "",
+            "status_history": [
+              {
+                "status": "Under Verification",
+                "changed_by": "Owner Person",
+                "timestamp": "2026-11-23 02:33:03",
+                "remarks": "Vendor initial registration"
+              }
+            ]
+          }
+        },
+        "vendorStatusFlow": {
+          "approvedStatus": "Approved",
+          "activeStatus": "Active"
+        },
+        "vendorTableCheck": {
+          "hasTable": true,
+          "rowCount": 6,
+          "firstText": "Trimble Navigation India Pvt Ltd\nTrimble R12i RTK GNSS Receiver AMC, Calibration"
+        }
+      }
+    },
+    {
+      "name": "Employee Status & Exit Management (Active/Notice/Former, F&F settlement, handover)",
+      "status": "PASSED",
+      "details": {
+        "rosterFilters": {
+          "activeCount": 0,
+          "noticeCount": 1,
+          "formerCount": 1,
+          "allCount": 1,
+          "sampleActive": ""
+        },
+        "exitWorkflowRes": {
+          "updated": true,
+          "empId": 1,
+          "empName": "Amit Sharma",
+          "newStatus": "Exited",
+          "formerCountAfter": 1
+        }
+      }
+    },
+    {
+      "name": "Report Archive & Visual Analytics (Charts, Tables, In-App Viewer)",
+      "status": "PASSED",
+      "details": {
+        "chartsCheck": {
+          "hasSummary": true,
+          "hasCharts": true,
+          "chartTitles": [
+            "📈 Revenue Distribution (GST vs Non-GST)",
+            "📊 Operational Realization & Collections"
+          ]
+        },
+        "generatedReportRes": {
+          "report": {
+            "id": 5,
+            "workspace_id": "SSC",
+            "report_type": "MONTHLY_PERFORMANCE",
+            "title": "SSC Comprehensive Business & Operations Performance Report",
+            "period_label": "November 2026",
+            "date_range": "Last 30 Days",
+            "generated_at": "2026-11-23 02:33:05",
+            "summary": "Executive summary for SSC covering operational lifecycle and financial settlement. Total active sites logged: 9 (7 completed). Total revenue billed to date: INR 430,000.00 (GST: INR 0.00, Non-GST: INR 430,000.00). Outstanding client balance across active sites: INR 800,000.00. Active workforce stands at 0 personnel.",
+            "executive_summary": "Executive summary for SSC covering operational lifecycle and financial settlement. Total active sites logged: 9 (7 completed). Total revenue billed to date: INR 430,000.00 (GST: INR 0.00, Non-GST: INR 430,000.00). Outstanding client balance across active sites: INR 800,000.00. Active workforce stands at 0 personnel.",
+            "detailed_tables_json": [
+              {
+                "section_name": "Revenue & Billing Breakdown",
+                "headers": [
+                  "Metric",
+                  "Amount (INR)",
+                  "Share / Ratio"
+                ],
+                "rows": [
+                  [
+                    "Total Billed Value",
+                    "INR 430,000.00",
+                    "100.0%"
+                  ],
+                  [
+                    "GST Tax Invoices",
+                    "INR 0.00",
+                    "0.0%"
+                  ],
+                  [
+                    "Non-GST Commercial Bills",
+                    "INR 430,000.00",
+                    "100.0%"
+                  ],
+                  [
+                    "Outstanding Site Receivables",
+                    "INR 800,000.00",
+                    "Uncollected Balance"
+                  ]
+                ]
+              },
+              {
+                "section_name": "Survey & Project Operations Lifecycle",
+                "headers": [
+                  "Operational Indicator",
+                  "Count / Value",
+                  "Operational Status"
+                ],
+                "rows": [
+                  [
+                    "Total Survey Sites",
+                    "9",
+                    "Active Portfolio"
+                  ],
+                  [
+                    "Field Surveys Completed",
+                    "7",
+                    "77.8% Completed"
+                  ],
+                  [
+                    "Commercial Quotations Issued",
+                    "12",
+                    "Valued at INR 3,175,970.00"
+                  ],
+                  [
+                    "Active Field Staff",
+                    "0",
+                    "1 former staff in archive"
+                  ]
+                ]
+              }
+            ],
+            "charts_json": {
+              "billing_distribution": {
+                "type": "donut",
+                "labels": [
+                  "GST Invoices",
+                  "Non-GST Bills",
+                  "Pending Receivables"
+                ],
+                "values": [
+                  0,
+                  430000,
+                  800000
+                ]
+              },
+              "operations_breakdown": {
+                "type": "bar",
+                "labels": [
+                  "Total Sites",
+                  "Completed Surveys",
+                  "Quotations Issued",
+                  "Active Staff"
+                ],
+                "values": [
+                  9,
+                  7,
+                  12,
+                  0
+                ]
+              }
+            },
+            "key_metrics_json": {
+              "total_revenue": 430000,
+              "gst_revenue": 0,
+              "nongst_revenue": 430000,
+              "total_sites": 9,
+              "completed_sites": 7,
+              "outstanding_receivables": 800000,
+              "active_employees": 0
+            },
+            "pending_actions_json": [
+              "Follow up on outstanding receivables totaling INR 800,000.00.",
+              "Advance field and data processing workflows on 2 pending site visits."
+            ],
+            "status": "Completed",
+            "error_message": "",
+            "author_id": 1
+          }
+        },
+        "viewerCheck": {
+          "hasModal": true,
+          "title": "📊 SSC Comprehensive Business & Operations Performance Report",
+          "tableCount": 2,
+          "hasSummary": false,
+          "hasRecommendations": true
+        }
+      }
+    },
+    {
+      "name": "Light Theme Accessibility & Contrast Hardening",
+      "status": "PASSED",
+      "details": {
+        "lightContrastCheck": {
+          "theme": "light",
+          "bodyBg": "rgb(248, 250, 252)",
+          "bodyColor": "rgb(15, 23, 42)",
+          "cardBg": "rgb(255, 255, 255)",
+          "cardColor": "rgb(15, 23, 42)",
+          "inputBg": "rgb(255, 255, 255)",
+          "inputColor": "rgb(15, 23, 42)",
+          "thColor": "rgb(30, 41, 59)",
+          "badContrastCount": 0
+        },
+        "darkContrastCheck": {
+          "theme": "dark",
+          "bodyBg": "rgb(11, 17, 32)",
+          "bodyColor": "rgb(248, 250, 252)"
+        }
+      }
+    },
+    {
+      "name": "Console & Runtime Stability (0 Console Errors)",
+      "status": "PASSED",
+      "details": {
+        "consoleErrorCount": 0,
+        "errors": []
+      }
+    }
+  ],
+  "consoleErrors": [],
+  "overallStatus": "ALL_PASSED"
+}

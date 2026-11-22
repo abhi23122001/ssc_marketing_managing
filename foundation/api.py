@@ -82,6 +82,7 @@ _MODULE_STATUS = {
 }
 
 from foundation.store import Store, now_iso
+from foundation.domains import lifecycle_enhancements
 
 # Symbols genuinely required by the Handler logic below.
 # authenticate/issue_token/TOKEN_PREFIX are defined in foundation.auth;
@@ -514,6 +515,12 @@ class Handler(BaseHTTPRequestHandler):
             elif path.startswith("/api/invoices"):
                 self._handle_invoices_route(path, user)
                 return
+            elif path.startswith("/api/bills"):
+                self._handle_invoices_route(path, user)
+                return
+            elif path.startswith("/api/vendors"):
+                self._handle_vendors_route(path, user)
+                return
             elif path.startswith("/api/payments"):
                 self._handle_payments_route(path, user)
                 return
@@ -743,33 +750,91 @@ class Handler(BaseHTTPRequestHandler):
         if err:
             self._json_err(err, 403)
             return
+
+        parsed = urllib.parse.urlparse(self.path)
+        query_params = urllib.parse.parse_qs(parsed.query)
+        cat_filter = query_params.get("category", [None])[0]
+
+        parts = [x for x in path.split("/") if x]
+
         if path == "/api/sites/export":
-            sites = self.store.list_sites(None if ws == "ALL" else ws)
-            self._send_csv(f"sites_{ws}.csv", ["id", "code", "name", "address", "geofence_radius", "active", "created_at"], sites)
+            sites = lifecycle_enhancements.list_lifecycle_sites(self.store.conn, None if ws == "ALL" else ws)
+            self._send_csv(f"sites_{ws}.csv", ["id", "code", "name", "address", "survey_type", "survey_status", "schedule_category", "balance_due", "created_at"], sites)
             return
-        if self.command == "GET":
-            sites = self.store.list_sites(None if ws == "ALL" else ws)
-            self._json_ok({"sites": sites})
+
+        if len(parts) == 3 and parts[1] == "sites" and parts[2] == "summary":
+            sites = lifecycle_enhancements.list_lifecycle_sites(self.store.conn, None if ws == "ALL" else ws)
+            summary = {
+                "total": len(sites),
+                "upcoming": sum(1 for s in sites if s.get("schedule_category") == "Upcoming Site"),
+                "tomorrow": sum(1 for s in sites if s.get("schedule_category") == "Tomorrow's Site"),
+                "today": sum(1 for s in sites if s.get("schedule_category") == "Today's Site Visit"),
+                "overdue": sum(1 for s in sites if s.get("schedule_category") == "Overdue Site Visit"),
+                "completed": sum(1 for s in sites if s.get("schedule_category") == "Completed Site"),
+                "payment_pending": sum(1 for s in sites if float(s.get("balance_due", 0.0)) > 0 and s.get("survey_status") in lifecycle_enhancements.COMPLETED_SURVEY_STATUSES)
+            }
+            self._json_ok({"summary": summary})
             return
-        if self.command == "POST":
-            if not self._has(user, "resource:create"):
-                self._json_err("resource:create not permitted", 403)
+
+        if len(parts) == 2 and parts[1] == "sites":
+            if self.command == "GET":
+                sites = lifecycle_enhancements.list_lifecycle_sites(self.store.conn, None if ws == "ALL" else ws, cat_filter)
+                self._json_ok({"sites": sites, "count": len(sites)})
                 return
+            if self.command == "POST":
+                if not self._has(user, "resource:create"):
+                    self._json_err("resource:create not permitted", 403)
+                    return
+                data = _read_json(self)
+                name = data.get("name")
+                code = data.get("code")
+                target_ws = data.get("workspace_id") or ws
+                user_name = user.get("name") or user.get("username") or "Admin"
+                site = lifecycle_enhancements.create_lifecycle_site(self.store.conn, target_ws, data, user_name)
+                actor_id = user.get("user_id") or user.get("id")
+                self.store.add_audit(actor_id, "site:create", f"site:{site.get('code')}", {"name": name, "code": code}, target_ws)
+                self._json_ok({"site": site}, 201)
+                return
+
+        if len(parts) == 3 and parts[1] == "sites" and parts[2].isdigit():
+            sid = int(parts[2])
+            if self.command == "GET":
+                s = lifecycle_enhancements.get_site_details(self.store.conn, sid)
+                if not s:
+                    self._json_err("site not found", 404)
+                    return
+                self._json_ok({"site": s})
+                return
+            if self.command in ("PUT", "POST"):
+                data = _read_json(self)
+                s = lifecycle_enhancements.get_site_details(self.store.conn, sid)
+                self._json_ok({"site": s})
+                return
+
+        if len(parts) == 4 and parts[1] == "sites" and parts[2].isdigit() and parts[3] == "status" and self.command == "POST":
+            sid = int(parts[2])
             data = _read_json(self)
-            name = data.get("name")
-            code = data.get("code")
-            if not name or not code:
-                self._json_err("name and code required", 400)
-                return
-            target_ws = data.get("workspace_id") or ws
-            addr = data.get("address", "")
-            rad = float(data.get("geofence_radius_m", 100.0))
-            pol = 1 if data.get("field_policy_required") else 0
-            site = self.store.create_site(target_ws, name, code, addr, rad, pol)
-            actor_id = user.get("user_id") or user.get("id")
-            self.store.add_audit(actor_id, "site:create", f"site:{code}", {"name": name, "code": code}, target_ws)
-            self._json_ok({"site": site}, 201)
+            new_status = data.get("survey_status") or data.get("status")
+            remarks = data.get("remarks", "")
+            user_name = user.get("name") or user.get("username") or "Admin"
+            try:
+                updated = lifecycle_enhancements.update_site_status(self.store.conn, sid, new_status, remarks, user_name)
+                self._json_ok({"site": updated})
+            except Exception as e:
+                self._json_err(str(e), 400)
             return
+
+        if len(parts) == 4 and parts[1] == "sites" and parts[2].isdigit() and parts[3] == "payment" and self.command == "POST":
+            sid = int(parts[2])
+            data = _read_json(self)
+            user_name = user.get("name") or user.get("username") or "Admin"
+            try:
+                updated = lifecycle_enhancements.update_site_payment(self.store.conn, sid, data, user_name)
+                self._json_ok({"site": updated})
+            except Exception as e:
+                self._json_err(str(e), 400)
+            return
+
         self._json_err("not found", 404)
 
     def _handle_finance_route(self, path: str, user: dict) -> None:
@@ -903,6 +968,12 @@ class Handler(BaseHTTPRequestHandler):
         if len(parts) == 2 and parts[1] == "quotations":
             if self.command == "GET":
                 quotations = self.store.list_quotations(ws)
+                for q in quotations:
+                    if isinstance(q.get("items_json"), str):
+                        try:
+                            q["items"] = json.loads(q["items_json"])
+                        except Exception:
+                            q["items"] = []
                 self._json_ok({"quotations": quotations, "count": len(quotations)})
                 return
             if self.command == "POST":
@@ -910,13 +981,13 @@ class Handler(BaseHTTPRequestHandler):
                     self._json_err("quotation creation restricted to Owner and Managers", 403)
                     return
                 data = _read_json(self)
-                q = self.store.create_quotation(ws, data)
+                q = lifecycle_enhancements.create_dynamic_quotation(self.store.conn, ws, data)
                 self._json_ok({"quotation": q}, 201)
                 return
-        if len(parts) == 3 and parts[1] == "quotations":
+        if len(parts) == 3 and parts[1] == "quotations" and parts[2].isdigit():
             qid = int(parts[2])
             if self.command == "GET":
-                q = self.store.get_quotation(qid)
+                q = lifecycle_enhancements.get_dynamic_quotation(self.store.conn, qid)
                 if not q:
                     self._json_err("quotation not found", 404)
                     return
@@ -924,6 +995,17 @@ class Handler(BaseHTTPRequestHandler):
                     self._json_err("tenant isolation violation: unauthorized quotation access", 403)
                     return
                 self._json_ok({"quotation": q})
+                return
+            if self.command in ("PUT", "POST"):
+                if role not in ("Owner", "Manager", "Project Manager", "Finance Manager"):
+                    self._json_err("quotation modification restricted to Owner and Managers", 403)
+                    return
+                data = _read_json(self)
+                updated = lifecycle_enhancements.update_dynamic_quotation(self.store.conn, qid, data)
+                if not updated:
+                    self._json_err("quotation not found", 404)
+                    return
+                self._json_ok({"quotation": updated})
                 return
         if len(parts) == 4 and parts[1] == "quotations" and parts[3] in ("status", "accept") and self.command == "POST":
             if role not in ("Owner", "Manager", "Project Manager", "Finance Manager"):
@@ -991,34 +1073,45 @@ class Handler(BaseHTTPRequestHandler):
         if err:
             self._json_err(err, 403)
             return
+        parsed = urllib.parse.urlparse(self.path)
+        query_params = urllib.parse.parse_qs(parsed.query)
+        bill_type = query_params.get("bill_type", [None])[0] or query_params.get("type", [None])[0]
+        if path.startswith("/api/bills") and not bill_type:
+            bill_type = "NON_GST"
+
         parts = [x for x in path.split("/") if x]
         role = user.get("role") or ""
-        if len(parts) == 2 and parts[1] == "invoices":
+
+        if len(parts) == 2 and parts[1] in ("invoices", "bills"):
             if self.command == "GET":
-                invs = self.store.list_invoices(ws)
-                self._json_ok({"invoices": invs, "count": len(invs)})
+                docs = lifecycle_enhancements.list_billing_documents(self.store.conn, ws, bill_type)
+                self._json_ok({"invoices": docs, "bills": docs, "count": len(docs)})
                 return
             if self.command == "POST":
                 if role not in ("Owner", "Finance Manager", "Manager"):
-                    self._json_err("invoice creation restricted to Owner and Finance Manager", 403)
+                    self._json_err("billing creation restricted to Owner and Finance Manager", 403)
                     return
                 data = _read_json(self)
-                inv = self.store.create_invoice(ws, data)
-                self._json_ok({"invoice": inv}, 201)
+                if parts[1] == "bills" and "bill_type" not in data:
+                    data["bill_type"] = "NON_GST"
+                inv = lifecycle_enhancements.create_billing_document(self.store.conn, ws, data)
+                self._json_ok({"invoice": inv, "bill": inv}, 201)
                 return
-        if len(parts) == 3 and parts[1] == "invoices":
+
+        if len(parts) == 3 and parts[1] in ("invoices", "bills") and parts[2].isdigit():
             inv_id = int(parts[2])
             if self.command == "GET":
-                inv = self.store.get_invoice(inv_id)
+                inv = lifecycle_enhancements.get_billing_document(self.store.conn, inv_id)
                 if not inv:
-                    self._json_err("invoice not found", 404)
+                    self._json_err("document not found", 404)
                     return
                 if user.get("role") != "Owner" and inv.get("workspace_id") != ws:
                     self._json_err("tenant isolation violation: unauthorized invoice access", 403)
                     return
-                self._json_ok({"invoice": inv})
+                self._json_ok({"invoice": inv, "bill": inv})
                 return
-        if len(parts) == 4 and parts[1] == "invoices" and parts[3] == "payment" and self.command == "POST":
+
+        if len(parts) == 4 and parts[1] in ("invoices", "bills") and parts[3] == "payment" and self.command == "POST":
             if role not in ("Owner", "Finance Manager", "Manager"):
                 self._json_err("recording payment restricted to Owner and Finance Manager", 403)
                 return
@@ -1086,8 +1179,63 @@ class Handler(BaseHTTPRequestHandler):
     # ------------------------------------------------------------------
     # HRM — Employees, Attendance, Leaves
     # ------------------------------------------------------------------
+    def _handle_vendors_route(self, path: str, user: dict) -> None:
+        if user is None:
+            self._json_err("authentication required", 401)
+            return
+        ws, err = self._get_request_workspace(user)
+        if err:
+            self._json_err(err, 403)
+            return
+        parsed = urllib.parse.urlparse(self.path)
+        query_params = urllib.parse.parse_qs(parsed.query)
+        status_filter = query_params.get("status", [None])[0]
+
+        parts = [x for x in path.split("/") if x]
+
+        if len(parts) == 2 and parts[1] == "vendors":
+            if self.command == "GET":
+                vendors = lifecycle_enhancements.list_registered_vendors(self.store.conn, ws, status_filter)
+                self._json_ok({"vendors": vendors, "count": len(vendors)})
+                return
+            if self.command == "POST":
+                data = _read_json(self)
+                user_name = user.get("name") or user.get("username") or "Admin"
+                v = lifecycle_enhancements.register_vendor(self.store.conn, ws, data, user_name)
+                self._json_ok({"vendor": v}, 201)
+                return
+
+        if len(parts) == 3 and parts[1] == "vendors" and parts[2].isdigit():
+            vid = int(parts[2])
+            if self.command == "GET":
+                v = lifecycle_enhancements.get_vendor_details(self.store.conn, vid)
+                if not v:
+                    self._json_err("vendor not found", 404)
+                    return
+                self._json_ok({"vendor": v})
+                return
+            if self.command in ("PUT", "POST"):
+                data = _read_json(self)
+                v = lifecycle_enhancements.update_vendor(self.store.conn, vid, data)
+                self._json_ok({"vendor": v})
+                return
+
+        if len(parts) == 4 and parts[1] == "vendors" and parts[2].isdigit() and parts[3] == "status" and self.command == "POST":
+            vid = int(parts[2])
+            data = _read_json(self)
+            new_status = data.get("status")
+            remarks = data.get("remarks", "")
+            user_name = user.get("name") or user.get("username") or "Admin"
+            try:
+                v = lifecycle_enhancements.update_vendor_status(self.store.conn, vid, new_status, remarks, user_name)
+                self._json_ok({"vendor": v})
+            except Exception as e:
+                self._json_err(str(e), 400)
+            return
+        self._json_err("not found", 404)
+
     def _handle_employees_route(self, path: str, user: dict) -> None:
-        """GET /api/employees — list employees; POST /api/employees — create employee."""
+        """GET /api/employees — list employees; POST /api/employees — create employee; POST /api/employees/<id>/status — exit/status update."""
         if user is None:
             self._json_err("authentication required", 401)
             return
@@ -1095,36 +1243,65 @@ class Handler(BaseHTTPRequestHandler):
             self._json_err("resource:read not permitted", 403)
             return
         ws = user.get("workspace_id") or "SSC"
+        parsed = urllib.parse.urlparse(self.path)
+        query_params = urllib.parse.parse_qs(parsed.query)
+        filter_mode = query_params.get("filter", ["active"])[0] or query_params.get("status", ["active"])[0]
+
+        parts = [x for x in path.split("/") if x]
+
         if path == "/api/employees/export":
-            rows = self.store.list_employees(ws)
-            self._send_csv(f"employees_{ws}.csv", ["id", "employee_id", "name", "designation", "role", "email", "phone", "status", "hire_date"], rows)
+            rows = lifecycle_enhancements.list_employees_filtered(self.store.conn, ws, "all")
+            self._send_csv(f"employees_{ws}.csv", ["id", "employee_id", "name", "designation", "employment_status", "email", "phone", "hire_date"], rows)
             return
-        if self.command == "GET":
-            rows = self.store.list_employees(ws)
-            self._json_ok({"employees": rows, "count": len(rows)})
-            return
-        if self.command == "POST":
-            if not self._has(user, ("resource:create", "hr:manage", "workspace:manage")):
-                self._json_err("resource:create not permitted", 403)
+
+        if len(parts) == 2 and parts[1] == "employees":
+            if self.command == "GET":
+                rows = lifecycle_enhancements.list_employees_filtered(self.store.conn, ws, filter_mode)
+                self._json_ok({"employees": rows, "count": len(rows)})
                 return
+            if self.command == "POST":
+                if not self._has(user, ("resource:create", "hr:manage", "workspace:manage")):
+                    self._json_err("resource:create not permitted", 403)
+                    return
+                data = _read_json(self)
+                name = data.get("name", "").strip()
+                if not name:
+                    self._json_err("name required", 400)
+                    return
+                emp = self.store.create_employee(
+                    workspace_id=ws,
+                    name=name,
+                    role=data.get("role", "Field Technician"),
+                    department=data.get("department", "Operations"),
+                    email=data.get("email", ""),
+                    phone=data.get("phone", ""),
+                    designation=data.get("designation", ""),
+                    salary=float(data.get("salary", 0.0)),
+                )
+                self._json_ok({"employee": emp}, 201)
+                return
+
+        if len(parts) == 3 and parts[1] == "employees" and parts[2].isdigit():
+            eid = int(parts[2])
+            if self.command == "GET":
+                emp = lifecycle_enhancements.get_employee_lifecycle_details(self.store.conn, eid)
+                if not emp:
+                    self._json_err("employee not found", 404)
+                    return
+                self._json_ok({"employee": emp})
+                return
+
+        if len(parts) == 4 and parts[1] == "employees" and parts[2].isdigit() and parts[3] == "status" and self.command == "POST":
+            eid = int(parts[2])
             data = _read_json(self)
-            name = data.get("name", "").strip()
-            if not name:
-                self._json_err("name required", 400)
-                return
-            emp = self.store.create_employee(
-                workspace_id=ws,
-                name=name,
-                role=data.get("role", "Field Technician"),
-                department=data.get("department", "Operations"),
-                email=data.get("email", ""),
-                phone=data.get("phone", ""),
-                designation=data.get("designation", ""),
-                salary=float(data.get("salary", 0.0)),
-            )
-            self._json_ok({"employee": emp}, 201)
+            user_name = user.get("name") or user.get("username") or "Admin"
+            try:
+                updated = lifecycle_enhancements.update_employee_employment_status(self.store.conn, eid, data, user_name)
+                self._json_ok({"employee": updated})
+            except Exception as e:
+                self._json_err(str(e), 400)
             return
-        self._json_err("method not allowed", 405)
+        self._json_err("not found", 404)
 
     def _handle_attendance_route(self, path: str, user: dict) -> None:
         """GET /api/attendance — list logs; POST /api/attendance — log check-in/out."""
@@ -1363,7 +1540,22 @@ class Handler(BaseHTTPRequestHandler):
         parsed = urllib.parse.urlparse(self.path)
         path = urllib.parse.unquote(parsed.path)
         try:
-            if path.startswith("/api/users/"):
+            if path.startswith("/api/quotations/"):
+                self._handle_quotations_route(path, user)
+                return
+            elif path.startswith("/api/sites/"):
+                self._handle_sites_route(path, user)
+                return
+            elif path.startswith("/api/vendors/"):
+                self._handle_vendors_route(path, user)
+                return
+            elif path.startswith("/api/employees/"):
+                self._handle_employees_route(path, user)
+                return
+            elif path.startswith("/api/invoices/") or path.startswith("/api/bills/"):
+                self._handle_invoices_route(path, user)
+                return
+            elif path.startswith("/api/users/"):
                 parts = [p for p in path.split("/") if p]
                 if len(parts) >= 3 and parts[1] == "users" and parts[2].isdigit():
                     uid = int(parts[2])
@@ -1428,16 +1620,77 @@ class Handler(BaseHTTPRequestHandler):
         self._json_err("not found", 404)
 
     def _handle_reports_route(self, path: str, user: dict) -> None:
-        """Reports: GET /api/reports, GET /api/reports/<id>, POST /api/reports."""
-        if path == "/api/reports":
-            self._handle_reports_list(user)
+        """Reports: GET /api/reports, GET /api/reports/dashboard, POST /api/reports/generate, GET /api/reports/<id>, GET /api/reports/<id>/export."""
+        if user is None:
+            self._json_err("authentication required", 401)
             return
-        parts = path.split("/")
-        if len(parts) >= 3 and parts[1] == "reports":
-            rid = parts[2]
-            self._handle_report_detail(user, rid)
-        else:
-            self._json_err("not found", 404)
+        ws, err = self._get_request_workspace(user)
+        if err:
+            self._json_err(err, 403)
+            return
+
+        parts = [x for x in path.split("/") if x]
+
+        # GET /api/reports/dashboard
+        if len(parts) == 3 and parts[1] == "reports" and parts[2] == "dashboard":
+            stats = lifecycle_enhancements.get_reports_analytics_summary(self.store.conn, ws)
+            self._json_ok(stats)
+            return
+
+        # POST /api/reports/generate or POST /api/reports
+        if (len(parts) == 3 and parts[1] == "reports" and parts[2] == "generate" and self.command == "POST") or (len(parts) == 2 and parts[1] == "reports" and self.command == "POST"):
+            data = _read_json(self) if (self.headers.get("Content-Length") and int(self.headers.get("Content-Length", 0)) > 0) else {}
+            rep_type = data.get("report_type", "MONTHLY_PERFORMANCE")
+            date_range = data.get("date_range", "Last 30 Days")
+            report = lifecycle_enhancements.generate_business_report(self.store.conn, ws, rep_type, date_range)
+            self._json_ok({"report": report}, 201)
+            return
+
+        # GET /api/reports
+        if len(parts) == 2 and parts[1] == "reports":
+            reports = lifecycle_enhancements.list_archived_reports(self.store.conn, ws)
+            self._json_ok({"reports": reports, "count": len(reports)})
+            return
+
+        # GET /api/reports/<id>
+        if len(parts) == 3 and parts[1] == "reports" and parts[2].isdigit():
+            rid = int(parts[2])
+            rep = lifecycle_enhancements.get_report_details(self.store.conn, rid)
+            if not rep:
+                self._json_err("report not found", 404)
+                return
+            self._json_ok({"report": rep})
+            return
+
+        # GET /api/reports/<id>/export
+        if len(parts) == 4 and parts[1] == "reports" and parts[2].isdigit() and parts[3] == "export":
+            rid = int(parts[2])
+            rep = lifecycle_enhancements.get_report_details(self.store.conn, rid)
+            if not rep:
+                self._json_err("report not found", 404)
+                return
+            parsed = urllib.parse.urlparse(self.path)
+            fmt = urllib.parse.parse_qs(parsed.query).get("format", ["json"])[0]
+            if fmt == "csv":
+                tables = rep.get("detailed_tables_json") or []
+                lines = [f"# {rep.get('title')}", f"# Period: {rep.get('period_label')}", f"# Generated: {rep.get('generated_at')}", ""]
+                for tbl in tables:
+                    lines.append(f"## {tbl.get('section_name')}")
+                    lines.append(",".join(f'"{h}"' for h in tbl.get('headers', [])))
+                    for r in tbl.get('rows', []):
+                        lines.append(",".join(f'"{c}"' for c in r))
+                    lines.append("")
+                csv_data = "\n".join(lines)
+                self.send_response(200)
+                self.send_header("Content-Type", "text/csv; charset=utf-8")
+                self.send_header("Content-Disposition", f"attachment; filename=report_{rid}_{ws}.csv")
+                self.end_headers()
+                self.wfile.write(csv_data.encode("utf-8"))
+                return
+            self._json_ok({"report": rep})
+            return
+
+        self._json_err("not found", 404)
 
     def do_POST(self) -> None:  # noqa: N802
         parsed = urllib.parse.urlparse(self.path)
@@ -1756,19 +2009,8 @@ class Handler(BaseHTTPRequestHandler):
             elif path.startswith("/api/social/accounts/"):
                 self._handle_social_accounts(user)
                 return
-            elif path.startswith("/api/reports/"):
-                parts = [x for x in path.split("/") if x]
-                if len(parts) >= 3 and parts[1] == "reports":
-                    rid = parts[2]
-                    if len(parts) == 3:
-                        self._handle_report_generate(user)
-                    else:
-                        self._handle_report_detail(user, rid)
-                else:
-                    self._json_err("not found", 404)
-                return
-            elif path == "/api/reports":
-                self._handle_report_generate(user)
+            elif path.startswith("/api/reports"):
+                self._handle_reports_route(path, user)
                 return
             elif path.startswith("/api/leads"):
                 self._handle_leads_route(path, user)
@@ -1805,6 +2047,12 @@ class Handler(BaseHTTPRequestHandler):
                 return
             elif path.startswith("/api/invoices"):
                 self._handle_invoices_route(path, user)
+                return
+            elif path.startswith("/api/bills"):
+                self._handle_invoices_route(path, user)
+                return
+            elif path.startswith("/api/vendors"):
+                self._handle_vendors_route(path, user)
                 return
             elif path.startswith("/api/payments"):
                 self._handle_payments_route(path, user)
