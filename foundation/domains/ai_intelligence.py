@@ -266,10 +266,11 @@ def ask_anything(store: Store, query: str, workspace_id: str = "SSC", user_role:
     ensure_ai_intelligence_schema(store.conn)
     q = query.strip()
     q_lower = q.lower()
+    q_clean = re.sub(r"[^\w\s]", " ", q_lower)
     calc_date = now_kolkata().strftime("%d %B %Y, %I:%M %p IST")
 
     # 1. GREETINGS & INTRODUCTIONS
-    if any(k == q_lower or q_lower.startswith(k + " ") or q_lower.endswith(" " + k) for k in [
+    if any(re.search(rf"\b{k}\b", q_clean) for k in [
         "hi", "hello", "hey", "namaste", "pranam", "kaise ho", "kya haal hai", "kya hal hai",
         "who are you", "kya kar sakte ho", "help", "help me", "madad", "kya features hain"
     ]):
@@ -420,7 +421,7 @@ def ask_anything(store: Store, query: str, workspace_id: str = "SSC", user_role:
         }
 
     # 5. EMPLOYEES & STAFF
-    if any(k in q_lower for k in ["employee", "employees", "staff", "team", "engineer", "surveyor", "attendance", "haziri", "kaun kaun hai"]):
+    if any(re.search(rf"\b{k}\b", q_clean) for k in ["employee", "employees", "staff", "attendance", "haziri", "kaun kaun hai"]) or (re.search(r"\b(engineer|surveyor|surveyors|engineers)\b", q_clean) and "engineering" not in q_clean):
         try:
             total_emp = store.fetchone("SELECT count(*) as cnt FROM employees WHERE workspace_id=?", (workspace_id,))["cnt"]
             users = store.fetchall("SELECT name, designation, status, employee_id FROM employees WHERE workspace_id=? ORDER BY id ASC LIMIT 8", (workspace_id,))
@@ -449,7 +450,27 @@ def ask_anything(store: Store, query: str, workspace_id: str = "SSC", user_role:
             "data_source": "SQLite employees table"
         }
 
-    # 6. INVOICES & BILLING
+    # 6. NON-GST COMMERCIAL BILLS (Check before generic bills/invoices)
+    if any(k in q_lower for k in ["non-gst", "non gst", "bill of supply", "commercial bill", "nongst"]):
+        try:
+            rows = store.fetchall("SELECT invoice_number, client_id, total_amount, status, created_at FROM business_invoices WHERE workspace_id=? AND (bill_type='NON_GST' OR invoice_number LIKE 'BILL-%') ORDER BY id DESC LIMIT 5", (workspace_id,))
+            if not rows:
+                ans = f"**Non-GST Commercial Bills of Supply ({workspace_id})**:\n\nNo Non-GST bills generated yet for `{workspace_id}`. Non-GST bills strictly enforce zero tax liability (0.00) and legal compliance with Section 31(3)(c) of the CGST Act 2017."
+            else:
+                lines = [f"- **{r['invoice_number']}** (Client: `{r['client_id']}`): Total INR {r['total_amount']:,.2f} | Status: `{r['status']}` | Tax: INR 0.00 (Bill of Supply)" for r in rows]
+                ans = f"**Non-GST Commercial Bills ({workspace_id})**:\n\n" + "\n".join(lines) + "\n\n*Statutory Compliance: Section 31(3)(c) CGST Act 2017 with 0% tax liability.*"
+        except Exception as e:
+            ans = f"**Non-GST Bills ({workspace_id})**:\n- Error: {str(e)}"
+        return {
+            "query": query,
+            "intent": "BUSINESS_DATA",
+            "workspace_id": workspace_id,
+            "verified_answer": ans,
+            "calculated_at": calc_date,
+            "data_source": "SQLite business_invoices (Non-GST)"
+        }
+
+    # 6B. GST TAX INVOICES & BILLING
     if any(k in q_lower for k in ["invoice", "invoices", "bill", "billing", "tax invoice", "chalan"]):
         rows = store.fetchall("SELECT invoice_number, client_id, total_amount, status, created_at FROM business_invoices WHERE workspace_id=? ORDER BY id DESC LIMIT 5", (workspace_id,))
         if not rows:
@@ -575,9 +596,10 @@ def ask_anything(store: Store, query: str, workspace_id: str = "SSC", user_role:
             "data_source": "SHAH Group OS Help Knowledge Base"
         }
 
-    # 9. SURVEYING & GEOSPATIAL SOPs
-    if any(k in q_lower for k in ["dgps", "rtk", "drone", "lidar", "total station", "survey of india", "accuracy", "tolerance", "traverse", "gcp"]):
-        if any(w in q_lower for w in ["drone", "lidar", "uav", "aerial"]):
+    # 9. SURVEYING & GEOSPATIAL SOPs (Exclude market pricing & commercial questions)
+    is_pricing_or_market = any(w in q_lower for w in ["price", "cost", "market", "rate", "buy", "vendor", "hire", "rental", "competitor", "latest", "news", "trend", "seo"])
+    if not is_pricing_or_market and any(k in q_lower for k in ["dgps", "rtk", "drone", "lidar", "uav", "aerial", "flight", "altitude", "total station", "survey of india", "accuracy", "tolerance", "traverse", "gcp", "pillar", "demarcation", "boundary"]):
+        if any(w in q_lower for w in ["drone", "lidar", "uav", "aerial", "flight", "altitude"]):
             ans = (
                 f"**Drone Photogrammetry & Aerial LiDAR SOP (DGCA & Survey of India Compliant)**:\n\n"
                 f"1. **Flight Overlap**: Minimum 75% forward overlap and 65% lateral overlap.\n"
@@ -648,14 +670,114 @@ def ask_anything(store: Store, query: str, workspace_id: str = "SSC", user_role:
             "data_source": "GeM / CPPP Public Procurement Framework"
         }
 
-    # 12. DYNAMIC GENERATIVE / SMART FALLBACK (Never static repeating repetition!)
-    # Formulate a helpful contextual answer based on company operations and user query
+    # 12. REGISTERED VENDORS & PROCUREMENT
+    if any(k in q_lower for k in ["vendor", "vendors", "supplier", "suppliers", "kyc", "msme", "procurement", "trimble navigation"]):
+        try:
+            total_v = store.fetchone("SELECT count(*) as cnt FROM expense_vendors WHERE workspace_id=?", (workspace_id,))["cnt"]
+            active_v = store.fetchall("SELECT name, category, status, pan, contact_person FROM expense_vendors WHERE workspace_id=? ORDER BY id DESC LIMIT 5", (workspace_id,))
+            if total_v == 0:
+                ans = f"**Registered Vendors ({workspace_id})**:\n\nNo registered vendors found for workspace `{workspace_id}`. You can register new vendors via '+ Register New Vendor' in the Finance & Vendors directory."
+            else:
+                lines = [f"- **{v['name']}** (`{v['category']}`): Status `{v['status']}` | PAN: `{v.get('pan', 'N/A')}` | Contact: `{v.get('contact_person', 'N/A')}`" for v in active_v]
+                ans = f"**Registered Vendors & Suppliers ({workspace_id}) — Total: {total_v}**:\n\n" + "\n".join(lines) + "\n\n*All vendors undergo full KYC, MSME Udyam, and bank verification before approval.*"
+        except Exception as e:
+            ans = f"**Registered Vendors ({workspace_id})**:\n- Error retrieving vendors: {str(e)}"
+        return {
+            "query": query,
+            "intent": "BUSINESS_DATA",
+            "workspace_id": workspace_id,
+            "verified_answer": ans,
+            "calculated_at": calc_date,
+            "data_source": "SQLite expense_vendors"
+        }
+
+    # 14. MATHEMATICAL & FINANCIAL / GST / UNIT CONVERSIONS
+    if "gst on" in q_lower or ("calculate" in q_lower and any(w in q_lower for w in ["gst", "tax", "discount", "margin", "%"])):
+        nums = [float(n) for n in re.findall(r"\b\d+(?:\.\d+)?\b", q_lower)]
+        if nums:
+            base_amt = nums[0]
+            rate = nums[1] if len(nums) > 1 and nums[1] <= 100 else 18.0
+            gst_val = base_amt * (rate / 100.0)
+            total_val = base_amt + gst_val
+            ans = (
+                f"**GST Calculation for Base Amount INR {base_amt:,.2f} at {rate:.1f}%**:\n\n"
+                f"- **Taxable Amount**: INR {base_amt:,.2f}\n"
+                f"- **Applicable Tax Rate**: {rate:.1f}%\n"
+                f"- **CGST ({rate/2:.1f}%)**: INR {gst_val/2:,.2f}\n"
+                f"- **SGST ({rate/2:.1f}%)**: INR {gst_val/2:,.2f}\n"
+                f"- **Total GST Liability**: INR {gst_val:,.2f}\n"
+                f"- **Total Gross Invoice Value**: INR {total_val:,.2f}\n\n"
+                f"*Note: For inter-state clients, IGST {rate:.1f}% = INR {gst_val:,.2f}. SAC Code for Land Surveying is 998315.*"
+            )
+            return {
+                "query": query,
+                "intent": "CALCULATION",
+                "workspace_id": workspace_id,
+                "verified_answer": ans,
+                "calculated_at": calc_date,
+                "data_source": "Indian GST Calculator Engine"
+            }
+
+    if any(k in q_lower for k in ["acre", "hectare", "sqm", "sqft", "square meter", "square feet", "guntha", "bigha"]) and any(w in q_lower for w in ["convert", "how many", "in", "to", "formula"]):
+        nums = [float(n) for n in re.findall(r"\b\d+(?:\.\d+)?\b", q_lower)]
+        val = nums[0] if nums else 1.0
+        ans = (
+            f"**Land Measurement Unit Conversion Reference (Basis: {val} Units)**:\n\n"
+            f"- **1 Acre** = 43,560 sq.ft = 4,046.86 sq.m = 40 Gunthas (Central India standard)\n"
+            f"- **1 Hectare** = 2.471 Acres = 10,000 sq.m = 107,639 sq.ft\n"
+            f"- **1 Guntha** = 1,089 sq.ft = 101.17 sq.m\n"
+            f"- **1 Bigha (Standard Central/MP)** = 27,225 sq.ft = 0.625 Acres\n"
+            f"- **1 Square Meter** = 10.764 sq.ft\n\n"
+            f"*Land Cadastral Standards: Shah Surveyors & Consultancy verifies all land demarcations in both Metric (sq.m/ha) and Revenue Record units (Acres/Gunthas).*"
+        )
+        return {
+            "query": query,
+            "intent": "CALCULATION",
+            "workspace_id": workspace_id,
+            "verified_answer": ans,
+            "calculated_at": calc_date,
+            "data_source": "Geodetic Unit Conversion Module"
+        }
+
+    # 15. REAL LIVE INTERNET RESEARCH (DuckDuckGo + Wikipedia OpenSearch)
+    try:
+        from . import internet_research
+        if any(w in q_lower for w in ["price", "cost", "market", "rate", "buy", "vendor", "hire", "rental"]):
+            cat = "market_pricing"
+        elif any(w in q_lower for w in ["competitor", "company", "firm", "agency", "ranking"]):
+            cat = "competitor_research"
+        elif any(w in q_lower for w in ["seo", "marketing", "instagram", "reel", "meta ads", "google ads", "social media", "traffic"]):
+            cat = "digital_marketing"
+        elif any(w in q_lower for w in ["tender", "gem", "cppp", "procurement", "pwd", "nhai"]):
+            cat = "tenders"
+        else:
+            cat = "survey_civil_engineering"
+
+        res = internet_research.conduct_live_internet_research(store, query, workspace_id, cat)
+        if res.get("ok") and res.get("report_markdown"):
+            return {
+                "query": query,
+                "intent": "LIVE_WEB_RESEARCH",
+                "workspace_id": workspace_id,
+                "verified_answer": res["report_markdown"],
+                "citations": res.get("citations", []),
+                "calculated_at": calc_date,
+                "data_source": f"Live Web Research ({res.get('sources_count', 0)} authoritative sources)"
+            }
+    except Exception as e:
+        pass
+
+    # 16. GROUNDED TECHNICAL FALLBACK (Never static repeating repetition!)
     ans = (
-        f"**SHAH Group AI Response to: '{query}'**\n\n"
-        f"Aapne '{query}' ke baare me poochha hai. SHAH Group AI OS ke pass iska context maujood hai:\n\n"
-        f"- **Corporate Operations**: Shah Surveyors & Consultancy (SSC) aur Shah Infrastructure (INFRA) ke sabhi records live active hain.\n"
-        f"- **Actionable Data**: Agar aapko specific financial records, project status, leads, ya engineering norms dekhne hain, to aap specific keywords enter kar sakte hain jaise *'Profit status'*, *'Pending payments'*, *'DGPS guidelines'*, ya *'Create invoice'*.\n"
-        f"- **Live Web Intelligence**: Agar aapko public government portals ya live internet se naya data check karna hai, to aap **Autonomous Daily Research** subtab me jaakar real-time DuckDuckGo live search run kar sakte hain."
+        f"**SHAH Group Verified Intelligence: '{query}'**\n\n"
+        f"**Operational Scope ({workspace_id})**:\n"
+        f"- **Shah Surveyors & Consultancy (SSC)**: Precision DGPS RTK, Aerial LiDAR drone photogrammetry, topographical contouring, cadastral boundary demarcation, Survey of India GTS ties.\n"
+        f"- **Shah Infra Developers (INFRA)**: Highway alignment, earthwork grading, road subgrade compaction (MoRTH Section 300 / IS 2720 Part 8), WMM/bituminous paving.\n\n"
+        f"**Engineering Guidelines**:\n"
+        f"- DGPS RTK static base observations require minimum 2 hours on GTS benchmarks with PDOP < 2.0 (horizontal ±5mm+0.5ppm).\n"
+        f"- Drone photogrammetry requires 75% front lap, 70% side lap, GSD < 3cm/px, and DGPS GCPs spaced every 250m.\n"
+        f"- Road subgrade compaction must achieve minimum 97% to 98% Modified Proctor Density.\n\n"
+        f"*For specific database records, enter: 'P&L profit', 'Unpaid invoices', 'Active sites', 'Registered vendors', or 'Staff roster'.*"
     )
     return {
         "query": query,
@@ -663,7 +785,7 @@ def ask_anything(store: Store, query: str, workspace_id: str = "SSC", user_role:
         "workspace_id": workspace_id,
         "verified_answer": ans,
         "calculated_at": calc_date,
-        "data_source": "SHAH Group Autonomous Intelligence Engine"
+        "data_source": "SHAH Group Authorized Engineering Standards"
     }
 
 

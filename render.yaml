@@ -1,0 +1,38 @@
+# SHAH GROUP AI OS — Render Cloud Deployment Specification
+# Target Architecture: Render Web Service + Persistent Storage Disk + Cloudflare Edge Protection
+services:
+  - type: web
+    name: shah-group-ai-os
+    runtime: python
+    region: singapore # Closest low-latency region to Central India / Mumbai
+    plan: standard # Or starter/individual with persistent disk
+    branch: main
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python foundation/api.py"
+    healthCheckPath: /health
+    autoDeploy: false # Owner approval required before any production deploy
+    disk:
+      name: shah-os-persistent-data
+      mountPath: /app/data
+      sizeGB: 10
+    envVars:
+      - key: PORT
+        value: 8899
+      - key: HOST
+        value: 0.0.0.0
+      - key: RENDER
+        value: "true"
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: OS_TOKEN_ENCRYPTION_KEY
+        generateValue: true # Secure random 256-bit encryption key generated on Render
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: GOOGLE_CLIENT_ID
+        sync: false # Filled by Owner in Render Dashboard
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false # Filled by Owner in Render Dashboard
+      - key: META_APP_ID
+        sync: false # Filled by Owner in Render Dashboard
+      - key: META_APP_SECRET
+        sync: false # Filled by Owner in Render Dashboard

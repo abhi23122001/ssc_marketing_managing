@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-22T21:02:50.588Z",
+  "timestamp": "2026-11-22T22:08:42.748Z",
   "tests": [
     {
       "name": "Authentication (Owner)",
@@ -7,14 +7,14 @@
       "details": {
         "token": true,
         "user": {
-          "token": "kqUh3nVimvHY04TDt0vinfb5smDgihDxSaJeZIfKou8",
+          "token": "qoCdpHxYu4g0UEqmOLpIKC8oB_5N1Rn9oZui0n002HU",
           "user_id": 1,
           "username": "owner",
           "name": "Owner Person",
           "role": "Owner",
           "workspace_id": "SSC",
           "active": 1,
-          "expires_at": "1795384975.1197248"
+          "expires_at": "1795388927.7728739"
         },
         "ws": "SSC"
       }
@@ -41,8 +41,8 @@
           "firstItem": "DGPS Ground Control Point (GCP) Survey"
         },
         "quotRowVerification": {
-          "totalRows": 12,
-          "firstRow": "QT-SSC-2026-0012\tMPRDC 4-Lane Highway Detailed Project Survey\tINR 2,95,000.00\tINR 51,840.00\tINR 3,39",
+          "totalRows": 19,
+          "firstRow": "QT-SSC-2026-0019\tMPRDC 4-Lane Highway Detailed Project Survey\tINR 2,95,000.00\tINR 51,840.00\tINR 3,39",
           "hasEditBtn": true,
           "hasViewBtn": true
         }
@@ -68,14 +68,14 @@
         ],
         "createdSiteRes": {
           "site": {
-            "id": 10,
+            "id": 21,
             "workspace_id": "SSC",
             "name": "Nagpur Metro Reach-4 Alignment & Geodetic Control",
-            "code": "SITE-NGP-METRO-02-1379",
+            "code": "SITE-NGP-METRO-02-5332",
             "address": "Metro Pillar 120 to 240, Wardha Rd, Nagpur 440022",
             "geofence_radius_m": 150,
             "field_policy_required": 1,
-            "created_at": "2026-11-23 02:32:59",
+            "created_at": "2026-11-23 03:38:52",
             "status": "active",
             "client_name": "Maharashtra Metro Rail Corporation (MahaMetro)",
             "project_location": "Hingna to Subhash Nagar Corridor, Nagpur",
@@ -107,7 +107,7 @@
               {
                 "status": "Site Scheduled",
                 "changed_by": "Owner Person",
-                "timestamp": "2026-11-23 02:32:59",
+                "timestamp": "2026-11-23 03:38:52",
                 "remarks": "Strict compliance with MoRTH accuracy tolerances."
               }
             ],
@@ -126,13 +126,13 @@
           }
         },
         "filterTests": {
-          "all": 9,
+          "all": 16,
           "upcoming": 0,
-          "tomorrow": 2,
+          "tomorrow": 7,
           "today": 0,
           "overdue": 3,
-          "completed": 4,
-          "payment_pending": 2
+          "completed": 6,
+          "payment_pending": 7
         },
         "statusUpdateFlow": [
           "Survey In Progress",
@@ -161,9 +161,9 @@
         },
         "createdBillRes": {
           "invoice": {
-            "id": 7,
+            "id": 19,
             "workspace_id": "SSC",
-            "invoice_number": "BILL-SSC-2026-0006",
+            "invoice_number": "BILL-SSC-2026-0013",
             "work_order_id": 0,
             "client_id": 0,
             "invoice_date": "2026-11-22",
@@ -178,9 +178,9 @@
             "amount_paid": 0,
             "payment_status": "Pending",
             "status": "Issued",
-            "created_at": "2026-11-23 02:33:02",
+            "created_at": "2026-11-23 03:38:54",
             "bill_type": "NON_GST",
-            "bill_number": "BILL-SSC-2026-0006",
+            "bill_number": "BILL-SSC-2026-0013",
             "client_name": "Vidarbha Agro & Infrastructure Pvt Ltd",
             "client_address": "Plot 45, MIDC Butibori, Nagpur - 441108",
             "client_contact": "+91 94221 55667",
@@ -218,9 +218,9 @@
             ]
           },
           "bill": {
-            "id": 7,
+            "id": 19,
             "workspace_id": "SSC",
-            "invoice_number": "BILL-SSC-2026-0006",
+            "invoice_number": "BILL-SSC-2026-0013",
             "work_order_id": 0,
             "client_id": 0,
             "invoice_date": "2026-11-22",
@@ -235,9 +235,9 @@
             "amount_paid": 0,
             "payment_status": "Pending",
             "status": "Issued",
-            "created_at": "2026-11-23 02:33:02",
+            "created_at": "2026-11-23 03:38:54",
             "bill_type": "NON_GST",
-            "bill_number": "BILL-SSC-2026-0006",
+            "bill_number": "BILL-SSC-2026-0013",
             "client_name": "Vidarbha Agro & Infrastructure Pvt Ltd",
             "client_address": "Plot 45, MIDC Butibori, Nagpur - 441108",
             "client_contact": "+91 94221 55667",
@@ -279,7 +279,7 @@
           "hasBillOfSupply": true,
           "hasZeroTax": true,
           "hasSec31": true,
-          "billNum": "BILL-SSC-2026-0006"
+          "billNum": "BILL-SSC-2026-0013"
         }
       }
     },
@@ -289,12 +289,12 @@
       "details": {
         "vendorRegRes": {
           "vendor": {
-            "id": 7,
+            "id": 15,
             "workspace_id": "SSC",
             "name": "Trimble Navigation India Pvt Ltd",
             "category": "Survey Equipment",
             "contact": "+91 98230 44556",
-            "created_at": "2026-11-23 02:33:03",
+            "created_at": "2026-11-23 03:38:56",
             "company_name": "Trimble Navigation India Pvt Ltd",
             "contact_person": "Suresh Kulkarni (Regional Sales Head)",
             "mobile": "+91 98230 44556",
@@ -319,7 +319,7 @@
               {
                 "status": "Under Verification",
                 "changed_by": "Owner Person",
-                "timestamp": "2026-11-23 02:33:03",
+                "timestamp": "2026-11-23 03:38:56",
                 "remarks": "Vendor initial registration"
               }
             ]
@@ -331,7 +331,7 @@
         },
         "vendorTableCheck": {
           "hasTable": true,
-          "rowCount": 6,
+          "rowCount": 13,
           "firstText": "Trimble Navigation India Pvt Ltd\nTrimble R12i RTK GNSS Receiver AMC, Calibration"
         }
       }
@@ -370,15 +370,15 @@
         },
         "generatedReportRes": {
           "report": {
-            "id": 5,
+            "id": 9,
             "workspace_id": "SSC",
             "report_type": "MONTHLY_PERFORMANCE",
             "title": "SSC Comprehensive Business & Operations Performance Report",
             "period_label": "November 2026",
             "date_range": "Last 30 Days",
-            "generated_at": "2026-11-23 02:33:05",
-            "summary": "Executive summary for SSC covering operational lifecycle and financial settlement. Total active sites logged: 9 (7 completed). Total revenue billed to date: INR 430,000.00 (GST: INR 0.00, Non-GST: INR 430,000.00). Outstanding client balance across active sites: INR 800,000.00. Active workforce stands at 0 personnel.",
-            "executive_summary": "Executive summary for SSC covering operational lifecycle and financial settlement. Total active sites logged: 9 (7 completed). Total revenue billed to date: INR 430,000.00 (GST: INR 0.00, Non-GST: INR 430,000.00). Outstanding client balance across active sites: INR 800,000.00. Active workforce stands at 0 personnel.",
+            "generated_at": "2026-11-23 03:38:57",
+            "summary": "Executive summary for SSC covering operational lifecycle and financial settlement. Total active sites logged: 16 (12 completed). Total revenue billed to date: INR 1,146,000.00 (GST: INR 236,000.00, Non-GST: INR 910,000.00). Outstanding client balance across active sites: INR 2,800,000.00. Active workforce stands at 0 personnel.",
+            "executive_summary": "Executive summary for SSC covering operational lifecycle and financial settlement. Total active sites logged: 16 (12 completed). Total revenue billed to date: INR 1,146,000.00 (GST: INR 236,000.00, Non-GST: INR 910,000.00). Outstanding client balance across active sites: INR 2,800,000.00. Active workforce stands at 0 personnel.",
             "detailed_tables_json": [
               {
                 "section_name": "Revenue & Billing Breakdown",
@@ -390,22 +390,22 @@
                 "rows": [
                   [
                     "Total Billed Value",
-                    "INR 430,000.00",
+                    "INR 1,146,000.00",
                     "100.0%"
                   ],
                   [
                     "GST Tax Invoices",
-                    "INR 0.00",
-                    "0.0%"
+                    "INR 236,000.00",
+                    "20.6%"
                   ],
                   [
                     "Non-GST Commercial Bills",
-                    "INR 430,000.00",
-                    "100.0%"
+                    "INR 910,000.00",
+                    "79.4%"
                   ],
                   [
                     "Outstanding Site Receivables",
-                    "INR 800,000.00",
+                    "INR 2,800,000.00",
                     "Uncollected Balance"
                   ]
                 ]
@@ -420,18 +420,18 @@
                 "rows": [
                   [
                     "Total Survey Sites",
-                    "9",
+                    "16",
                     "Active Portfolio"
                   ],
                   [
                     "Field Surveys Completed",
-                    "7",
-                    "77.8% Completed"
+                    "12",
+                    "75.0% Completed"
                   ],
                   [
                     "Commercial Quotations Issued",
-                    "12",
-                    "Valued at INR 3,175,970.00"
+                    "19",
+                    "Valued at INR 5,187,870.00"
                   ],
                   [
                     "Active Field Staff",
@@ -450,9 +450,9 @@
                   "Pending Receivables"
                 ],
                 "values": [
-                  0,
-                  430000,
-                  800000
+                  236000,
+                  910000,
+                  2800000
                 ]
               },
               "operations_breakdown": {
@@ -464,25 +464,25 @@
                   "Active Staff"
                 ],
                 "values": [
-                  9,
-                  7,
+                  16,
                   12,
+                  19,
                   0
                 ]
               }
             },
             "key_metrics_json": {
-              "total_revenue": 430000,
-              "gst_revenue": 0,
-              "nongst_revenue": 430000,
-              "total_sites": 9,
-              "completed_sites": 7,
-              "outstanding_receivables": 800000,
+              "total_revenue": 1146000,
+              "gst_revenue": 236000,
+              "nongst_revenue": 910000,
+              "total_sites": 16,
+              "completed_sites": 12,
+              "outstanding_receivables": 2800000,
               "active_employees": 0
             },
             "pending_actions_json": [
-              "Follow up on outstanding receivables totaling INR 800,000.00.",
-              "Advance field and data processing workflows on 2 pending site visits."
+              "Follow up on outstanding receivables totaling INR 2,800,000.00.",
+              "Advance field and data processing workflows on 4 pending site visits."
             ],
             "status": "Completed",
             "error_message": "",

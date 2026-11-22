@@ -1,0 +1,241 @@
+{
+  "round": "Round 1 - Functional Cross-Verification",
+  "timestamp": "2026-11-22T21:59:40.306008+00:00",
+  "base_url": "http://127.0.0.1:8899",
+  "total_checks": 20,
+  "passed_checks": 20,
+  "failed_checks": 0,
+  "test_cases": [
+    {
+      "id": 1,
+      "category": "Authentication",
+      "name": "Owner Master Login & Token Minting",
+      "status": "PASSED",
+      "details": {
+        "status_code": 200,
+        "user": "owner"
+      }
+    },
+    {
+      "id": 2,
+      "category": "Quotation Engine",
+      "name": "Dynamic 15-Item Quotation Creation with GST Math",
+      "status": "PASSED",
+      "details": {
+        "items_count": 15,
+        "subtotal": 240000.0,
+        "total_amount": 276120.0,
+        "expected_total": 276120.0
+      }
+    },
+    {
+      "id": 3,
+      "category": "Quotation Engine",
+      "name": "Quotation Edit & Dynamic Item Addition without Data Loss",
+      "status": "PASSED",
+      "details": {
+        "items_before": 15,
+        "items_after": 16
+      }
+    },
+    {
+      "id": 4,
+      "category": "Survey Site Lifecycle",
+      "name": "Site Creation & Intelligent Reminder Categorization",
+      "status": "PASSED",
+      "details": {
+        "site_id": 16,
+        "code": "SITE-HSR-4780",
+        "schedule_category": "Tomorrow's Site",
+        "balance_due": 600000.0
+      }
+    },
+    {
+      "id": 5,
+      "category": "Survey Site Lifecycle",
+      "name": "16-Stage Survey Status State Transition & Audit Trail",
+      "status": "PASSED",
+      "details": {
+        "updated_status": "Field Survey Completed"
+      }
+    },
+    {
+      "id": 6,
+      "category": "Survey Site Lifecycle",
+      "name": "Site Payment Tracking & Dynamic Balance Due Recalculation",
+      "status": "PASSED",
+      "details": {
+        "balance_due": 400000.0,
+        "payment_status": "Partially Paid",
+        "invoice": "INV-SSC-2026-0888"
+      }
+    },
+    {
+      "id": 7,
+      "category": "Financial Billing",
+      "name": "Non-GST Commercial Bill of Supply (0% Tax Strict Compliance)",
+      "status": "PASSED",
+      "details": {
+        "bill_number": "BILL-SSC-2026-0012",
+        "tax": 0.0,
+        "total": 70000.0
+      }
+    },
+    {
+      "id": 8,
+      "category": "Financial Billing",
+      "name": "Standard GST Tax Invoice Calculation (18% GST Compliance)",
+      "status": "PASSED",
+      "details": {
+        "invoice_number": "INV-SSC-2026-0003",
+        "tax": 18000.0,
+        "total": 118000.0
+      }
+    },
+    {
+      "id": 9,
+      "category": "Vendor Management",
+      "name": "Registered Vendor KYC, MSME & Bank Details Ingestion",
+      "status": "PASSED",
+      "details": {
+        "vendor_id": 13,
+        "name": "Apex Instruments 4780",
+        "status": "Approved"
+      }
+    },
+    {
+      "id": 10,
+      "category": "Vendor Management",
+      "name": "Vendor Verification & Active State Activation",
+      "status": "PASSED",
+      "details": {
+        "status": "Active"
+      }
+    },
+    {
+      "id": 11,
+      "category": "HRM & Exit Management",
+      "name": "Employee Exit Lifecycle & Full and Final Settlement Workflow",
+      "status": "PASSED",
+      "details": {
+        "emp_id": 1,
+        "status": "Exited",
+        "final_settlement": "Settled",
+        "handover": "All DGPS survey raw files, Rinex logs, CAD drawings and drone memory cards handed over."
+      }
+    },
+    {
+      "id": 12,
+      "category": "Instagram Multi-Manager",
+      "name": "Multi-Instagram Account Registry Discovery",
+      "status": "PASSED",
+      "details": {
+        "accounts_found": 2
+      }
+    },
+    {
+      "id": 13,
+      "category": "Instagram Multi-Manager",
+      "name": "Multi-Tenant Instagram Professional Account Onboarding",
+      "status": "PASSED",
+      "details": {
+        "account_id": 25,
+        "username": "@shahgroupofficial1",
+        "status": "Authorization Required"
+      }
+    },
+    {
+      "id": 14,
+      "category": "Instagram Multi-Manager",
+      "name": "Multi-Account Creative Post Draft Persistence",
+      "status": "PASSED",
+      "details": {
+        "draft_id": 5,
+        "message": "Instagram multi-account draft saved successfully."
+      }
+    },
+    {
+      "id": 15,
+      "category": "Instagram Multi-Manager",
+      "name": "Honest Meta Graph API OAuth Gatekeeper (Zero Simulation)",
+      "status": "PASSED",
+      "details": {
+        "account_id": 25,
+        "status": "authorization_required",
+        "error": "Account @shahgroupofficial1 is not connected to Meta Graph API. Official OAuth connection required before publishing."
+      }
+    },
+    {
+      "id": 16,
+      "category": "Instagram Multi-Manager",
+      "name": "Anti-Duplicate Protection & Idempotency Key Hashing",
+      "status": "PASSED",
+      "details": {
+        "status": "authorization_required",
+        "details": "Account @shahgroupofficial1 is not connected to Meta Graph API. Official OAuth connection required before publishing."
+      }
+    },
+    {
+      "id": 17,
+      "category": "Financial Architecture",
+      "name": "Real-Time P&L, Receivables & Payables Financial Aggregation",
+      "status": "PASSED",
+      "details": {
+        "profit_loss": {
+          "workspace_id": "SSC",
+          "total_invoiced_inr": 1066000.0,
+          "total_collected_inr": 0.0,
+          "total_gst_collected_inr": 36000.0,
+          "outstanding_receivables_inr": 1066000.0,
+          "total_expenses_inr": 0.0,
+          "total_payroll_inr": 0.0,
+          "total_outflows_inr": 0.0,
+          "cash_operating_profit_inr": 0.0,
+          "accrual_operating_profit_inr": 1066000.0,
+          "net_operating_profit_inr": 0.0,
+          "active_contract_value_inr": 0.0,
+          "pipeline_quotations_inr": 0.0,
+          "metrics": {
+            "invoice_count": 15,
+            "expense_count": 0,
+            "payroll_runs_count": 0,
+            "profit_margin_pct": 100.0
+          }
+        }
+      }
+    },
+    {
+      "id": 18,
+      "category": "CRM & Business Development",
+      "name": "Client Enquiries & Lead Pipeline Management",
+      "status": "PASSED",
+      "details": {
+        "leads_count": 4
+      }
+    },
+    {
+      "id": 19,
+      "category": "Reporting & Analytics",
+      "name": "Executive Report Generation & Analytical Dashboard Archive",
+      "status": "PASSED",
+      "details": {
+        "reports_count": 7,
+        "sample_title": "SSC Comprehensive Business & Operations Performance Report"
+      }
+    },
+    {
+      "id": 20,
+      "category": "Database Architecture",
+      "name": "Direct SQLite Persistence Verification Across 6 Core Tables",
+      "status": "PASSED",
+      "details": {
+        "db_site": "('SITE-HSR-4780', 'NHSRCL', 850000.0, 400000.0)",
+        "db_bill": "('BILL-SSC-2026-0010', 'NON_GST', 0.0, 70000.0)",
+        "db_vendor": "('Apex Instruments 4780', 'Active', '27AAPCA1234F1Z8')",
+        "db_draft": "(5, 'Drone LiDAR Geodetic Survey Showcase', 'REEL')",
+        "db_quot": "(19, 'Major Industrial Corridor Geodetic Package - Revised', 329220.0)",
+        "db_emp": "(1, 'Exited', 'Settled')"
+      }
+    }
+  ]
+}

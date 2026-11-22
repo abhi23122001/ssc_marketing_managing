@@ -714,7 +714,7 @@ def list_billing_documents(conn: sqlite3.Connection, workspace_id: Optional[str]
     if workspace_id and workspace_id != "ALL":
         sql += " AND workspace_id = ?"
         params.append(workspace_id)
-    if bill_type:
+    if bill_type and bill_type.upper() not in ("ALL", "*"):
         sql += " AND bill_type = ?"
         params.append(bill_type.upper())
     sql += " ORDER BY id DESC"

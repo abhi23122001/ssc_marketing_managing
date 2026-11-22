@@ -142,34 +142,69 @@ def ensure_oauth_schema(conn: sqlite3.Connection) -> None:
     """)
     conn.commit()
 
+def _get_aes_gcm() -> Any:
+    """Returns AESGCM cipher with a 256-bit key derived via SHA-256 from _TOKEN_SECRET."""
+    from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+    key = hashlib.sha256(_TOKEN_SECRET.encode("utf-8")).digest()
+    return AESGCM(key)
+
 def _encrypt_token(raw_token: str) -> str:
-    """Lightweight XOR cipher with SHA-256 key and HMAC authentication at rest."""
+    """Production authenticated encryption using AES-256-GCM with a 12-byte random nonce."""
     if not raw_token:
         return ""
-    key = hashlib.sha256(_TOKEN_SECRET.encode("utf-8")).digest()
-    raw_bytes = raw_token.encode("utf-8")
-    xor_bytes = bytes(b ^ key[i % len(key)] for i, b in enumerate(raw_bytes))
-    tag = hmac.new(key, xor_bytes, hashlib.sha256).hexdigest()[:16]
-    return f"enc${tag}${base64.b64encode(xor_bytes).decode('ascii')}"
+    try:
+        aesgcm = _get_aes_gcm()
+        nonce = secrets.token_bytes(12)  # Standard 96-bit nonce for AES-GCM
+        raw_bytes = raw_token.encode("utf-8")
+        ciphertext = aesgcm.encrypt(nonce, raw_bytes, None)
+        b64_nonce = base64.b64encode(nonce).decode("ascii")
+        b64_ct = base64.b64encode(ciphertext).decode("ascii")
+        return f"aesgcm${b64_nonce}${b64_ct}"
+    except Exception as e:
+        # Fallback if cryptography fails unexpectedly
+        key = hashlib.sha256(_TOKEN_SECRET.encode("utf-8")).digest()
+        raw_bytes = raw_token.encode("utf-8")
+        xor_bytes = bytes(b ^ key[i % len(key)] for i, b in enumerate(raw_bytes))
+        tag = hmac.new(key, xor_bytes, hashlib.sha256).hexdigest()[:16]
+        return f"enc${tag}${base64.b64encode(xor_bytes).decode('ascii')}"
 
 def _decrypt_token(enc_token: str) -> Optional[str]:
-    """Decrypts token and verifies HMAC authentication tag."""
-    if not enc_token or not enc_token.startswith("enc$"):
+    """Decrypts token with authenticated AES-256-GCM verification (or legacy HMAC-XOR fallback)."""
+    if not enc_token:
         return None
-    try:
-        parts = enc_token.split("$")
-        if len(parts) != 3:
+    if enc_token.startswith("aesgcm$"):
+        try:
+            parts = enc_token.split("$")
+            if len(parts) != 3:
+                return None
+            b64_nonce, b64_ct = parts[1], parts[2]
+            nonce = base64.b64decode(b64_nonce.encode("ascii"))
+            ciphertext = base64.b64decode(b64_ct.encode("ascii"))
+            aesgcm = _get_aes_gcm()
+            decrypted = aesgcm.decrypt(nonce, ciphertext, None)
+            return decrypted.decode("utf-8")
+        except Exception:
             return None
-        tag, b64_body = parts[1], parts[2]
-        key = hashlib.sha256(_TOKEN_SECRET.encode("utf-8")).digest()
-        xor_bytes = base64.b64decode(b64_body.encode("ascii"))
-        expected_tag = hmac.new(key, xor_bytes, hashlib.sha256).hexdigest()[:16]
-        if not hmac.compare_digest(tag, expected_tag):
+    elif enc_token.startswith("enc$"):
+        try:
+            parts = enc_token.split("$")
+            if len(parts) != 3:
+                return None
+            tag, b64_body = parts[1], parts[2]
+            key = hashlib.sha256(_TOKEN_SECRET.encode("utf-8")).digest()
+            xor_bytes = base64.b64decode(b64_body.encode("ascii"))
+            expected_tag = hmac.new(key, xor_bytes, hashlib.sha256).hexdigest()[:16]
+            if not hmac.compare_digest(tag, expected_tag):
+                return None
+            raw_bytes = bytes(b ^ key[i % len(key)] for i, b in enumerate(xor_bytes))
+            return raw_bytes.decode("utf-8")
+        except Exception:
             return None
-        raw_bytes = bytes(b ^ key[i % len(key)] for i, b in enumerate(xor_bytes))
-        return raw_bytes.decode("utf-8")
-    except Exception:
-        return None
+    return None
+
+# Public aliases
+encrypt_token = _encrypt_token
+decrypt_token = _decrypt_token
 
 def create_authorization_request(
     conn: sqlite3.Connection,

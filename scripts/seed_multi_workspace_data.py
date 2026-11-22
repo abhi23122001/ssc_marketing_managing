@@ -83,13 +83,29 @@ if not inv_existing:
         (now_iso(),)
     )
 
-# 6. Seed INFRA Expenses
+# 6. Seed INFRA Expenses & Vendors
 exp_existing = st.fetchone("SELECT id FROM expense_claims WHERE workspace_id='INFRA'")
 if not exp_existing:
     st.conn.execute(
         "INSERT INTO expense_claims (workspace_id, employee_id, submitted_by, category, amount, currency, status, notes, submitted_at, created_at) "
         "VALUES ('INFRA', 1, 1, 'machinery_fuel', 145000.0, 'INR', 'approved', 'Excavator & Tipper diesel fuel for Rewa Ring Road', ?, ?)",
         (now_iso(), now_iso())
+    )
+
+vend_existing = st.fetchone("SELECT id FROM expense_vendors WHERE workspace_id='INFRA'")
+if not vend_existing:
+    st.conn.execute(
+        "INSERT INTO expense_vendors (workspace_id, name, category, status, contact_person, mobile, city, state, gstin, created_at) "
+        "VALUES ('INFRA', 'Vindhya Heavy Earthmovers LLP', 'Earthmoving Machinery', 'Active', 'Rajesh Patel', '+91 94251 22334', 'Rewa', 'MP', '23AAAFV1234D1Z2', ?)",
+        (now_iso(),)
+    )
+
+nongst_existing = st.fetchone("SELECT id FROM business_invoices WHERE workspace_id='INFRA' AND bill_type='NON_GST'")
+if not nongst_existing:
+    st.conn.execute(
+        "INSERT INTO business_invoices (workspace_id, invoice_number, invoice_date, due_date, subtotal, total_tax, total_amount, amount_paid, payment_status, status, bill_type, client_name, created_at) "
+        "VALUES ('INFRA', 'BILL-INF-2026-0001', '2026-11-20', '2026-12-20', 125000.0, 0.0, 125000.0, 0.0, 'unpaid', 'issued', 'NON_GST', 'Vindhya Commercial Developers LLP', ?)",
+        (now_iso(),)
     )
 
 # 7. Seed OTHER workspace records

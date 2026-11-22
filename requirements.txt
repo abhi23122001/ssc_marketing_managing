@@ -1,0 +1,4 @@
+# SHAH GROUP AI OS — Production Python Dependencies
+# Core standard-library first, with hardened cryptography for token encryption at rest
+cryptography>=42.0.0
+cffi>=1.16.0

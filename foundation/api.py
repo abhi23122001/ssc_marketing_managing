@@ -113,6 +113,10 @@ def _send_json(handler, payload, status=200):
         handler.send_response(status)
         handler.send_header("Content-Type", "application/json")
         handler.send_header("Content-Length", str(len(body)))
+        handler.send_header("X-Content-Type-Options", "nosniff")
+        handler.send_header("X-Frame-Options", "SAMEORIGIN")
+        handler.send_header("X-XSS-Protection", "1; mode=block")
+        handler.send_header("Referrer-Policy", "strict-origin-when-cross-origin")
         handler.end_headers()
         handler.wfile.write(body)
     except (ConnectionResetError, ConnectionAbortedError, BrokenPipeError, OSError):
@@ -213,11 +217,17 @@ class Handler(BaseHTTPRequestHandler):
         path = urllib.parse.unquote(parsed.path)
         try:
             user = self._user()
-            if user is None and path not in ("/health", "/"):
+            if user is None and path not in ("/health", "/healthz", "/api/health", "/"):
                 self._json_err("authentication required", 401)
                 return
-            if path == "/health":
-                self._json_ok({"ok": True, "service": "SHAH-Group-AI-OS"})
+            if path in ("/health", "/healthz", "/api/health"):
+                self._json_ok({
+                    "ok": True,
+                    "service": "SHAH-Group-AI-OS",
+                    "status": "healthy",
+                    "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
+                })
+                return
             elif path in ("/favicon.ico", "/favicon.png"):
                 self._handle_static_favicon()
                 return
@@ -535,6 +545,9 @@ class Handler(BaseHTTPRequestHandler):
                 return
             elif path == "/api/ai-brain/action":
                 self._handle_ai_brain_action(user)
+                return
+            elif path.startswith("/api/instagram"):
+                self._handle_instagram_route(path, user)
                 return
             elif path.startswith("/api/reports"):
                 self._handle_reports_route(path, user)
@@ -1537,6 +1550,10 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_PUT(self) -> None:  # noqa: N802
         """Handle PUT requests; the owner dashboard edits users via PUT /api/users/{id} or /api/users/{id}/edit."""
+        user = self._user()
+        if user is None:
+            self._json_err("authentication required", 401)
+            return
         parsed = urllib.parse.urlparse(self.path)
         path = urllib.parse.unquote(parsed.path)
         try:
@@ -1559,10 +1576,6 @@ class Handler(BaseHTTPRequestHandler):
                 parts = [p for p in path.split("/") if p]
                 if len(parts) >= 3 and parts[1] == "users" and parts[2].isdigit():
                     uid = int(parts[2])
-                    user = self._user()
-                    if user is None:
-                        self._json_err("authentication required", 401)
-                        return
                     data = _read_json(self)
                     self._handle_user_edit(user, uid, data)
                     return
@@ -2008,6 +2021,9 @@ class Handler(BaseHTTPRequestHandler):
                 return
             elif path.startswith("/api/social/accounts/"):
                 self._handle_social_accounts(user)
+                return
+            elif path.startswith("/api/instagram"):
+                self._handle_instagram_route(path, user)
                 return
             elif path.startswith("/api/reports"):
                 self._handle_reports_route(path, user)
@@ -2687,6 +2703,90 @@ class Handler(BaseHTTPRequestHandler):
         from foundation.domains import social_integrations
         res = social_integrations.test_account_connection(self.store, int(aid))
         self._json_ok(res)
+
+    def _handle_instagram_route(self, path: str, user: dict) -> None:
+        """Multi-Instagram Account Manager & Publishing Engine."""
+        from foundation.domains import instagram_multi_manager
+        ws, err = self._get_request_workspace(user)
+        if err:
+            self._json_err(err, 403)
+            return
+
+        # 1. Accounts list: GET /api/instagram/accounts
+        if path == "/api/instagram/accounts":
+            parsed = urllib.parse.urlparse(self.path)
+            qs = urllib.parse.parse_qs(parsed.query)
+            target_ws = qs.get("workspace_id", [ws])[0]
+            accounts = instagram_multi_manager.list_instagram_accounts(self.store, target_ws)
+            self._json_ok({"accounts": accounts, "workspace_id": target_ws})
+            return
+
+        # 2. Register account: POST /api/instagram/accounts/register
+        if path == "/api/instagram/accounts/register":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            data = _read_json(self)
+            target_ws = data.get("workspace_id") or ws
+            res = instagram_multi_manager.register_instagram_account(self.store, target_ws, data)
+            self._json_ok(res, 201 if res.get("ok") else 400)
+            return
+
+        # 3. Disconnect account: POST /api/instagram/accounts/disconnect
+        if path == "/api/instagram/accounts/disconnect":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            data = _read_json(self)
+            aid = int(data.get("account_id", 0))
+            res = instagram_multi_manager.disconnect_instagram_account(self.store, aid)
+            self._json_ok(res)
+            return
+
+        # 4. Settings: POST /api/instagram/accounts/settings
+        if path == "/api/instagram/accounts/settings":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            data = _read_json(self)
+            aid = int(data.get("account_id", 0))
+            settings = data.get("settings", {})
+            res = instagram_multi_manager.update_instagram_settings(self.store, aid, settings)
+            self._json_ok(res)
+            return
+
+        # 5. Drafts: GET/POST /api/instagram/drafts
+        if path == "/api/instagram/drafts":
+            if self.command == "GET":
+                drafts = instagram_multi_manager.list_instagram_drafts(self.store, ws)
+                self._json_ok({"drafts": drafts, "workspace_id": ws})
+            else:
+                data = _read_json(self)
+                target_ws = data.get("workspace_id") or ws
+                res = instagram_multi_manager.save_instagram_draft(self.store, target_ws, data)
+                self._json_ok(res)
+            return
+
+        # 6. Multi-Publish: POST /api/instagram/publish
+        if path == "/api/instagram/publish":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            data = _read_json(self)
+            target_ws = data.get("workspace_id") or ws
+            res = instagram_multi_manager.publish_or_schedule_multi_account(
+                self.store, target_ws, data, actor_name=user.get("role", "owner")
+            )
+            self._json_ok(res)
+            return
+
+        # 7. History: GET /api/instagram/history
+        if path == "/api/instagram/history":
+            history = instagram_multi_manager.get_instagram_publishing_history(self.store, ws)
+            self._json_ok({"history": history, "workspace_id": ws})
+            return
+
+        self._json_err("instagram endpoint not found", 404)
 
     def _handle_reports_list(self, user: dict) -> None:
         """Reports list + generate."""
@@ -3630,7 +3730,9 @@ if __name__ == "__main__":
         sys.path.insert(0, project_root)
     from foundation import config as foundation_config
     cfg = foundation_config.load_config()
-    srv = make_server(cfg.get("host", "127.0.0.1"), cfg.get("port", 8899))
+    port = int(os.getenv("PORT", cfg.get("port", 8899)))
+    host = os.getenv("HOST", "0.0.0.0" if os.getenv("RENDER") else cfg.get("host", "127.0.0.1"))
+    srv = make_server(host, port)
     print(f"SHAI foundation API listening on http://{srv.server_address[0]}:{srv.server_address[1]}")
     try:
         srv.serve_forever()

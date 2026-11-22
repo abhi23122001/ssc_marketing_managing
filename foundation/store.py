@@ -158,9 +158,11 @@ class Store:
         self._connect()
 
     def _connect(self) -> None:
-        raw = sqlite3.connect(str(self.db_path), timeout=10, check_same_thread=False)
+        raw = sqlite3.connect(str(self.db_path), timeout=15, check_same_thread=False)
         raw.row_factory = sqlite3.Row
         raw.execute("PRAGMA journal_mode=WAL")
+        raw.execute("PRAGMA busy_timeout=5000")
+        raw.execute("PRAGMA synchronous=NORMAL")
         self.conn = _ThreadSafeConnection(raw)
         self._migrate()
 

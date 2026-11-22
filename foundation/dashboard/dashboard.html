@@ -2346,17 +2346,127 @@
         </div>
       </div>
 
-      <!-- Sub 4: Publishing & Accounts -->
+      <!-- Sub 4: Instagram Multi-Account Manager & Publishing Suite -->
       <div id="sub-mkt-publishing" style="display:none">
-        <div class="grid2" style="margin-bottom:14px">
-          <div class="card">
-            <h3>Connected Business Channels</h3>
-            <div id="social-accounts-list"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+          <div>
+            <h3 style="margin:0 0 4px">&#128248; Instagram Multi-Account Suite &amp; Multi-Channel Publisher</h3>
+            <div style="font-size:12px;color:var(--muted)">Connect and manage multiple Instagram Professional (Business &amp; Creator) accounts across SSC, INFRA, and client brands. Publish simultaneously with tailored captions and hashtags.</div>
           </div>
-          <div class="card">
-            <h3>Publishing Verification & Reconciliation</h3>
-            <div style="font-size:13px;color:var(--muted);margin-bottom:12px">All posts require Owner / Marketing Manager sign-off before official API dispatch. Zero simulated publishing.</div>
-            <button id="btn-reconcile-pub" class="btn btn-primary btn-sm">&#128260; Reconcile Published Status</button>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary btn-sm" onclick="openConnectInstagramModal()">+ Connect Instagram Account</button>
+            <button class="btn btn-secondary btn-sm" onclick="renderInstagramMultiSuite()">&#8635; Refresh Accounts</button>
+          </div>
+        </div>
+
+        <!-- 1. Connected Instagram Accounts Grid -->
+        <div class="card" style="margin-bottom:16px;background:var(--panel-2);border-left:4px solid #e1306c">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <h4 style="margin:0;font-size:14px">&#128241; Connected Instagram Accounts (<span id="ig-accounts-count">0</span>)</h4>
+            <span class="pill info" id="ig-meta-graph-badge">Meta Graph API v19+ Compliant</span>
+          </div>
+          <div id="ig-accounts-grid" class="grid3" style="margin-bottom:8px">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- 2. Multi-Account Post Composer & Dispatcher -->
+        <div class="card" style="margin-bottom:16px">
+          <h4 style="margin:0 0 12px;font-size:14px">&#9997; Multi-Account Post Composer &amp; Dispatcher</h4>
+          <div class="grid2" style="margin-bottom:14px">
+            <!-- Left Column: Target Accounts & Media -->
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div>
+                <label style="font-size:12px;font-weight:600;display:block;margin-bottom:6px">Target Instagram Accounts (Select All That Apply):</label>
+                <div id="ig-target-accounts-selector" style="background:#0b1120;padding:10px;border-radius:6px;border:1px solid var(--line);display:flex;flex-direction:column;gap:8px;max-height:160px;overflow-y:auto">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+
+              <div>
+                <label style="font-size:12px;font-weight:600;display:block;margin-bottom:6px">Creative Media Format:</label>
+                <select id="ig-post-media-type" class="input" style="width:100%" onchange="updateIGMediaPreview()">
+                  <option value="IMAGE">Single Image Post (1:1 Square)</option>
+                  <option value="CAROUSEL">Multi-Slide Carousel (Up to 10 Slides)</option>
+                  <option value="REEL">Video Reel (9:16 Vertical, 1080x1920)</option>
+                  <option value="STORY">24-Hour Story (9:16)</option>
+                </select>
+              </div>
+
+              <div>
+                <label style="font-size:12px;font-weight:600;display:block;margin-bottom:6px">Media Asset / Creative URL:</label>
+                <input type="text" id="ig-post-media-url" class="input" placeholder="e.g. /brand/ssc_rtk_banner.png or data/m19_output/reel_01.mp4" style="width:100%" oninput="updateIGMediaPreview()">
+              </div>
+
+              <div>
+                <label style="font-size:12px;font-weight:600;display:block;margin-bottom:6px">Publishing Schedule:</label>
+                <div style="display:flex;gap:8px">
+                  <select id="ig-schedule-mode" class="input" style="flex:1" onchange="toggleIGScheduleDate()">
+                    <option value="NOW">Publish Immediately</option>
+                    <option value="LATER">Schedule for Later Date &amp; Time</option>
+                  </select>
+                  <input type="datetime-local" id="ig-schedule-datetime" class="input" style="flex:1;display:none">
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Tailored Captions & Per-Account Customization -->
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div>
+                <label style="font-size:12px;font-weight:600;display:block;margin-bottom:6px">Base Caption (Shared across all accounts):</label>
+                <textarea id="ig-base-caption" class="input" rows="4" style="width:100%;font-size:12px" placeholder="Enter universal caption or headline for all accounts..."></textarea>
+              </div>
+
+              <div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                  <label style="font-size:12px;font-weight:600;margin:0">Account-Specific Custom Captions &amp; Hashtags:</label>
+                  <span style="font-size:11px;color:var(--muted)">Override caption for specific brand</span>
+                </div>
+                <div id="ig-custom-tabs" style="display:flex;gap:4px;overflow-x:auto;padding-bottom:4px;border-bottom:1px solid var(--line);margin-bottom:8px">
+                  <!-- Generated dynamically per selected account -->
+                </div>
+                <div id="ig-custom-panel">
+                  <textarea id="ig-account-caption" class="input" rows="3" style="width:100%;font-size:12px" placeholder="Custom caption for selected account..."></textarea>
+                  <input type="text" id="ig-account-hashtags" class="input" style="width:100%;margin-top:6px;font-size:12px" placeholder="Custom hashtags: #ShahGroup #Surveying #Nagpur">
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div style="display:flex;gap:8px;margin-top:auto">
+                <button class="btn btn-secondary btn-sm" onclick="saveInstagramDraft()">&#128190; Save Draft</button>
+                <button class="btn btn-secondary btn-sm" onclick="openInstagramPreviewModal()">&#128065; Mobile Preview</button>
+                <button class="btn btn-primary btn-sm" style="flex:1" onclick="submitInstagramMultiPublish()">&#128640; Publish to Selected Accounts</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Account-Wise Publishing History & Reconciliation -->
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+            <div>
+              <h4 style="margin:0 0 4px;font-size:14px">&#128220; Publishing History &amp; Multi-Channel Audit Trail</h4>
+              <div style="font-size:12px;color:var(--muted)">Full cryptographic idempotency. Zero accidental duplicate posts. Real-time reconciliation.</div>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="renderInstagramPublishingHistory()">&#8635; Refresh History</button>
+          </div>
+          <div style="overflow-x:auto">
+            <table style="width:100%;font-size:12px">
+              <thead>
+                <tr>
+                  <th>Job ID</th>
+                  <th>Target Account</th>
+                  <th>Media Type</th>
+                  <th>Caption Snippet</th>
+                  <th>Status</th>
+                  <th>Published / Scheduled At</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="ig-publishing-history-tbody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -5718,6 +5828,7 @@ function setupMarketingSubnav(){
       const el = $("#sub-mkt-"+k);
       if(el) el.style.display = (k === sub) ? "block" : "none";
     });
+    if(sub === "publishing") renderInstagramMultiSuite();
   });
 }
 
@@ -11286,6 +11397,487 @@ async function openReportViewerModal(reportId){
       </div>
     `);
   }catch(e){ toast("Error loading report viewer: " + e.message, "bad"); }
+}
+
+
+// ==============================================================================
+// 7. MULTI-INSTAGRAM ACCOUNT MANAGEMENT & MULTI-CHANNEL SUITE
+// ==============================================================================
+
+window.igActiveAccounts = [];
+window.igSelectedAccountIds = [];
+window.igCustomCaptions = {};
+window.igCustomHashtags = {};
+
+async function renderInstagramMultiSuite() {
+  try {
+    const ws = (window.state && window.state.workspace) ? window.state.workspace : "ALL";
+    const res = await api(`/api/instagram/accounts?workspace_id=${ws}`);
+    const accounts = res.accounts || [];
+    window.igActiveAccounts = accounts;
+
+    const countEl = $("#ig-accounts-count");
+    if (countEl) countEl.textContent = accounts.length;
+
+    const grid = $("#ig-accounts-grid");
+    if (grid) {
+      if (accounts.length === 0) {
+        grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--muted)">No Instagram accounts registered yet. Click <strong>"+ Connect Instagram Account"</strong> to add an account.</div>`;
+      } else {
+        grid.innerHTML = accounts.map(a => {
+          const statusClass = a.connection_status === 'Connected' ? 'good' : (a.connection_status === 'Expired' ? 'bad' : 'warn');
+          return `
+            <div class="card" style="background:#0b1120;border:1px solid var(--line);padding:14px;display:flex;flex-direction:column;justify-content:space-between">
+              <div>
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+                  <div style="display:flex;gap:10px;align-items:center">
+                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff">&#128248;</div>
+                    <div>
+                      <strong style="font-size:13px;color:var(--text);display:block">${esc(a.display_name)}</strong>
+                      <span style="font-size:12px;color:#e1306c;font-weight:600">${esc(a.username)}</span>
+                    </div>
+                  </div>
+                  <span class="pill ${statusClass}" style="font-size:10px">${esc(a.connection_status)}</span>
+                </div>
+                <div style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.4">
+                  <div><strong>Type:</strong> ${esc(a.account_type)}</div>
+                  <div><strong>Workspace:</strong> <span class="pill info" style="font-size:9px">${esc(a.workspace_id)}</span></div>
+                  <div><strong>Linked Page:</strong> ${esc(a.linked_page_name)}</div>
+                  <div><strong>Token Expiry:</strong> ${esc(a.token_expiry_status)}</div>
+                </div>
+              </div>
+              <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+                <button class="btn btn-primary btn-sm" style="flex:1" onclick="openConnectInstagramModal(${a.id})">&#9889; ${a.is_connected ? 'Reconnect' : 'Connect'}</button>
+                <button class="btn btn-secondary btn-sm" onclick="openInstagramSettingsModal(${a.id})">&#9881;</button>
+                <button class="btn btn-secondary btn-sm" style="color:var(--bad)" onclick="disconnectInstagramAccount(${a.id})">&#128268;</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    // Populate Target Accounts selector
+    const selBox = $("#ig-target-accounts-selector");
+    if (selBox) {
+      if (accounts.length === 0) {
+        selBox.innerHTML = `<span style="font-size:11px;color:var(--muted)">No Instagram accounts available to select.</span>`;
+      } else {
+        selBox.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <span style="font-size:11px;color:var(--muted)">Select Accounts:</span>
+            <button type="button" class="btn btn-secondary btn-sm" style="padding:2px 6px;font-size:10px" onclick="toggleSelectAllIGAccounts()">Toggle Select All</button>
+          </div>
+          ${accounts.map(a => `
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer">
+              <input type="checkbox" value="${a.id}" class="ig-acc-chk" onchange="onIGAccountSelectionChange()" checked>
+              <span><strong>${esc(a.display_name)}</strong> (<span style="color:#e1306c">${esc(a.username)}</span> &bull; ${esc(a.workspace_id)})</span>
+            </label>
+          `).join('')}
+        `;
+      }
+    }
+
+    onIGAccountSelectionChange();
+    renderInstagramPublishingHistory();
+  } catch (err) {
+    console.error("renderInstagramMultiSuite error:", err);
+  }
+}
+
+function toggleSelectAllIGAccounts() {
+  const chks = document.querySelectorAll(".ig-acc-chk");
+  const allChecked = Array.from(chks).every(c => c.checked);
+  chks.forEach(c => c.checked = !allChecked);
+  onIGAccountSelectionChange();
+}
+
+function onIGAccountSelectionChange() {
+  const chks = document.querySelectorAll(".ig-acc-chk:checked");
+  window.igSelectedAccountIds = Array.from(chks).map(c => parseInt(c.value));
+
+  const tabsBox = $("#ig-custom-tabs");
+  if (!tabsBox) return;
+
+  if (window.igSelectedAccountIds.length <= 1) {
+    tabsBox.innerHTML = `<span style="font-size:11px;color:var(--muted)">Default base caption will be applied to selected account.</span>`;
+    return;
+  }
+
+  // Render tabs for selected accounts
+  tabsBox.innerHTML = window.igSelectedAccountIds.map((aid, idx) => {
+    const acc = window.igActiveAccounts.find(a => a.id === aid);
+    const label = acc ? acc.username : `#${aid}`;
+    return `<button type="button" class="btn btn-secondary btn-sm ${idx === 0 ? 'active' : ''}" style="font-size:11px" onclick="switchIGCaptionTab(${aid}, this)">${esc(label)}</button>`;
+  }).join('');
+
+  if (window.igSelectedAccountIds.length > 0) {
+    switchIGCaptionTab(window.igSelectedAccountIds[0]);
+  }
+}
+
+window.currentIGTabAccountId = null;
+function switchIGCaptionTab(aid, btn) {
+  if (btn) {
+    const p = btn.parentElement;
+    if (p) p.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+  }
+
+  // Save current before switching
+  if (window.currentIGTabAccountId) {
+    const cEl = $("#ig-account-caption");
+    const hEl = $("#ig-account-hashtags");
+    if (cEl) window.igCustomCaptions[window.currentIGTabAccountId] = cEl.value;
+    if (hEl) window.igCustomHashtags[window.currentIGTabAccountId] = hEl.value;
+  }
+
+  window.currentIGTabAccountId = aid;
+  const cEl = $("#ig-account-caption");
+  const hEl = $("#ig-account-hashtags");
+  const baseEl = $("#ig-base-caption");
+
+  if (cEl) cEl.value = window.igCustomCaptions[aid] || (baseEl ? baseEl.value : "");
+  if (hEl) {
+    const acc = window.igActiveAccounts.find(a => a.id === aid);
+    const defTags = (acc && acc.settings) ? acc.settings.default_hashtags : "#ShahGroup #Surveying";
+    hEl.value = window.igCustomHashtags[aid] || defTags;
+  }
+}
+
+function updateIGMediaPreview() {
+  // Live preview refresh
+}
+
+function toggleIGScheduleDate() {
+  const mode = $("#ig-schedule-mode").value;
+  const dt = $("#ig-schedule-datetime");
+  if (dt) dt.style.display = (mode === "LATER") ? "block" : "none";
+}
+
+function openConnectInstagramModal(existingAccountId) {
+  const acc = existingAccountId ? window.igActiveAccounts.find(a => a.id === existingAccountId) : null;
+  showModal(`
+    <div style="width:520px;max-width:95vw">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px solid var(--line);padding-bottom:10px">
+        <h3 style="margin:0">&#128248; ${acc ? 'Connect / Re-authorize Instagram' : '+ Register Instagram Account'}</h3>
+        <button class="btn btn-secondary btn-sm" onclick="closeModal()">&times;</button>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;font-size:12px">
+        <div style="background:rgba(225,48,108,0.1);border:1px solid rgba(225,48,108,0.3);padding:10px;border-radius:6px;line-height:1.4">
+          <strong>Official Meta Graph API v19+ Requirement:</strong><br>
+          Instagram account must be an <strong>Instagram Professional</strong> (Business or Creator) account linked to a Facebook Page in Meta Business Suite.
+        </div>
+
+        <div>
+          <label style="font-weight:600;display:block;margin-bottom:4px">Target Workspace:</label>
+          <select id="modal-ig-ws" class="input" style="width:100%">
+            <option value="SSC" ${acc && acc.workspace_id==='SSC'?'selected':''}>Shah Surveyors &amp; Consultancy (SSC)</option>
+            <option value="INFRA" ${acc && acc.workspace_id==='INFRA'?'selected':''}>Shah Infra Developers (INFRA)</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="font-weight:600;display:block;margin-bottom:4px">Instagram Handle / Username:</label>
+          <input type="text" id="modal-ig-handle" class="input" style="width:100%" placeholder="e.g. shahgroupofficial1" value="${acc ? esc(acc.raw_handle) : ''}">
+        </div>
+
+        <div>
+          <label style="font-weight:600;display:block;margin-bottom:4px">Display Name / Identity:</label>
+          <input type="text" id="modal-ig-name" class="input" style="width:100%" placeholder="e.g. Shah Group Official" value="${acc ? esc(acc.display_name) : ''}">
+        </div>
+
+        <div class="grid2">
+          <div>
+            <label style="font-weight:600;display:block;margin-bottom:4px">Account Type:</label>
+            <select id="modal-ig-type" class="input" style="width:100%">
+              <option value="Business">Instagram Professional (Business)</option>
+              <option value="Creator">Instagram Professional (Creator)</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-weight:600;display:block;margin-bottom:4px">Linked Facebook Page:</label>
+            <input type="text" id="modal-ig-page" class="input" style="width:100%" placeholder="e.g. Shah Surveyors Central India" value="${acc ? esc(acc.linked_page_name) : ''}">
+          </div>
+        </div>
+
+        <div>
+          <label style="font-weight:600;display:block;margin-bottom:4px">Default Hashtags:</label>
+          <input type="text" id="modal-ig-tags" class="input" style="width:100%" placeholder="e.g. #ShahGroup #Surveying #DGPS #Nagpur" value="${acc && acc.settings ? esc(acc.settings.default_hashtags) : '#ShahGroup #Surveying #DGPS'}">
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;border-top:1px solid var(--line);padding-top:12px">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="submitRegisterInstagramAccount()">Register &amp; Generate OAuth URL</button>
+      </div>
+    </div>
+  `);
+}
+
+async function submitRegisterInstagramAccount() {
+  const ws = $("#modal-ig-ws").value;
+  const username = $("#modal-ig-handle").value.trim();
+  const display_name = $("#modal-ig-name").value.trim();
+  const account_type = $("#modal-ig-type").value;
+  const linked_page_name = $("#modal-ig-page").value.trim();
+  const default_hashtags = $("#modal-ig-tags").value.trim();
+
+  if (!username) return toast("Instagram username is required", "bad");
+
+  try {
+    const res = await api("/api/instagram/accounts/register", "POST", {
+      workspace_id: ws,
+      username: username,
+      display_name: display_name,
+      account_type: account_type,
+      linked_page_name: linked_page_name,
+      settings: {
+        default_hashtags: default_hashtags,
+        default_signature: `${display_name} — High Precision Surveying`,
+        auto_schedule_time: "11:00"
+      }
+    });
+
+    closeModal();
+    toast(res.message || "Account registered successfully!", "good");
+    renderInstagramMultiSuite();
+
+    if (res.oauth_authorization_url) {
+      showModal(`
+        <div style="width:500px">
+          <h3 style="margin:0 0 10px">&#128279; Meta Graph API Authorization URL</h3>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Copy and paste this official authorization URL in your browser to grant required permissions in Meta Business Suite:</p>
+          <textarea class="input" style="width:100%;font-size:11px" rows="4" readonly>${esc(res.oauth_authorization_url)}</textarea>
+          <div style="display:flex;justify-content:flex-end;margin-top:12px">
+            <button class="btn btn-primary" onclick="closeModal()">Done</button>
+          </div>
+        </div>
+      `);
+    }
+  } catch (err) {
+    toast("Error registering account: " + err.message, "bad");
+  }
+}
+
+async function disconnectInstagramAccount(aid) {
+  if (!confirm("Are you sure you want to disconnect this Instagram account? Stored tokens will be revoked.")) return;
+  try {
+    const res = await api("/api/instagram/accounts/disconnect", "POST", { account_id: aid });
+    toast(res.message || "Account disconnected", "good");
+    renderInstagramMultiSuite();
+  } catch (err) {
+    toast("Error: " + err.message, "bad");
+  }
+}
+
+function openInstagramSettingsModal(aid) {
+  const acc = window.igActiveAccounts.find(a => a.id === aid);
+  if (!acc) return;
+  const s = acc.settings || {};
+  showModal(`
+    <div style="width:480px">
+      <h3 style="margin:0 0 12px">&#9881; Account Settings: ${esc(acc.username)}</h3>
+      <div style="display:flex;flex-direction:column;gap:12px;font-size:12px">
+        <div>
+          <label style="font-weight:600;display:block;margin-bottom:4px">Default Hashtag Group:</label>
+          <input type="text" id="modal-ig-set-tags" class="input" style="width:100%" value="${esc(s.default_hashtags||'')}">
+        </div>
+        <div>
+          <label style="font-weight:600;display:block;margin-bottom:4px">Default Caption Signature / Footer:</label>
+          <textarea id="modal-ig-set-sig" class="input" style="width:100%" rows="3">${esc(s.default_signature||'')}</textarea>
+        </div>
+        <div>
+          <label style="font-weight:600;display:block;margin-bottom:4px">Optimal Daily Posting Time (IST):</label>
+          <input type="time" id="modal-ig-set-time" class="input" value="${esc(s.auto_schedule_time||'11:00')}">
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="submitInstagramSettings(${aid})">Save Settings</button>
+      </div>
+    </div>
+  `);
+}
+
+async function submitInstagramSettings(aid) {
+  const tags = $("#modal-ig-set-tags").value.trim();
+  const sig = $("#modal-ig-set-sig").value.trim();
+  const timeVal = $("#modal-ig-set-time").value;
+  try {
+    await api("/api/instagram/accounts/settings", "POST", {
+      account_id: aid,
+      settings: { default_hashtags: tags, default_signature: sig, auto_schedule_time: timeVal }
+    });
+    closeModal();
+    toast("Account settings updated successfully", "good");
+    renderInstagramMultiSuite();
+  } catch (err) {
+    toast("Error: " + err.message, "bad");
+  }
+}
+
+async function saveInstagramDraft() {
+  const ws = (window.state && window.state.workspace) ? window.state.workspace : "SSC";
+  const mediaType = $("#ig-post-media-type").value;
+  const mediaUrl = $("#ig-post-media-url").value.trim();
+  const baseCaption = $("#ig-base-caption").value.trim();
+
+  // Save current active tab caption
+  if (window.currentIGTabAccountId) {
+    const cEl = $("#ig-account-caption");
+    const hEl = $("#ig-account-hashtags");
+    if (cEl) window.igCustomCaptions[window.currentIGTabAccountId] = cEl.value;
+    if (hEl) window.igCustomHashtags[window.currentIGTabAccountId] = hEl.value;
+  }
+
+  try {
+    const res = await api("/api/instagram/drafts", "POST", {
+      workspace_id: ws,
+      title: baseCaption.slice(0, 30) || "Draft Post",
+      media_type: mediaType,
+      media_url: mediaUrl,
+      target_account_ids: window.igSelectedAccountIds,
+      custom_captions: window.igCustomCaptions,
+      custom_hashtags: window.igCustomHashtags
+    });
+    toast(res.message || "Draft saved!", "good");
+  } catch (err) {
+    toast("Error saving draft: " + err.message, "bad");
+  }
+}
+
+function openInstagramPreviewModal() {
+  const mediaType = $("#ig-post-media-type").value;
+  const mediaUrl = $("#ig-post-media-url").value.trim() || "/brand/ssc_logo.png";
+  const baseCaption = $("#ig-base-caption").value.trim();
+  const acc = window.igActiveAccounts.find(a => window.igSelectedAccountIds.includes(a.id)) || { username: "@shahgroupofficial1" };
+
+  showModal(`
+    <div style="width:380px;max-width:95vw;background:#000;color:#fff;border-radius:12px;padding:16px;border:1px solid #333">
+      <!-- Simulated Phone Top Bar -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:12px;color:#888">
+        <span>Instagram Preview (${esc(mediaType)})</span>
+        <button class="btn btn-secondary btn-sm" onclick="closeModal()" style="color:#fff">&times;</button>
+      </div>
+
+      <!-- Account Header -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);display:flex;align-items:center;justify-content:center;font-size:14px">&#128248;</div>
+        <strong style="font-size:13px">${esc(acc.username)}</strong>
+      </div>
+
+      <!-- Media Canvas -->
+      <div style="width:100%;height:280px;background:#18181b;border-radius:6px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:10px">
+        <img src="${esc(mediaUrl)}" onerror="this.src='/brand/ssc_logo.png'" style="max-width:100%;max-height:100%;object-fit:cover">
+      </div>
+
+      <!-- Caption & Tags -->
+      <div style="font-size:12px;line-height:1.5;max-height:120px;overflow-y:auto;color:#e4e4e7">
+        <strong>${esc(acc.username)}</strong> ${esc(baseCaption || "No caption entered yet.")}
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;margin-top:14px">
+        <button class="btn btn-secondary btn-sm" onclick="closeModal()">Close Preview</button>
+      </div>
+    </div>
+  `);
+}
+
+async function submitInstagramMultiPublish() {
+  if (window.igSelectedAccountIds.length === 0) {
+    return toast("Please select at least one Instagram account to publish", "bad");
+  }
+
+  const ws = (window.state && window.state.workspace) ? window.state.workspace : "SSC";
+  const mediaType = $("#ig-post-media-type").value;
+  const mediaUrl = $("#ig-post-media-url").value.trim() || "/brand/ssc_logo.png";
+  const baseCaption = $("#ig-base-caption").value.trim();
+  const scheduleMode = $("#ig-schedule-mode").value;
+  const scheduledAt = (scheduleMode === "LATER") ? $("#ig-schedule-datetime").value : null;
+
+  if (!baseCaption) return toast("Base caption is required", "bad");
+
+  // Save active tab
+  if (window.currentIGTabAccountId) {
+    const cEl = $("#ig-account-caption");
+    const hEl = $("#ig-account-hashtags");
+    if (cEl) window.igCustomCaptions[window.currentIGTabAccountId] = cEl.value;
+    if (hEl) window.igCustomHashtags[window.currentIGTabAccountId] = hEl.value;
+  }
+
+  try {
+    const res = await api("/api/instagram/publish", "POST", {
+      workspace_id: ws,
+      target_account_ids: window.igSelectedAccountIds,
+      media_type: mediaType,
+      media_url: mediaUrl,
+      caption: baseCaption,
+      custom_captions: window.igCustomCaptions,
+      custom_hashtags: window.igCustomHashtags,
+      scheduled_at: scheduledAt
+    });
+
+    const results = res.results || [];
+    let pubCount = 0;
+    let authReqCount = 0;
+    let dupCount = 0;
+
+    results.forEach(r => {
+      if (r.status === "published" || r.status === "scheduled") pubCount++;
+      if (r.status === "authorization_required") authReqCount++;
+      if (r.status === "duplicate_prevented") dupCount++;
+    });
+
+    if (pubCount > 0) {
+      toast(`Successfully published / scheduled to ${pubCount} Instagram accounts!`, "good");
+    }
+    if (dupCount > 0) {
+      toast(`Duplicate post prevented for ${dupCount} accounts (already posted recently).`, "warn");
+    }
+    if (authReqCount > 0) {
+      toast(`${authReqCount} account(s) require Meta Graph API OAuth authorization before live publishing.`, "warn");
+    }
+
+    renderInstagramPublishingHistory();
+  } catch (err) {
+    toast("Error publishing post: " + err.message, "bad");
+  }
+}
+
+async function renderInstagramPublishingHistory() {
+  const tbody = $("#ig-publishing-history-tbody");
+  if (!tbody) return;
+  try {
+    const ws = (window.state && window.state.workspace) ? window.state.workspace : "ALL";
+    const res = await api(`/api/instagram/history?workspace_id=${ws}`);
+    const history = res.history || [];
+
+    if (history.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:16px;color:var(--muted)">No publishing events recorded yet.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = history.map(h => {
+      const statusClass = (h.status === 'published') ? 'good' : ((h.status === 'scheduled') ? 'info' : 'warn');
+      return `
+        <tr>
+          <td><code>#${h.id}</code></td>
+          <td><strong>${esc(h.account_name)}</strong> (<span style="color:#e1306c">${esc(h.account_handle)}</span>)</td>
+          <td><span class="pill info" style="font-size:10px">${esc(h.media_type)}</span></td>
+          <td>${esc((h.caption||'').slice(0, 45))}...</td>
+          <td><span class="pill ${statusClass}" style="font-size:10px">${esc(h.status)}</span></td>
+          <td>${esc(h.published_at || '')}</td>
+          <td>
+            <a href="${esc(h.platform_post_url || '#')}" target="_blank" class="btn btn-secondary btn-sm" style="font-size:11px">&#128065; View</a>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  } catch (err) {
+    console.error("renderInstagramPublishingHistory error:", err);
+  }
 }
 
 // Wire up subnav and listeners when document is ready
