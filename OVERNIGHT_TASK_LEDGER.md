@@ -38,6 +38,11 @@
 | **TSK-024** | Convert Research Directive to Task Bridge | `convertResearchRecToTask()` | Injected dynamic task button; verified creation of Task #43 | **COMPLETED** |
 | **TSK-025** | Module Test Matrix (CSV & Markdown) | `generate_test_matrix.py` | 47 comprehensive test cases generated (100% Pass) | **COMPLETED** |
 | **TSK-026** | Complete Master Handover & Operating Guide | `MASTER_HANDOVER.md` | Executive summary, baseline comparison, operating guide | **COMPLETED** |
+| **TSK-027** | Root-Cause HTML DOM Tag Balance Fix | `dashboard.html:2097-2104` | Fixed extra `</div>` at end of canvas gallery that closed `<main>` early | **COMPLETED** |
+| **TSK-028** | Enterprise Sidebar & Subnav Styling | `dashboard.html:85-180` | Restored active pills, hover effects, icon alignments in Dark/Light themes | **COMPLETED** |
+| **TSK-029** | ChatGPT-Style AI Brain Interface | `#sec-ai / #sub-ai-assistant` | Full ChatGPT layout with left sidebar, prompt cards, message stream, dock | **COMPLETED** |
+| **TSK-030** | Multi-Turn Conversational Memory | `initChatGptEngine()` | History list, session titles, instant SQLite grounded responses, task conversion | **COMPLETED** |
+| **TSK-031** | Full 11-Module CDP Verification | `verify_all_modules_and_errors.js` | All 11 modules and 16 subtabs verified; 0 console errors; 0 exceptions | **COMPLETED** |
 
 ---
 
