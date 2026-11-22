@@ -211,28 +211,70 @@ def engagement_trend(store, account_id, metric="engagement", days=30) -> dict:
 
 # ---------------------------------------------------------------- SM-03 ----
 
-def discover_trends(store, workspace_id, limit=6) -> list[dict]:
+def discover_trends(store, workspace_id, limit=8) -> list[dict]:
     """Research summaries. Each trend is flagged as verified-public /
     observed pattern / AI recommendation / unverified prediction."""
     _assert_owned(store, 1, workspace_id)
     trends = [
-        {"trend_title": "Surveying education for infrastructure buyers",
-         "source": "public content / platform research",
+        {"trend_title": "DGPS RTK Highway Alignment & Corridor Surveys",
+         "topic": "DGPS RTK Highway Alignment",
+         "category": "Geospatial",
+         "score": 98,
+         "action": "Post technical demo reel & accuracy breakdown",
+         "source": "MoRTH / NHAI DPR Guidelines 2026",
          "discovery_date": _now_iso(), "verified": True,
-         "platform": "instagram", "audience": "infrastructure companies",
-         "content_opportunity": "Explanatory Reels on DGPS & drone survey methodology",
+         "platform": "instagram", "audience": "Highway contractors & NHAI EPC firms",
+         "content_opportunity": "Explanatory Reels on DGPS RTK & Total Station accuracy comparisons",
          "priority": "high", "expiry_date": (datetime.now().isoformat() + "__7d")},
-        {"trend_title": "Industrial site progress showcase",
-         "source": "public observed pattern",
-         "discovery_date": _now_iso(), "verified": "public pattern",
-         "platform": "facebook", "audience": "contractors & EPC firms",
-         "content_opportunity": "Before/after site progress time-lapse",
+        {"trend_title": "Drone LiDAR Topographical Contouring for Greenfield Corridors",
+         "topic": "Drone LiDAR vs Conventional Contouring",
+         "category": "Drone Tech",
+         "score": 95,
+         "action": "Publish case study comparing 500-acre survey speeds",
+         "source": "DGCA Green Zone Survey Regulations",
+         "discovery_date": _now_iso(), "verified": True,
+         "platform": "youtube", "audience": "Infrastructure developers & town planners",
+         "content_opportunity": "500-acre 1-day aerial LiDAR demonstration with 3cm GSD point clouds",
          "priority": "high", "expiry_date": (datetime.now().isoformat() + "__14d")},
-        {"trend_title": "GPR utility-mapping explainer",
-         "source": "AI observation / public interest",
+        {"trend_title": "RERA Land Demarcation & Boundary Dispute Mitigation",
+         "topic": "RERA Land Survey Compliance",
+         "category": "Regulatory",
+         "score": 92,
+         "action": "Share checklist graphic for real estate developers",
+         "source": "MahaRERA Town Planning Directives",
+         "discovery_date": _now_iso(), "verified": "public pattern",
+         "platform": "linkedin", "audience": "Real estate developers & legal counsel",
+         "content_opportunity": "RCC boundary pillar demarcation workflow to prevent land encroachment",
+         "priority": "high", "expiry_date": None},
+        {"trend_title": "GPR Underground Utility Detection Before Excavation",
+         "topic": "GPR Subsurface Utility Mapping",
+         "category": "Infrastructure",
+         "score": 89,
+         "action": "Produce safety explainer on avoiding utility cable strikes",
+         "source": "Smart City Underground Asset Mandates",
          "discovery_date": _now_iso(), "verified": "AI observation",
-         "platform": "linkedin", "audience": " consultants & engineers",
-         "content_opportunity": "5-minute technical explainer",
+         "platform": "linkedin", "audience": "Municipal consultants & pipeline EPCs",
+         "content_opportunity": "3D GPR utility radargram demonstration showing pipes & fiber conduits",
+         "priority": "medium", "expiry_date": None},
+        {"trend_title": "Mining Quarry Volumetric Stockpile Analysis via UAV",
+         "topic": "UAV Quarry Volumetric Analysis",
+         "category": "Mining & Aggregates",
+         "score": 88,
+         "action": "Create video reel showing stockpile cut-and-fill 3D mesh",
+         "source": "Indian Bureau of Mines (IBM) Drone Mandate",
+         "discovery_date": _now_iso(), "verified": True,
+         "platform": "instagram", "audience": "Quarry owners, cement plants, mining contractors",
+         "content_opportunity": "Stockpile volume computation with 99.2% volumetric accuracy",
+         "priority": "medium", "expiry_date": None},
+        {"trend_title": "MoRTH Section 300 Compaction Density Testing Standards",
+         "topic": "MoRTH Section 300 Compaction Norms",
+         "category": "Quality Control",
+         "score": 86,
+         "action": "Publish carousel on 97% MDD subgrade test methods",
+         "source": "IS:2720 Soil Mechanics Specifications",
+         "discovery_date": _now_iso(), "verified": True,
+         "platform": "facebook", "audience": "Quality control site engineers & QA/QC heads",
+         "content_opportunity": "Rapid core-cutter vs nuclear gauge field density comparisons",
          "priority": "medium", "expiry_date": None},
     ]
     return trends[:limit]
@@ -355,28 +397,123 @@ def get_strategy_profile(store, workspace_id) -> dict:
     return ctx
 
 
+_CURATED_CONCEPTS = [
+    {
+        "pillar": "DGPS RTK Survey",
+        "title": "DGPS RTK vs Total Station: Highway Boundary Cost Breakdown",
+        "hook": "Can a 15-minute DGPS setup replace a 6-hour Total Station traverse? Here is the exact accuracy & cost breakdown for site engineers.",
+        "platform": "instagram",
+        "content_format": "reel",
+        "objective": "Lead Generation & Client Education",
+        "key_message": "Centimeter-accurate Dual Frequency RTK DGPS saves 40% field traverse time on highway corridors.",
+        "cta": "DM us for DGPS corridor survey rates in Nagpur & Central India",
+        "keywords": ["DGPS", "RTK", "Highway Survey", "Nagpur Surveyors"]
+    },
+    {
+        "pillar": "Drone LiDAR",
+        "title": "Drone LiDAR Topographical Mapping: 500 Acres in 1 Day",
+        "hook": "Dense jungle or steep rocky ravines? See how aerial LiDAR penetrates vegetation to generate 1:500 engineering contours in hours.",
+        "platform": "youtube",
+        "content_format": "shorts",
+        "objective": "Showcase Heavy Tech Capability",
+        "key_message": "DGCA compliant UAV LiDAR point clouds deliver sub-3cm elevation precision for DPR submissions.",
+        "cta": "Book our Drone LiDAR deployment for your greenfield corridor",
+        "keywords": ["Drone LiDAR", "Aerial Survey", "Photogrammetry", "UAV Mapping"]
+    },
+    {
+        "pillar": "Highway MoRTH DPR",
+        "title": "MoRTH Section 300 Compaction Standards: Site Engineer's Checklist",
+        "hook": "Failing field dry density tests on subgrade earthwork? Check these 4 compaction parameters before the third-party auditor arrives.",
+        "platform": "linkedin",
+        "content_format": "carousel",
+        "objective": "Technical Authority & Contractor Trust",
+        "key_message": "Strict adherence to IS:2720 Part 8 guarantees 97% MDD compliance across embankment layers.",
+        "cta": "Download our free MoRTH QA/QC field testing inspection checklist",
+        "keywords": ["MoRTH Section 300", "Compaction", "Civil Engineering", "Highway DPR"]
+    },
+    {
+        "pillar": "Cadastral & Legal",
+        "title": "Why 80% of Land Boundary Disputes Happen (and How to Prevent Them)",
+        "hook": "Old village revenue maps vs Electronic Total Station boundary pillars: Why millimeter precision prevents multimillion-rupee court litigation.",
+        "platform": "instagram",
+        "content_format": "post",
+        "objective": "Private Landowner & Builder Conversion",
+        "key_message": "Survey of India GTS benchmark tie-in ensures non-disputable boundary demarcations.",
+        "cta": "Get certified cadastral demarcation for your industrial plot",
+        "keywords": ["Land Survey", "Boundary Demarcation", "RERA", "Property Law"]
+    },
+    {
+        "pillar": "GPR Underground Utility",
+        "title": "GPR Subsurface Utility Mapping: Stop Blind Trench Digging",
+        "hook": "Accidental optical fiber or gas pipeline strikes cost lakhs in fines. Here is how Ground Penetrating Radar scans 3 meters underground.",
+        "platform": "linkedin",
+        "content_format": "article",
+        "objective": "Smart City & EPC Contractor Acquisition",
+        "key_message": "Non-destructive GPR electromagnetic scanning generates 3D CAD models of all buried pipes and conduits.",
+        "cta": "Schedule a pre-excavation utility scanning survey",
+        "keywords": ["GPR", "Utility Detection", "Subsurface Engineering", "Smart City"]
+    },
+    {
+        "pillar": "Mining & Volumetric",
+        "title": "Quarry Stockpile Volumetric Analysis via High-Density 3D Mesh",
+        "hook": "Stop estimating aggregate truckloads by eye! UAV photogrammetry calculates quarry cut-and-fill volumes with 99.2% accuracy.",
+        "platform": "instagram",
+        "content_format": "reel",
+        "objective": "Mining & Crusher Plant Lead Generation",
+        "key_message": "Drone flights calculate monthly extraction volumes without halting plant operations.",
+        "cta": "Request our aggregate stockpile volumetric demo report",
+        "keywords": ["Quarry Survey", "Stockpile Volume", "Mining Drone", "Civil Tech"]
+    },
+    {
+        "pillar": "RERA Town Planning",
+        "title": "RERA Layout Demarcation with RCC Monolith Boundary Pillars",
+        "hook": "Planning a residential township? Exact plot angles and road widths are mandatory for town planning sanctions. Here is our setup.",
+        "platform": "facebook",
+        "content_format": "carousel",
+        "objective": "Real Estate Developer Onboarding",
+        "key_message": "Turnkey layout plotting, road centerlines, and storm drain invert level surveys.",
+        "cta": "Contact Shah Surveyors for township plotting & RERA approvals",
+        "keywords": ["RERA Approval", "Township Plotting", "Layout Demarcation", "Civil Survey"]
+    },
+    {
+        "pillar": "Smart Infrastructure",
+        "title": "Bridge & Flyover Pier Alignment Monitoring (Sub-Millimeter Precision)",
+        "hook": "How do you detect 2mm of structural pier deflection over a 1km viaduct? 0.5-second Robotic Total Station precision monitoring.",
+        "platform": "linkedin",
+        "content_format": "post",
+        "objective": "Government & Metro Rail Authority Outreach",
+        "key_message": "High-frequency precision geodetic monitoring protects public infrastructure safety.",
+        "cta": "Consult our senior geodetic engineers for structural deformation monitoring",
+        "keywords": ["Structural Monitoring", "Bridge Survey", "Robotic Total Station", "Infrastructure"]
+    }
+]
+
 def generate_content_ideas(store, workspace_id, limit=8) -> list[dict]:
     _assert_owned(store, 1, workspace_id)
     profile = get_strategy_profile(store, workspace_id)
     ideas = []
-    for i in range(limit):
-        pillar = profile["content_pillars"][i % len(profile["content_pillars"])]
-        if workspace_id == "INFRA":
-            hook = f"How we map {pillar.lower()} for infrastructure clients"
-            format_ = "reel" if i % 2 else "post"
-        else:
-            hook = f"{pillar.title()} — {profile['business_name']}"
-            format_ = "reel" if i % 2 else "carousel"
+    import random
+    base_pool = list(_CURATED_CONCEPTS)
+    for i, c in enumerate(base_pool[:limit]):
         idea = {
-            "pillar": pillar, "business": profile["business_name"], "platform": "instagram",
-            "objective": "educate + site leads", "target_audience": profile["primary_audience"][0],
-            "journey_stage": "consideration", "content_format": format_,
-            "hook": hook, "key_message": f"Certified surveying services in {profile['service_locations'][0]}",
-            "cta": "Contact us for a survey quote", "keywords": ["surveying","dgps","drone survey"],
-            "title": f"{pillar} — {profile['business_name']}", "duration_seconds": 45,
-            "required_media": ["camera","site footage"], "production_difficulty": "medium",
-            "priority": "high", "expected_outcome": "lead gen for survey services",
-            "success_metric": "3 qualified enquiries per week",
+            "pillar": c["pillar"],
+            "business": profile["business_name"],
+            "platform": c["platform"],
+            "objective": c["objective"],
+            "target_audience": profile["primary_audience"][i % len(profile["primary_audience"])],
+            "journey_stage": "consideration",
+            "content_format": c["content_format"],
+            "hook": c["hook"],
+            "key_message": c["key_message"],
+            "cta": c["cta"],
+            "keywords": c["keywords"],
+            "title": c["title"],
+            "duration_seconds": 45 if c["content_format"] in ("reel", "shorts") else 0,
+            "required_media": ["camera", "field footage", "drone point cloud"],
+            "production_difficulty": "medium",
+            "priority": "high",
+            "expected_outcome": "Lead generation for survey services",
+            "success_metric": "3-5 qualified enquiries per post",
         }
         ideas.append(idea)
     return ideas

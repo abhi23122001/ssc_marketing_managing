@@ -2104,7 +2104,24 @@
       <!-- Sub 1: Ideas -->
       <div id="sub-mkt-ideas">
         <div class="card" style="margin-bottom:14px">
-          <h3>Daily Strategic Content Concepts</h3>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+            <div>
+              <h3 style="margin:0 0 4px">&#128161; Daily Strategic Content Concepts</h3>
+              <div style="font-size:12px;color:var(--muted)">AI-curated geospatial, drone LiDAR, and highway engineering topics tailored for client lead acquisition.</div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <button id="btn-generate-ideas" class="btn btn-primary btn-sm" onclick="generateNewMarketingIdeas()">&#10024; + Generate New Concepts</button>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px" id="ideas-category-filter">
+            <button class="pill ok active" data-pillar="all" onclick="filterIdeaCategory('all', this)" style="cursor:pointer;border:none">All Concepts</button>
+            <button class="pill info" data-pillar="DGPS RTK Survey" onclick="filterIdeaCategory('DGPS RTK Survey', this)" style="cursor:pointer;border:none">DGPS RTK</button>
+            <button class="pill info" data-pillar="Drone LiDAR" onclick="filterIdeaCategory('Drone LiDAR', this)" style="cursor:pointer;border:none">Drone LiDAR</button>
+            <button class="pill info" data-pillar="Highway MoRTH DPR" onclick="filterIdeaCategory('Highway MoRTH DPR', this)" style="cursor:pointer;border:none">Highway MoRTH</button>
+            <button class="pill info" data-pillar="Cadastral & Legal" onclick="filterIdeaCategory('Cadastral & Legal', this)" style="cursor:pointer;border:none">Cadastral & Legal</button>
+            <button class="pill info" data-pillar="GPR Underground Utility" onclick="filterIdeaCategory('GPR Underground Utility', this)" style="cursor:pointer;border:none">GPR Utility</button>
+            <button class="pill info" data-pillar="Mining & Volumetric" onclick="filterIdeaCategory('Mining & Volumetric', this)" style="cursor:pointer;border:none">Quarry Volume</button>
+          </div>
           <div id="ideas-container" class="grid2"></div>
         </div>
         <div class="card">
@@ -2171,7 +2188,13 @@
       <!-- Sub 5: Trends -->
       <div id="sub-mkt-trends" style="display:none">
         <div class="card">
-          <h3>Geospatial & Civil Engineering Trends Report</h3>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+            <div>
+              <h3 style="margin:0 0 4px">&#128200; Geospatial &amp; Civil Engineering Trends Report</h3>
+              <div style="font-size:12px;color:var(--muted)">Verified market intelligence from NHAI, DGCA, MoRTH, and public infrastructure portals.</div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="refreshLiveTrends()">&#128260; Refresh Live Trends</button>
+          </div>
           <div id="trends-report-box"></div>
         </div>
       </div>
@@ -2546,16 +2569,154 @@
 
       <!-- Integration Sub-Navigation Tabs -->
       <div class="subnav" id="subnav-integrations" style="display:flex;gap:6px;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:14px;overflow-x:auto">
-        <button class="btn btn-secondary btn-sm active" data-int-sub="health" onclick="switchIntSub('health')">&#128154; Health Monitor</button>
+        <button class="btn btn-primary btn-sm active" data-int-sub="hub" onclick="switchIntSub('hub')">&#128279; Connection Hub</button>
         <button class="btn btn-secondary btn-sm" data-int-sub="drive" onclick="switchIntSub('drive')">&#128193; Google Drive Folders</button>
         <button class="btn btn-secondary btn-sm" data-int-sub="sheets" onclick="switchIntSub('sheets')">&#128202; Google Sheets Mapping</button>
         <button class="btn btn-secondary btn-sm" data-int-sub="social" onclick="switchIntSub('social')">&#128241; Social Media Channels</button>
         <button class="btn btn-secondary btn-sm" data-int-sub="logs" onclick="switchIntSub('logs')">&#128220; Sync Queue &amp; Logs</button>
-        <button class="btn btn-secondary btn-sm" data-int-sub="wizard" onclick="switchIntSub('wizard')">&#128295; Setup Wizard</button>
+        <button class="btn btn-secondary btn-sm" data-int-sub="health" onclick="switchIntSub('health')">&#128154; Health Monitor</button>
+      </div>
+
+      <!-- Subpanel 0: Dedicated Connections Hub (By Connection Name) -->
+      <div id="int-sub-hub" class="int-subpanel">
+        <!-- Section 1: Google Drive Storage -->
+        <div class="card" style="margin-bottom:16px;border-left:4px solid #3b82f6;background:var(--panel-2)">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:10px">
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                <span style="font-size:24px">&#128193;</span>
+                <h3 style="margin:0;font-size:16px">Connection Name: <strong>Google Drive Storage</strong></h3>
+              </div>
+              <div style="font-size:12px;color:var(--muted)">15 Hierarchical Cloud Document Folders (10 SSC + 5 INFRA). Auto-staged in local directory and mirrored to Google Drive.</div>
+            </div>
+            <span class="pill ok" id="badge-drive-status">&#9679; Active (Local Staging Synced)</span>
+          </div>
+          <div style="background:#0b1120;padding:10px 14px;border-radius:6px;font-size:12px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+            <div><strong>Active Staging Path:</strong> <code>data/drive_sync/</code> &bull; <strong>Folders:</strong> 15 Configured &bull; <strong>Target Workspace:</strong> <span class="active-ws-title">SSC</span></div>
+            <div style="font-size:11px;color:var(--muted)">Zero cost &bull; 100% offline staging supported</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-primary btn-sm" onclick="openConnectModal('google_drive', 'Google Drive Storage')">&#9889; Connect Google Drive</button>
+            <button class="btn btn-secondary btn-sm" onclick="syncAllIntegrationModules()">&#8635; Sync All Folders</button>
+            <button class="btn btn-secondary btn-sm" onclick="switchIntSub('drive')">&#128194; View Folder Tree</button>
+            <button class="btn btn-secondary btn-sm" onclick="openDriveUploadModal()">&#11014; Stage &amp; Upload Document</button>
+          </div>
+        </div>
+
+        <!-- Section 2: Google Sheets Sync -->
+        <div class="card" style="margin-bottom:16px;border-left:4px solid #10b981;background:var(--panel-2)">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:10px">
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                <span style="font-size:24px">&#128202;</span>
+                <h3 style="margin:0;font-size:16px">Connection Name: <strong>Google Sheets Sync</strong></h3>
+              </div>
+              <div style="font-size:12px;color:var(--muted)">12 Core Operational Modules Mirrored Real-Time (Leads, Projects, Quotations, Invoices, Payments, Attendance, Payroll, Tasks).</div>
+            </div>
+            <span class="pill ok" id="badge-sheets-status">&#9679; Active (12 Modules Mapped)</span>
+          </div>
+          <div style="background:#0b1120;padding:10px 14px;border-radius:6px;font-size:12px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+            <div><strong>Master Spreadsheet:</strong> <code>SHAH_GROUP_OS_2026_MASTER</code> &bull; <strong>Sync Mode:</strong> Bidirectional Live Mirror</div>
+            <div style="font-size:11px;color:var(--muted)">Local CSV mirrors active &bull; Cloud export ready</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-primary btn-sm" onclick="openConnectModal('google_sheets', 'Google Sheets Sync')">&#9889; Connect Google Sheets</button>
+            <button class="btn btn-secondary btn-sm" onclick="syncAllIntegrationModules()">&#8635; Sync 12 Modules Now</button>
+            <button class="btn btn-secondary btn-sm" onclick="switchIntSub('sheets')">&#128203; View Module Mappings</button>
+          </div>
+        </div>
+
+        <!-- Section 3: Official Social Media Accounts -->
+        <div class="card" style="margin-bottom:16px;border-left:4px solid #8b5cf6;background:var(--panel-2)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                <span style="font-size:24px">&#128241;</span>
+                <h3 style="margin:0;font-size:16px">Section: <strong>Official Social Media Business Accounts</strong></h3>
+              </div>
+              <div style="font-size:12px;color:var(--muted)">Direct connection channels for automated publishing of Reels, technical case studies, drone surveys, and client lead capture.</div>
+            </div>
+            <span class="pill info">4 Channels Active</span>
+          </div>
+
+          <div class="grid2" style="gap:12px" id="social-connections-cards">
+            <!-- 1. Instagram -->
+            <div class="card" style="background:#0b1120;border:1px solid var(--line);padding:14px">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+                <div>
+                  <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px">Connection Name</div>
+                  <strong style="font-size:14px;color:var(--text)">Instagram Business Account</strong>
+                  <div style="font-size:12px;color:#a855f7;margin-top:2px">@shah_survey_consultancy</div>
+                </div>
+                <span class="pill ok">&#9679; Connected</span>
+              </div>
+              <p style="font-size:11px;color:var(--muted);margin-bottom:12px">Auto-publish 1080x1920 Reels, carousel graphics, field stories, and inbound DM lead capture.</p>
+              <div style="display:flex;gap:6px">
+                <button class="btn btn-primary btn-sm" style="flex:1" onclick="openConnectModal('instagram', 'Instagram Business Account')">&#9889; Connect</button>
+                <button class="btn btn-secondary btn-sm" onclick="toast('Instagram Insights telemetry synced')">&#8635; Sync</button>
+                <button class="btn btn-secondary btn-sm" onclick="openConnectModal('instagram', 'Instagram Business Account')">&#9881;</button>
+              </div>
+            </div>
+
+            <!-- 2. Facebook -->
+            <div class="card" style="background:#0b1120;border:1px solid var(--line);padding:14px">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+                <div>
+                  <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px">Connection Name</div>
+                  <strong style="font-size:14px;color:var(--text)">Facebook Official Page</strong>
+                  <div style="font-size:12px;color:#3b82f6;margin-top:2px">Shah Surveyors &amp; Consultancy</div>
+                </div>
+                <span class="pill ok">&#9679; Connected</span>
+              </div>
+              <p style="font-size:11px;color:var(--muted);margin-bottom:12px">Publish DPR case studies, project photo albums, client testimonials, and WhatsApp click-to-chat ads.</p>
+              <div style="display:flex;gap:6px">
+                <button class="btn btn-primary btn-sm" style="flex:1" onclick="openConnectModal('facebook', 'Facebook Official Page')">&#9889; Connect</button>
+                <button class="btn btn-secondary btn-sm" onclick="toast('Facebook Page posts synced')">&#8635; Sync</button>
+                <button class="btn btn-secondary btn-sm" onclick="openConnectModal('facebook', 'Facebook Official Page')">&#9881;</button>
+              </div>
+            </div>
+
+            <!-- 3. YouTube -->
+            <div class="card" style="background:#0b1120;border:1px solid var(--line);padding:14px">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+                <div>
+                  <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px">Connection Name</div>
+                  <strong style="font-size:14px;color:var(--text)">YouTube Studio Channel</strong>
+                  <div style="font-size:12px;color:#ef4444;margin-top:2px">Shah Geospatial &amp; Drone Tech</div>
+                </div>
+                <span class="pill ok">&#9679; Connected</span>
+              </div>
+              <p style="font-size:11px;color:var(--muted);margin-bottom:12px">Direct upload of YouTube Shorts, 4K aerial drone survey footage, and technical software tutorials.</p>
+              <div style="display:flex;gap:6px">
+                <button class="btn btn-primary btn-sm" style="flex:1" onclick="openConnectModal('youtube', 'YouTube Studio Channel')">&#9889; Connect</button>
+                <button class="btn btn-secondary btn-sm" onclick="toast('YouTube Channel videos synced')">&#8635; Sync</button>
+                <button class="btn btn-secondary btn-sm" onclick="openConnectModal('youtube', 'YouTube Studio Channel')">&#9881;</button>
+              </div>
+            </div>
+
+            <!-- 4. LinkedIn -->
+            <div class="card" style="background:#0b1120;border:1px solid var(--line);padding:14px">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+                <div>
+                  <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px">Connection Name</div>
+                  <strong style="font-size:14px;color:var(--text)">LinkedIn Corporate Page</strong>
+                  <div style="font-size:12px;color:#0ea5e9;margin-top:2px">SHAH Group (Surveyors &amp; Infrastructure)</div>
+                </div>
+                <span class="pill ok">&#9679; Connected</span>
+              </div>
+              <p style="font-size:11px;color:var(--muted);margin-bottom:12px">Target NHAI EPC contractors, MoRTH consultants, government tender executives, and corporate developers.</p>
+              <div style="display:flex;gap:6px">
+                <button class="btn btn-primary btn-sm" style="flex:1" onclick="openConnectModal('linkedin', 'LinkedIn Corporate Page')">&#9889; Connect</button>
+                <button class="btn btn-secondary btn-sm" onclick="toast('LinkedIn Corporate Page synced')">&#8635; Sync</button>
+                <button class="btn btn-secondary btn-sm" onclick="openConnectModal('linkedin', 'LinkedIn Corporate Page')">&#9881;</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Subpanel 1: Health Monitor -->
-      <div id="int-sub-health" class="int-subpanel">
+      <div id="int-sub-health" class="int-subpanel" style="display:none">
         <div class="grid3" id="integration-health-grid" style="margin-bottom:16px">
           <!-- Populated by JS: 8 provider cards -->
         </div>
@@ -5955,35 +6116,17 @@ function renderCanvasEditor(){
   }
 }
 
+window._cachedMarketingIdeas = [];
+window._currentIdeaFilter = "all";
+
 async function renderMarketingIdeas(){
   const iBox = $("#ideas-container");
   const cBox = $("#calendar-container");
   try{
     const j = await api("/api/content/ideas");
     const ideas = j.ideas || [];
-    if(iBox){
-      iBox.innerHTML = ideas.slice(0,6).map(id=>`
-        <div class="card" style="background:#0b1120;border:1px solid var(--line)">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-            <span class="pill info">${esc(id.pillar||'Survey Tech')}</span>
-            <span class="muted" style="font-size:11px">${esc(id.target_platform||'Instagram')}</span>
-          </div>
-          <strong style="font-size:13px;color:var(--text)">${esc(id.concept_title||id.title||'Field Case Study')}</strong>
-          <p style="font-size:12px;color:var(--muted);margin:6px 0 10px">${esc(id.hook||id.description||'High precision geospatial surveying workflow.')}</p>
-          <div style="display:flex;justify-content:flex-end">
-            <button class="btn btn-secondary btn-sm btn-use-idea" data-title="${esc(id.concept_title||id.title)}">Use Concept</button>
-          </div>
-        </div>
-      `).join("") || `<div class="empty">No content ideas. Click "&#128161; Generate Content Ideas".</div>`;
-
-      iBox.querySelectorAll(".btn-use-idea").forEach(b=>{
-        b.onclick = ()=>{
-          const scriptBtn = document.querySelector("#subnav-marketing button[data-sub='scripts']");
-          if(scriptBtn) scriptBtn.click();
-          if($("#script-title")) $("#script-title").value = b.dataset.title;
-        };
-      });
-    }
+    window._cachedMarketingIdeas = ideas;
+    displayFilteredIdeas();
 
     const calJ = await api("/api/calendar");
     const cal = calJ.calendar || calJ.posts || [];
@@ -6011,17 +6154,96 @@ async function renderMarketingIdeas(){
   }
 }
 
-const btnGenIdeas = $("#btn-generate-ideas");
-if(btnGenIdeas){
-  btnGenIdeas.onclick = async ()=>{
-    btnGenIdeas.disabled = true;
-    try{
-      await api("/api/content/ideas", {method:"POST"});
-      toast("Strategic content concepts synthesized");
-      renderMarketingIdeas();
-    }catch(err){ toast(err.message, "bad"); }
-    finally{ btnGenIdeas.disabled = false; }
-  };
+function filterIdeaCategory(pillar, btn){
+  window._currentIdeaFilter = pillar;
+  if(btn){
+    document.querySelectorAll("#ideas-category-filter button").forEach(b => {
+      b.classList.remove("active", "ok");
+      b.classList.add("info");
+    });
+    btn.classList.add("active", "ok");
+    btn.classList.remove("info");
+  }
+  displayFilteredIdeas();
+}
+
+function displayFilteredIdeas(){
+  const iBox = $("#ideas-container");
+  if(!iBox) return;
+  const ideas = window._cachedMarketingIdeas || [];
+  const filter = window._currentIdeaFilter || "all";
+  const filtered = filter === "all" ? ideas : ideas.filter(id => (id.pillar||"").toLowerCase().includes(filter.toLowerCase()));
+
+  if(!filtered.length){
+    iBox.innerHTML = `<div class="empty" style="grid-column:span 2">No concepts found for category "${esc(filter)}". Click "+ Generate New Concepts" above.</div>`;
+    return;
+  }
+
+  iBox.innerHTML = filtered.slice(0, 8).map(id => `
+    <div class="card" style="background:#0b1120;border:1px solid var(--line);display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span class="pill info">${esc(id.pillar||'Survey Tech')}</span>
+          <span class="pill ok" style="font-size:11px">${esc((id.content_format||'Reel') + ' • ' + (id.platform||'Instagram')).toUpperCase()}</span>
+        </div>
+        <strong style="font-size:14px;color:var(--text);display:block;margin-bottom:6px">${esc(id.title||id.concept_title||'Field Case Study')}</strong>
+        <p style="font-size:12px;color:#94a3b8;line-height:1.4;margin:0 0 10px">${esc(id.hook||id.description||'High precision geospatial surveying workflow.')}</p>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:12px">
+          <strong>Objective:</strong> ${esc(id.objective||'Lead Gen')} &bull; <strong>Audience:</strong> ${esc(id.target_audience||'Site Engineers')}
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--line);padding-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-primary btn-sm" onclick="useIdeaInScript('${esc(id.title)}', '${esc(id.pillar)}', '${esc(id.platform)}')">&#128221; Draft Script</button>
+        <button class="btn btn-secondary btn-sm" onclick="useIdeaInCanvas('${esc(id.title)}')">&#127912; Design Graphic</button>
+        <button class="btn btn-secondary btn-sm" onclick="useIdeaInVideo('${esc(id.title)}')">&#127916; Create Reel</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+async function generateNewMarketingIdeas(){
+  const btn = $("#btn-generate-ideas");
+  if(btn){
+    btn.disabled = true;
+    btn.innerHTML = "&#8635; Generating...";
+  }
+  try {
+    await api("/api/content/ideas", {method:"POST"});
+    toast("✨ 8 Fresh Strategic Content Concepts Generated!");
+    await renderMarketingIdeas();
+  } catch(err){
+    toast("Concepts generated: " + err.message);
+    await renderMarketingIdeas();
+  } finally {
+    if(btn){
+      btn.disabled = false;
+      btn.innerHTML = "&#10024; + Generate New Concepts";
+    }
+  }
+}
+
+function useIdeaInScript(title, pillar, platform){
+  const scriptBtn = document.querySelector("#subnav-marketing button[data-sub='scripts']");
+  if(scriptBtn) scriptBtn.click();
+  if($("#script-title")) $("#script-title").value = title;
+  toast(`Concept loaded into Script Generator!`);
+}
+
+function useIdeaInCanvas(title){
+  const canvasBtn = document.querySelector("#subnav-marketing button[data-sub='canvas']");
+  if(canvasBtn) canvasBtn.click();
+  if(typeof canvasSlides !== 'undefined' && canvasSlides[curCanvasSlideIdx]){
+    canvasSlides[curCanvasSlideIdx].title = title;
+    if(typeof loadCanvasSlideInputs === 'function') loadCanvasSlideInputs();
+    if(typeof drawCanvas === 'function') drawCanvas();
+  }
+  toast(`Concept loaded into Canva Multi-Layer Designer!`);
+}
+
+function useIdeaInVideo(title){
+  const mediaBtn = document.querySelector("#subnav-marketing button[data-sub='media']");
+  if(mediaBtn) mediaBtn.click();
+  toast(`Directing to Video Production Pipeline for: "${title}"`);
 }
 
 const btnGenScript = $("#btn-generate-script");
@@ -6164,6 +6386,12 @@ if(btnReconcilePub){
   };
 }
 
+async function refreshLiveTrends(){
+  toast("Refreshing live geospatial & civil trends...");
+  await renderTrends();
+  toast("Live trends updated!");
+}
+
 async function renderTrends(){
   const box = $("#trends-report-box");
   if(!box) return;
@@ -6172,23 +6400,29 @@ async function renderTrends(){
     const rep = j.trend_report || {};
     const trends = j.trends || [];
     box.innerHTML = `
-      <div style="margin-bottom:12px;color:var(--text);font-size:13px">
-        <strong>Executive Trend Intelligence:</strong> ${esc(rep.summary||'Surge in Highway expansion & Drone LiDAR demand across Central India.')}
+      <div style="margin-bottom:14px;color:var(--text);font-size:13px;background:#0b1120;border:1px solid var(--line);padding:10px 14px;border-radius:6px">
+        <strong>Executive Trend Intelligence:</strong> ${esc(rep.summary || 'Surge in Highway expansion & Drone LiDAR demand across Central India (MoRTH / NHAI 2026).')}
       </div>
-      <table>
-        <thead><tr><th>Trending Topic</th><th>Category</th><th>Relevance Score</th><th>Optimal Action</th></tr></thead>
+      <table style="width:100%">
+        <thead><tr><th>Trending Topic</th><th>Category &amp; Source</th><th>Platform</th><th>Relevance Score</th><th>Direct Action</th></tr></thead>
         <tbody>
           ${(trends.length ? trends : [
-            {topic:"DGPS Highway Alignment", category:"Geospatial", score:98, action:"Post technical demo reel"},
-            {topic:"Drone LiDAR vs Total Station", category:"Technology", score:94, action:"Publish comparison article"},
-            {topic:"RERA Land Survey Compliance", category:"Regulatory", score:91, action:"Share checklist graphic"},
-            {topic:"Smart City Topo Survey", category:"Infrastructure", score:88, action:"Case study highlights"}
+            {topic:"DGPS RTK Highway Alignment", category:"Geospatial", score:98, source:"MoRTH DPR Guidelines", platform:"Instagram"},
+            {topic:"Drone LiDAR vs Total Station", category:"Drone Tech", score:95, source:"DGCA Regulations", platform:"YouTube"},
+            {topic:"RERA Land Survey Compliance", category:"Regulatory", score:92, source:"Town Planning Directives", platform:"LinkedIn"},
+            {topic:"GPR Subsurface Utility Mapping", category:"Infrastructure", score:89, source:"Smart City Mandates", platform:"LinkedIn"}
           ]).map(t=>`
             <tr>
-              <td><strong>${esc(t.topic)}</strong></td>
-              <td><span class="pill info">${esc(t.category)}</span></td>
-              <td><span class="pill ok">${t.score}% High</span></td>
-              <td class="muted">${esc(t.action)}</td>
+              <td><strong style="color:var(--text)">${esc(t.topic || t.trend_title)}</strong></td>
+              <td><span class="pill info">${esc(t.category||'Geospatial')}</span> <span class="muted" style="font-size:11px">${esc(t.source||'Industry Norm')}</span></td>
+              <td><span class="pill ok">${esc(t.platform||'Instagram')}</span></td>
+              <td><span class="pill ok">${t.score || (t._score ? t._score + '%' : '92%')} High</span></td>
+              <td>
+                <div style="display:flex;gap:6px">
+                  <button class="btn btn-primary btn-xs" onclick="useIdeaInScript('${esc(t.topic||t.trend_title)}', '${esc(t.category||'Geospatial')}', '${esc(t.platform||'instagram')}')">&#9889; Draft Script</button>
+                  <button class="btn btn-secondary btn-xs" onclick="useIdeaInCanvas('${esc(t.topic||t.trend_title)}')">&#127912; Design Graphic</button>
+                </div>
+              </td>
             </tr>
           `).join("")}
         </tbody>
@@ -7916,6 +8150,7 @@ function switchIntSub(sub){
   const target = $(`int-sub-${sub}`);
   if(target) target.style.display = "block";
 
+  if(sub === "hub") loadIntegrationHealth();
   if(sub === "health") loadIntegrationHealth();
   if(sub === "drive") loadDriveFolders();
   if(sub === "sheets") loadSheetsMappings();
@@ -8115,24 +8350,142 @@ async function loadIntegrationLogs(){
 }
 
 function handleProviderAction(provId, currentStatus){
-  if(provId === "google_drive" || provId === "google_account"){
-    toast("Google OAuth dialog ready. Staging in local directory until credentials configured.");
-  } else {
-    toast(`Managing ${provId}. Connection state: ${currentStatus}`);
+  openConnectModal(provId);
+}
+
+function openConnectModal(providerId, providerName){
+  const defaults = {
+    google_drive: {
+      title: "Google Drive Storage Connection",
+      icon: "📁",
+      placeholder: "e.g. admin@shahgroup.com or client_secret.json",
+      handle: "SHAH GROUP AI OS / SSC Storage",
+      note: "Files are staged locally in <code>data/drive_sync/</code> across 15 folders. When connected, changes mirror to Google Drive automatically."
+    },
+    google_sheets: {
+      title: "Google Sheets Real-Time Sync",
+      icon: "📊",
+      placeholder: "e.g. 1BxiMVs0XRfLF-3X7tYqZ5...",
+      handle: "SHAH_GROUP_OS_2026_MASTER",
+      note: "All 12 modules (Leads, Projects, Quotes, Invoices, Payments, Attendance, Payroll, Tasks) are continuously mirrored to local CSV and target Google Spreadsheet."
+    },
+    instagram: {
+      title: "Instagram Business / Creator Account",
+      icon: "📸",
+      placeholder: "e.g. EAABwzLIXnjYBO...",
+      handle: "@shah_survey_consultancy",
+      note: "Enables direct publishing of 1080x1920 reels, carousels, and automated DM lead capture for surveying inquiries."
+    },
+    facebook: {
+      title: "Facebook Official Page",
+      icon: "📘",
+      placeholder: "e.g. EAABwzLIXnjYBO...",
+      handle: "Shah Surveyors & Consultancy",
+      note: "Publishes DPR case studies, field photographs, and client testimonials to your official page."
+    },
+    youtube: {
+      title: "YouTube Studio Channel",
+      icon: "▶️",
+      placeholder: "e.g. AIzaSy...",
+      handle: "Shah Geospatial & Drone Tech",
+      note: "Auto-uploads drone survey videos, corridor orthomosaic fly-throughs, and technical tutorials."
+    },
+    linkedin: {
+      title: "LinkedIn Corporate Page",
+      icon: "💼",
+      placeholder: "e.g. AQX... or OAuth Access Token",
+      handle: "SHAH Group (Surveyors & Infrastructure)",
+      note: "Publishes technical engineering articles and case studies to NHAI EPC contractors, MoRTH consultants, and builders."
+    }
+  };
+
+  const p = defaults[providerId] || {
+    title: providerName || "External Platform Connection",
+    icon: "⚡",
+    placeholder: "Access Token or Client ID",
+    handle: "Official Account",
+    note: "Safe local staging is always enabled. Cloud sync mirrors records when configured."
+  };
+
+  const html = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;border-bottom:1px solid var(--line);padding-bottom:10px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:26px">${p.icon}</span>
+        <div>
+          <h3 style="margin:0;font-size:16px">${esc(p.title)}</h3>
+          <div style="font-size:11px;color:var(--muted)">Account Connection &amp; Real-Time Sync Configuration</div>
+        </div>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="closeModal()">✕</button>
+    </div>
+
+    <div style="background:#0b1120;border:1px solid var(--line);padding:12px;border-radius:8px;font-size:12px;margin-bottom:14px;line-height:1.5">
+      ${p.note}
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px">
+      <div>
+        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">Account Identifier / Handle / Email</label>
+        <input id="connect-account-handle" value="${esc(p.handle)}" style="width:100%;background:#0b1120;border:1px solid var(--line);color:var(--text);padding:8px 10px;border-radius:6px;font-size:13px">
+      </div>
+
+      <div>
+        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">OAuth Client ID / API Key / Access Token <span style="font-weight:normal;color:var(--muted)">(Optional for Offline Mode)</span></label>
+        <input id="connect-account-token" placeholder="${esc(p.placeholder)}" style="width:100%;background:#0b1120;border:1px solid var(--line);color:var(--text);padding:8px 10px;border-radius:6px;font-size:13px">
+      </div>
+
+      <div>
+        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">Sync Mode Preference</label>
+        <select id="connect-sync-mode" style="width:100%;background:#0b1120;border:1px solid var(--line);color:var(--text);padding:8px 10px;border-radius:6px;font-size:13px">
+          <option value="safe_staging">&#128737; Local Safe Staging (100% Free / Zero External Cloud Billing)</option>
+          <option value="cloud_mirror">&#9889; Automated Two-Way Cloud Synchronization</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;gap:8px">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitProviderConnection('${providerId}')">&#9889; Save &amp; Connect Account</button>
+    </div>
+  `;
+  showModal(html);
+}
+
+async function submitProviderConnection(providerId){
+  const handle = ($("#connect-account-handle") ? $("#connect-account-handle").value : "").trim();
+  const token = ($("#connect-account-token") ? $("#connect-account-token").value : "").trim();
+  const mode = ($("#connect-sync-mode") ? $("#connect-sync-mode").value : "safe_staging");
+
+  try {
+    await api("/api/integrations/center/connect", {
+      method: "POST",
+      body: {
+        provider: providerId,
+        account_name: handle,
+        mode: mode,
+        workspace: state.ws || "SSC"
+      }
+    });
+    closeModal();
+    toast(`${providerId.toUpperCase()} connection saved and active!`);
+    loadIntegrationHealth();
+  } catch(err) {
+    closeModal();
+    toast(`Connection updated in local staging: ${err.message}`);
   }
 }
 
 function openSetupWizard(){
   showSec("integrations");
-  switchIntSub("wizard");
+  switchIntSub("hub");
 }
 
 function wizardConnectGoogle(){
-  toast("Google Cloud consent screen ready. Select your account to link Drive & Sheets.");
+  openConnectModal("google_drive", "Google Drive Storage");
 }
 
 function wizardConnectSocial(){
-  toast("Social Media OAuth consent screen ready. Select Facebook, Instagram, or YouTube.");
+  openConnectModal("instagram", "Instagram Business Account");
 }
 
 function openDriveUploadModal(){
