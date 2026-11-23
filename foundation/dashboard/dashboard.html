@@ -793,12 +793,12 @@
   }
 
   /* ---- Tables ---- */
-  table{width:100%;border-collapse:collapse;font-size:12px}
-  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
-  th{color:var(--text);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.4px;background:var(--panel-2)}
-  td{color:var(--muted)}
-  tr:hover td{color:var(--text);background:rgba(56,189,248,.03)}
-  tbody tr{transition:background .1s ease}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line)}
+  th{color:#ffffff !important;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.5px;background:var(--panel-2) !important;border-bottom:2px solid var(--line) !important}
+  td{color:#f1f5f9 !important;font-weight:500}
+  tr:hover td{color:#ffffff !important;background:rgba(56,189,248,.10) !important}
+  tbody tr{transition:background .15s ease}
 
   /* ---- Pills & Badges ---- */
   .pill{display:inline-flex;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.3px}
@@ -926,24 +926,138 @@
      PREMIUM LIQUID GLASS THEME SYSTEM (WCAG AA ACCESSIBLE)
      ------------------------------------------------------------------------- */
   :root {
-    --bg: #0b1120;
-    --panel: rgba(15, 23, 42, 0.85);
-    --panel-2: rgba(26, 39, 68, 0.90);
-    --line: rgba(255, 255, 255, 0.12);
-    --text: #f8fafc;
+    --bg: #090d16;
+    --panel: #0f172a;
+    --panel-2: #172033;
+    --line: #2e3d56;
+    --text: #ffffff;
     --muted: #94a3b8;
-    --good: #22c55e;
+    --good: #10b981;
     --warn: #f59e0b;
-    --bad: #ef4444;
+    --bad: #f43f5e;
     --accent: #38bdf8;
     --ai: #818cf8;
     --topbar-h: 64px;
     --glass-blur: blur(16px);
-    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
-    --card-border: 1px solid rgba(255, 255, 255, 0.10);
-    --input-bg: rgba(11, 17, 32, 0.80);
-    --input-color: #f8fafc;
-    --table-stripe: rgba(255, 255, 255, 0.02);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.55);
+    --card-border: 1px solid #2e3d56;
+    --input-bg: #172033;
+    --input-color: #ffffff;
+    --table-stripe: #111a2e;
+  }
+
+  /* Enhanced High-Contrast Obsidian Dark Theme */
+  body:not(.theme-light) {
+    background: #090d16 !important;
+    color: #ffffff !important;
+  }
+  body:not(.theme-light) header.top {
+    background: #0f172a !important;
+    border-bottom: 1px solid #1e293b !important;
+  }
+  body:not(.theme-light) header.top h1 {
+    color: #ffffff !important;
+  }
+  body:not(.theme-light) .sidebar {
+    background: #0b1120 !important;
+    border-right: 1px solid #1e293b !important;
+  }
+  body:not(.theme-light) .sidebar .item {
+    color: #cbd5e1 !important;
+    font-weight: 500 !important;
+  }
+  body:not(.theme-light) .sidebar .item:hover {
+    color: #ffffff !important;
+    background: #172033 !important;
+  }
+  body:not(.theme-light) .sidebar .item.active {
+    background: rgba(56, 189, 248, 0.16) !important;
+    color: #38bdf8 !important;
+    border-left: 3px solid #38bdf8 !important;
+    font-weight: 700 !important;
+  }
+  body:not(.theme-light) .card {
+    background: #0f172a !important;
+    border: 1px solid #2e3d56 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+  }
+  body:not(.theme-light) .card h2,
+  body:not(.theme-light) .card h3,
+  body:not(.theme-light) .card h4 {
+    color: #38bdf8 !important;
+    font-weight: 700 !important;
+  }
+  body:not(.theme-light) .summary .c {
+    background: #172033 !important;
+    border: 1px solid #2e3d56 !important;
+  }
+  body:not(.theme-light) .summary .c .v {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+  }
+  body:not(.theme-light) .summary .c .l {
+    color: #94a3b8 !important;
+    font-weight: 600 !important;
+  }
+  body:not(.theme-light) input,
+  body:not(.theme-light) select,
+  body:not(.theme-light) textarea {
+    background: #172033 !important;
+    color: #ffffff !important;
+    border: 1px solid #334155 !important;
+  }
+  body:not(.theme-light) input:focus,
+  body:not(.theme-light) select:focus,
+  body:not(.theme-light) textarea:focus {
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25) !important;
+    outline: none !important;
+  }
+  body:not(.theme-light) input::placeholder,
+  body:not(.theme-light) textarea::placeholder {
+    color: #64748b !important;
+  }
+  body:not(.theme-light) .btn-primary {
+    background: #0284c7 !important;
+    color: #ffffff !important;
+    border-color: #0284c7 !important;
+    font-weight: 600 !important;
+  }
+  body:not(.theme-light) .btn-primary:hover {
+    background: #0369a1 !important;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4) !important;
+  }
+  body:not(.theme-light) .btn-secondary {
+    background: #172033 !important;
+    color: #f8fafc !important;
+    border: 1px solid #334155 !important;
+  }
+  body:not(.theme-light) .btn-secondary:hover {
+    background: #1e293b !important;
+    border-color: #38bdf8 !important;
+    color: #ffffff !important;
+  }
+  body:not(.theme-light) .pill.ok {
+    background: rgba(16, 185, 129, 0.2) !important;
+    color: #34d399 !important;
+    border: 1px solid rgba(16, 185, 129, 0.4) !important;
+  }
+  body:not(.theme-light) .pill.pending {
+    background: rgba(245, 158, 11, 0.2) !important;
+    color: #fbbf24 !important;
+    border: 1px solid rgba(245, 158, 11, 0.4) !important;
+  }
+  body:not(.theme-light) .pill.bad,
+  body:not(.theme-light) .pill.rejected {
+    background: rgba(244, 63, 94, 0.2) !important;
+    color: #fb7185 !important;
+    border: 1px solid rgba(244, 63, 94, 0.4) !important;
+  }
+  body:not(.theme-light) .pill.info {
+    background: rgba(56, 189, 248, 0.2) !important;
+    color: #38bdf8 !important;
+    border: 1px solid rgba(56, 189, 248, 0.4) !important;
   }
 
   body.theme-light {
@@ -3403,7 +3517,10 @@ if(overlayEl){
   });
 }
 
-async function api(path, opts={}){
+async function api(path, opts={}, bodyData=null){
+  if(typeof opts === "string"){
+    opts = { method: opts, body: bodyData };
+  }
   const headers = { 
     "Authorization": "Bearer " + state.token,
     "X-Workspace-ID": state.ws || "SSC",
@@ -3516,12 +3633,21 @@ const SEC_PERM = {
   settings: ["security:manage", "workspace:manage"]
 };
 
+const ROLE_MODULE_ACCESS = {
+  "Owner": ["*"],
+  "Manager": ["overview", "workspaces", "projects", "finance", "employees", "marketing", "crm", "ai", "approvals", "integrations", "settings"],
+  "Finance Manager": ["overview", "finance", "approvals", "ai"],
+  "Project Manager": ["overview", "projects", "crm", "ai"],
+  "HR Manager": ["overview", "employees", "ai"],
+  "Employee": ["overview", "projects", "employees", "crm", "ai"],
+  "Viewer": ["overview", "projects", "ai"]
+};
+
 function visible(sec){
   if(state.role === "Owner") return true;
-  // Strict role boundaries: Employees and Viewers are strictly prohibited from admin/finance/setup modules
-  if(state.role === "Employee" || state.role === "Viewer"){
-    const blockedForStaff = ["owner-setup", "settings", "integrations", "finance", "approvals", "workspaces", "marketing"];
-    if(blockedForStaff.includes(sec)) return false;
+  const allowed = ROLE_MODULE_ACCESS[state.role];
+  if(allowed && !allowed.includes("*")){
+    if(!allowed.includes(sec)) return false;
   }
   const perms = state.perms || new Set();
   const req = (SEC_PERM[sec]||[]).map(x=>x.replace(/^[+-]/,""));
@@ -3537,13 +3663,13 @@ function updateNavVisibility(){
     el.style.display = canSee ? "flex" : "none";
   });
 
-  // 2. Workspace switcher filtering: Employees & Viewers locked to assigned workspace
+  // 2. Workspace switcher filtering: ONLY Owner and Manager can switch workspaces
   const wsWshop = $("#ws-wshop");
   if(wsWshop){
-    if(state.role === "Employee" || state.role === "Viewer"){
-      wsWshop.style.display = "none";
-    } else {
+    if(state.role === "Owner" || state.role === "Manager"){
       wsWshop.style.display = "inline-flex";
+    } else {
+      wsWshop.style.display = "none";
     }
   }
 
@@ -3551,7 +3677,8 @@ function updateNavVisibility(){
   const activeItem = document.querySelector(".sidebar .item.active");
   const currentSec = activeItem ? activeItem.dataset.sec : "overview";
   if(!visible(currentSec)){
-    const target = visible("projects") ? "projects" : "overview";
+    const allowed = ROLE_MODULE_ACCESS[state.role] || ["overview"];
+    const target = allowed.includes("projects") && visible("projects") ? "projects" : "overview";
     showSection(target);
   }
 }
@@ -9074,22 +9201,27 @@ async function submitProviderConnection(providerId){
   const token = ($("#connect-account-token") ? $("#connect-account-token").value : "").trim();
   const mode = ($("#connect-sync-mode") ? $("#connect-sync-mode").value : "safe_staging");
 
+  if(!handle) return toast("Account handle/identifier is required", "bad");
+
   try {
-    await api("/api/integrations/center/connect", {
+    const res = await api("/api/integrations/center/connect", {
       method: "POST",
       body: {
         provider: providerId,
         account_name: handle,
+        access_token: token,
         mode: mode,
         workspace: state.ws || "SSC"
       }
     });
     closeModal();
-    toast(`${providerId.toUpperCase()} connection saved and active!`);
+    toast(res.message || `${providerId.toUpperCase()} connected successfully!`, "ok");
     loadIntegrationHealth();
+    loadSocialIntegrationChannels();
+    if(window.renderInstagramMultiSuite) renderInstagramMultiSuite();
   } catch(err) {
     closeModal();
-    toast(`Connection updated in local staging: ${err.message}`);
+    toast(`Connection failed: ${err.message}`, "bad");
   }
 }
 

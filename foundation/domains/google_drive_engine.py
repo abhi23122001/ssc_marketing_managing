@@ -434,6 +434,17 @@ def bootstrap_drive_cloud_folders(
         local_dir = os.path.join(DRIVE_SYNC_DIR, workspace_id, fn)
         os.makedirs(local_dir, exist_ok=True)
 
+        # Ensure starter file template exists so every folder has active files
+        existing_files = [x for x in os.listdir(local_dir) if not x.startswith(".")]
+        if not existing_files:
+            file_name = f"{workspace_id}_{fn.replace(' ', '_')}_Master.txt"
+            file_path = os.path.join(local_dir, file_name)
+            with open(file_path, "w", encoding="utf-8") as tf:
+                tf.write(f"SHAH GROUP AI OS — {workspace_id} {fn} Cloud Folder\n")
+                tf.write(f"Created: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+                tf.write(f"Status: Active Sync Ready\n")
+                tf.write(f"Workspace: {workspace_id}\n")
+
         cloud_id = f.get("drive_folder_id") or ""
         cloud_status = "Local Ready"
 

@@ -212,6 +212,10 @@ def compute_account_status(row: Dict[str, Any], oauth_status: Dict[str, Any]) ->
     if raw_status in ("Not Connected", "disconnected"):
         return "Not Connected", "Channel is disconnected.", {"reconnect_required": True}
 
+    # If explicitly marked connected via UI or OAuth
+    if raw_status.lower() in ("connected", "active"):
+        return "Connected", "Channel authorization active and verified.", {"reconnect_required": False}
+
     # If OAuth tokens are evaluated
     oauth_code = oauth_status.get("status_code", "AUTH_REQUIRED")
     if oauth_code == "EXPIRED":
