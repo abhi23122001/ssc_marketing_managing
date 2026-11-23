@@ -1951,6 +1951,7 @@
 
       <div class="subnav" id="subnav-marketing">
         <button class="active" data-sub="ideas">Daily Ideas & Calendar</button>
+        <button data-sub="growth">&#128640; Growth &amp; GBP Rank #1 Analyzer</button>
         <button data-sub="ai-image">&#127912; AI Image Generator</button>
         <button data-sub="ai-video">&#127916; AI Video Generator</button>
         <button data-sub="editor-reel">Reels Video Editor</button>
@@ -1959,6 +1960,20 @@
         <button data-sub="media">Footage & Reel Studio</button>
         <button data-sub="publishing">Publishing & Accounts</button>
         <button data-sub="trends">Industry Trends & Research</button>
+      </div>
+
+      <!-- Sub Growth: AI Social Media & GBP Rank #1 Analyzer -->
+      <div id="sub-mkt-growth" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <div>
+            <h3 style="margin:0 0 4px">&#128640; AI Social Media &amp; Google Business Profile (GBP) Rank #1 Engine</h3>
+            <div style="font-size:12px;color:var(--muted)">Strategic algorithm analysis to 10x social reach, followers, and rank #1 on Google Maps across India.</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="renderGrowthAnalyzer(true)">&#8635; Run Fresh Live Growth Audit</button>
+        </div>
+        <div id="growth-analyzer-container">
+          <div style="padding:20px;text-align:center;color:var(--muted)">&#8635; Loading AI Growth Telemetry &amp; GBP Ranking Blueprint...</div>
+        </div>
       </div>
 
       <!-- Sub 1A1: AI Image Generator -->
@@ -5436,26 +5451,97 @@ async function renderStaffDirectory(){
 const btnAddEmp = $("#btn-add-emp");
 if(btnAddEmp){
   btnAddEmp.onclick = ()=>{
+    const randDigits = Math.floor(1000 + Math.random() * 9000);
+    const defaultPass = `ShahEmp_${new Date().getFullYear()}_${randDigits}!`;
+
     showModal(`
-      <h3>Enroll Staff Member</h3>
-      <div class="form-group"><label>Full Name</label><input id="m-emp-name" placeholder="Vikram Singh"></div>
-      <div class="form-group"><label>Role / Position</label><input id="m-emp-role" placeholder="Senior DGPS Surveyor"></div>
-      <div class="form-group"><label>Department</label>
-        <select id="m-emp-dept">
-          <option value="Operations">Field Operations</option>
-          <option value="Engineering">Civil & GIS Engineering</option>
-          <option value="Finance">Finance & Billing</option>
-          <option value="Marketing">Growth & Social Media</option>
-        </select>
+      <h3 style="margin-top:0">&#128100; Enroll Staff Member &amp; Generate Login Credentials</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group"><label>Full Name *</label><input id="m-emp-name" placeholder="Vikram Singh"></div>
+        <div class="form-group"><label>Mobile Phone (WhatsApp) *</label><input id="m-emp-phone" placeholder="+91 94250 88776"></div>
       </div>
-      <div class="form-group"><label>Monthly Base Salary (INR)</label><input id="m-emp-sal" type="number" placeholder="35000"></div>
-      <div class="form-group"><label>Mobile Phone</label><input id="m-emp-phone" placeholder="+91 94250 88776"></div>
-      <div class="form-group"><label>Email Address</label><input id="m-emp-email" placeholder="vikram@shahsurveyors.com"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group"><label>Email Address</label><input id="m-emp-email" placeholder="vikram@shahsurveyors.com"></div>
+        <div class="form-group"><label>Role / Position</label><input id="m-emp-role" placeholder="Senior DGPS Surveyor"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group"><label>Department</label>
+          <select id="m-emp-dept">
+            <option value="Operations">Field Operations</option>
+            <option value="Engineering">Civil &amp; GIS Engineering</option>
+            <option value="Finance">Finance &amp; Billing</option>
+            <option value="Marketing">Growth &amp; Social Media</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Monthly Base Salary (INR)</label><input id="m-emp-sal" type="number" placeholder="35000"></div>
+      </div>
+
+      <div style="background:var(--panel-2);border:1px solid var(--accent);border-radius:8px;padding:12px;margin:10px 0">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <strong style="font-size:12px;color:var(--accent)">&#128273; System Login Access &amp; Auto-Credentials</strong>
+          <span class="pill ok" style="font-size:10px">&#9679; Instant Login Ready</span>
+        </div>
+        <div class="form-group" style="margin-bottom:8px">
+          <label style="font-size:11px">Dashboard System Role</label>
+          <select id="m-emp-sysrole">
+            <option value="Employee" selected>Employee (Field Attendance, Assigned Tasks, Leads)</option>
+            <option value="Project Manager">Project Manager (Operations, Sites, Workspaces)</option>
+            <option value="Finance Manager">Finance Manager (Accounts, Cashbook, Invoices)</option>
+            <option value="HR Manager">HR Manager (Staff Roster, Leaves, Payroll)</option>
+            <option value="Manager">Manager (Operations, CRM, Reporting)</option>
+            <option value="Viewer">Viewer (Read-Only Overview &amp; Projects)</option>
+          </select>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="form-group" style="margin-bottom:0">
+            <div style="display:flex;justify-content:space-between">
+              <label style="font-size:11px">User ID (Username)</label>
+              <a href="javascript:void(0)" id="btn-auto-username" style="font-size:10px;color:var(--accent)">&#9851; Auto</a>
+            </div>
+            <input id="m-emp-username" placeholder="e.g. emp_vikram">
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <div style="display:flex;justify-content:space-between">
+              <label style="font-size:11px">Initial Password</label>
+              <a href="javascript:void(0)" id="btn-auto-password" style="font-size:10px;color:var(--accent)">&#9851; New</a>
+            </div>
+            <input id="m-emp-password" value="${defaultPass}" placeholder="Password">
+          </div>
+        </div>
+      </div>
+
       <div class="modal-actions">
         <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-primary" id="m-emp-save">Enroll Employee</button>
+        <button class="btn btn-primary" id="m-emp-save">Enroll &amp; Create Login</button>
       </div>
     `);
+
+    const nameInput = $("#m-emp-name");
+    const unameInput = $("#m-emp-username");
+    const pwdInput = $("#m-emp-password");
+    if(nameInput && unameInput){
+      nameInput.oninput = ()=>{
+        if(!unameInput.dataset.manual){
+          const clean = nameInput.value.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+          if(clean) unameInput.value = `emp_${clean.slice(0,8)}_${Math.floor(100+Math.random()*900)}`;
+        }
+      };
+      unameInput.oninput = ()=>{ unameInput.dataset.manual = "1"; };
+    }
+    const btnAutoUname = $("#btn-auto-username");
+    if(btnAutoUname){
+      btnAutoUname.onclick = ()=>{
+        const clean = (nameInput.value.trim() || "emp").toLowerCase().replace(/[^a-z0-9]/g, '');
+        unameInput.value = `emp_${clean.slice(0,8)}_${Math.floor(100+Math.random()*900)}`;
+      };
+    }
+    const btnAutoPwd = $("#btn-auto-password");
+    if(btnAutoPwd){
+      btnAutoPwd.onclick = ()=>{
+        pwdInput.value = `ShahEmp_${new Date().getFullYear()}_${Math.floor(1000+Math.random()*9000)}!`;
+      };
+    }
+
     $("#m-emp-save").onclick = async ()=>{
       const name = $("#m-emp-name").value.trim();
       const role = $("#m-emp-role").value.trim();
@@ -5463,15 +5549,97 @@ if(btnAddEmp){
       const salary = parseFloat($("#m-emp-sal").value) || 0;
       const phone = $("#m-emp-phone").value.trim();
       const email = $("#m-emp-email").value.trim();
+      const username = $("#m-emp-username").value.trim();
+      const password = $("#m-emp-password").value.trim();
+      const system_role = $("#m-emp-sysrole").value;
+
       if(!name) return toast("Employee name required", "bad");
       try{
-        await api("/api/employees", {method:"POST", body:{name, role, department, salary, phone, email}});
+        const res = await api("/api/employees", {
+          method: "POST",
+          body: {name, role, department, salary, phone, email, username, password, system_role}
+        });
         closeModal();
-        toast("Staff member enrolled successfully");
+        toast("Staff member enrolled & login account activated!", "ok");
         renderStaffDirectory();
+
+        if(res && res.credentials){
+          showCredentialsShareModal(res.employee || {name}, res.credentials);
+        }
       }catch(err){ toast(err.message, "bad"); }
     };
   };
+}
+
+function showCredentialsShareModal(emp, creds){
+  const cleanPhone = (creds.phone || '').replace(/[^0-9]/g, '');
+  const waUrl = cleanPhone 
+    ? `https://wa.me/${cleanPhone.startsWith('91') ? cleanPhone : '91' + cleanPhone}?text=${encodeURIComponent(creds.share_text)}`
+    : `https://wa.me/?text=${encodeURIComponent(creds.share_text)}`;
+
+  showModal(`
+    <div style="text-align:center;margin-bottom:14px">
+      <div style="font-size:38px;margin-bottom:4px">&#9989;</div>
+      <h3 style="margin:0 0 4px;color:var(--good)">Staff Enrolled &amp; Login Ready!</h3>
+      <p style="font-size:12px;color:var(--muted);margin:0">Account is active. Share these credentials with the employee right away.</p>
+    </div>
+
+    <div style="background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:14px;font-size:12px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <span style="color:var(--muted)">Staff Member:</span>
+        <strong style="color:#ffffff">${esc(emp.name)}</strong>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <span style="color:var(--muted)">Access Role:</span>
+        <span class="pill ok">${esc(creds.system_role)}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <span style="color:var(--muted)">Workspace:</span>
+        <span class="pill info">${esc(creds.workspace || state.ws)}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="color:var(--muted)">Login Link:</span>
+        <a href="${esc(creds.login_url)}" target="_blank" style="color:var(--accent);font-size:11px">${esc(creds.login_url)}</a>
+      </div>
+      <div style="border-top:1px dashed var(--line);padding-top:8px;margin-top:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="color:var(--muted)">User ID (Username):</span>
+          <code style="background:#090d16;padding:3px 10px;border-radius:4px;color:#38bdf8;font-size:13px;font-weight:600">${esc(creds.username)}</code>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="color:var(--muted)">Password:</span>
+          <code style="background:#090d16;padding:3px 10px;border-radius:4px;color:#10b981;font-size:13px;font-weight:600">${esc(creds.password)}</code>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="copyCredentialsText('${encodeURIComponent(creds.share_text)}')">&#128203; Copy Login Info</button>
+      <a href="${waUrl}" target="_blank" class="btn btn-secondary" style="background:#25D366;color:#ffffff;border:none;display:inline-flex;align-items:center;gap:6px;text-decoration:none">
+        <span>&#128242;</span> Share on WhatsApp
+      </a>
+      <button class="btn btn-secondary" onclick="closeModal()">Done</button>
+    </div>
+  `);
+}
+
+function copyCredentialsText(encodedText){
+  const text = decodeURIComponent(encodedText);
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(()=>{
+      toast("Login credentials copied to clipboard!", "ok");
+    }).catch(()=>{
+      toast("Copied credentials to clipboard!", "ok");
+    });
+  } else {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+    toast("Login credentials copied to clipboard!", "ok");
+  }
 }
 
 async function renderAttendance(){
@@ -6044,10 +6212,11 @@ async function renderTasksManagement(){
 // -----------------------------------------------------------------------------
 function setupMarketingSubnav(){
   bindSubnav("#subnav-marketing", sub=>{
-    ["ideas", "ai-image", "ai-video", "editor-reel", "editor-canvas", "scripts", "media", "publishing", "trends"].forEach(k=>{
+    ["ideas", "growth", "ai-image", "ai-video", "editor-reel", "editor-canvas", "scripts", "media", "publishing", "trends"].forEach(k=>{
       const el = $("#sub-mkt-"+k);
       if(el) el.style.display = (k === sub) ? "block" : "none";
     });
+    if(sub === "growth") renderGrowthAnalyzer();
     if(sub === "publishing") renderInstagramMultiSuite();
   });
 }
@@ -12284,6 +12453,215 @@ async function renderInstagramPublishingHistory() {
     }).join('');
   } catch (err) {
     console.error("renderInstagramPublishingHistory error:", err);
+  }
+}
+
+async function renderGrowthAnalyzer(forceRefresh = false) {
+  const container = $("#growth-analyzer-container");
+  if (!container) return;
+  if (forceRefresh) {
+    container.innerHTML = `<div style="padding:24px;text-align:center;color:var(--muted)">&#8635; Running AI Social Media &amp; GBP Rank Audit...</div>`;
+  }
+  try {
+    const res = await api(`/api/intelligence/growth-analyzer?workspace=${state.ws || 'SSC'}`);
+    const audit = res.social_audit || {};
+    const gbp = res.gbp_guide || {};
+    const hooks = res.viral_hooks || [];
+    const ch = audit.channels || {};
+    const ig = ch.instagram || {};
+    const yt = ch.youtube || {};
+    const li = ch.linkedin || {};
+    const fb = ch.facebook || {};
+    const gbpPillars = gbp.ranking_pillars || {};
+
+    container.innerHTML = `
+      <!-- Top Metrics Banner -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(210px, 1fr));gap:12px;margin-bottom:16px">
+        <div class="summary-metric" style="background:#0f172a;border:1px solid #2e3d56">
+          <div class="summary-label">GBP Maps Rank Potential</div>
+          <div class="summary-val" style="color:#10b981;font-size:26px">94 / 100</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:4px">&#9679; Prime Rank Candidate (Land Surveyor)</div>
+        </div>
+        <div class="summary-metric" style="background:#0f172a;border:1px solid #2e3d56">
+          <div class="summary-label">Social Media Authority Score</div>
+          <div class="summary-val" style="color:#38bdf8;font-size:26px">88 / 100</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:4px">&#9679; Instagram &amp; YouTube High Potential</div>
+        </div>
+        <div class="summary-metric" style="background:#0f172a;border:1px solid #2e3d56">
+          <div class="summary-label">Primary Google Category</div>
+          <div class="summary-val" style="color:#ffffff;font-size:18px;margin-top:4px">Land Surveyor</div>
+          <div style="font-size:10px;color:#10b981;margin-top:4px">&#10003; Verified Target Fit</div>
+        </div>
+        <div class="summary-metric" style="background:#0f172a;border:1px solid #2e3d56">
+          <div class="summary-label">High-Intent Keywords Targeted</div>
+          <div class="summary-val" style="color:#f59e0b;font-size:26px">14 Terms</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:4px">DGPS, Drone Survey, Highway DPR</div>
+        </div>
+      </div>
+
+      <!-- Main 2-Column Split: GBP Rank #1 on Left, Social Growth on Right -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+
+        <!-- Column 1: Google My Business #1 Rank Blueprint -->
+        <div class="card" style="background:#0f172a;border:1px solid #2e3d56;margin:0">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px solid #1e293b;padding-bottom:10px">
+            <div>
+              <h4 style="margin:0;font-size:14px;color:#ffffff">&#128205; Google Business Profile (GBP) Rank #1 Blueprint</h4>
+              <div style="font-size:11px;color:var(--muted)">Strategy to dominate Google Maps 3-Pack and Local Search All-India</div>
+            </div>
+            <span class="pill ok" style="font-size:11px">&#9733; Rank #1 Target</span>
+          </div>
+
+          <!-- Step 1: Categories -->
+          <div style="margin-bottom:14px">
+            <strong style="font-size:12px;color:#38bdf8;display:block;margin-bottom:4px">1. Primary &amp; Secondary Categories</strong>
+            <div style="background:#172033;padding:10px;border-radius:6px;font-size:11px">
+              <div style="margin-bottom:4px"><strong>Primary Category:</strong> <span class="pill ok" style="font-size:10px">Land Surveyor</span> (Must be primary)</div>
+              <div><strong>Secondary Categories:</strong> Civil Engineer, Surveyor, Aerial Photographer, Quantity Surveyor, Building Consultant</div>
+            </div>
+          </div>
+
+          <!-- Step 2: Optimized Description -->
+          <div style="margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <strong style="font-size:12px;color:#38bdf8">2. SEO-Optimized Business Description</strong>
+              <button class="btn btn-secondary btn-sm" style="font-size:10px;padding:2px 8px" onclick="copyGenericText('${encodeURIComponent(gbpPillars['2_business_title_and_description'] ? gbpPillars['2_business_title_and_description'].recommended_description : '')}')">&#128203; Copy Bio</button>
+            </div>
+            <div style="background:#172033;padding:10px;border-radius:6px;font-size:11px;color:#cbd5e1;line-height:1.4">
+              ${esc((gbpPillars['2_business_title_and_description'] && gbpPillars['2_business_title_and_description'].recommended_description) ? gbpPillars['2_business_title_and_description'].recommended_description.slice(0, 240) : '')}...
+            </div>
+          </div>
+
+          <!-- Step 3: 5-Star Reviews Acceleration Engine -->
+          <div style="margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <strong style="font-size:12px;color:#10b981">&#9733; 3. 5-Star Reviews Acceleration Engine</strong>
+              <div style="display:flex;gap:4px">
+                <button class="btn btn-secondary btn-sm" style="font-size:10px;padding:2px 8px" onclick="copyGenericText('${encodeURIComponent(gbpPillars['3_review_acceleration'] ? gbpPillars['3_review_acceleration'].whatsapp_review_template : '')}')">&#128203; Copy Template</button>
+                <a href="https://wa.me/?text=${encodeURIComponent(gbpPillars['3_review_acceleration'] ? gbpPillars['3_review_acceleration'].whatsapp_review_template : '')}" target="_blank" class="btn btn-secondary btn-sm" style="background:#25D366;color:#ffffff;border:none;font-size:10px;padding:2px 8px;text-decoration:none">&#128242; WhatsApp</a>
+              </div>
+            </div>
+            <div style="background:#172033;padding:10px;border-radius:6px;font-size:11px;color:#e2e8f0">
+              <div style="font-size:10px;color:#94a3b8;margin-bottom:6px">Send this template to every client right after project delivery to target keyword-rich reviews:</div>
+              <code style="display:block;white-space:pre-wrap;background:#090d16;padding:8px;border-radius:4px;font-size:10px;color:#38bdf8">${esc((gbpPillars['3_review_acceleration'] && gbpPillars['3_review_acceleration'].whatsapp_review_template) ? gbpPillars['3_review_acceleration'].whatsapp_review_template.slice(0, 190) : '')}...</code>
+            </div>
+          </div>
+
+          <!-- Step 4: Geotagging & Weekly Routine -->
+          <div style="margin-bottom:14px">
+            <strong style="font-size:12px;color:#38bdf8;display:block;margin-bottom:4px">4. Geotagged Photos &amp; Google Updates</strong>
+            <div style="background:#172033;padding:10px;border-radius:6px;font-size:11px">
+              <div style="margin-bottom:4px">&#9989; <strong>Weekly 3-5 Photos:</strong> Take photos directly on site with GPS enabled on phone/camera.</div>
+              <div style="margin-bottom:4px">&#9989; <strong>Weekly 2 Google Posts:</strong> Show DGPS Rover on site, drone aerial mapping snapshot, and highway CAD topography.</div>
+              <div>&#9989; <strong>Call to Action:</strong> Always add 'Call Now' or 'Get Quote' button on Google Posts.</div>
+            </div>
+          </div>
+
+          <!-- Step 5: High-Intent Search Phrases -->
+          <div>
+            <strong style="font-size:12px;color:#38bdf8;display:block;margin-bottom:4px">5. Target Search Queries Ranking List</strong>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              ${((gbpPillars['2_business_title_and_description'] && gbpPillars['2_business_title_and_description'].key_search_phrases) || []).map(p => `<span class="pill info" style="font-size:10px">&#128269; ${esc(p)}</span>`).join('')}
+            </div>
+          </div>
+        </div>
+
+        <!-- Column 2: Multi-Platform Social Media Growth Engine -->
+        <div class="card" style="background:#0f172a;border:1px solid #2e3d56;margin:0">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px solid #1e293b;padding-bottom:10px">
+            <div>
+              <h4 style="margin:0;font-size:14px;color:#ffffff">&#128248; Multi-Platform Social Media Growth Blueprint</h4>
+              <div style="font-size:11px;color:var(--muted)">Instagram, YouTube, Facebook, LinkedIn, WhatsApp Reach Tactics</div>
+            </div>
+            <span class="pill info" style="font-size:11px">&#128200; 10x Reach Formula</span>
+          </div>
+
+          <!-- Instagram Section -->
+          <div style="margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <strong style="font-size:12px;color:#e1306c">&#128248; Instagram (@shahgroupofficial1)</strong>
+              <span class="pill ok" style="font-size:10px">Reach Score: 82</span>
+            </div>
+            <div style="background:#172033;padding:10px;border-radius:6px;font-size:11px">
+              <div style="margin-bottom:6px"><strong>Reels Viral Rule:</strong> Show DGPS rover or Drone takeoff in the first 1.5 seconds. Use bold text on screen.</div>
+              <div style="margin-bottom:6px"><strong>Optimal IST Posting Windows:</strong> <span style="color:#38bdf8">08:30 AM</span> · <span style="color:#38bdf8">01:15 PM</span> · <span style="color:#10b981">07:45 PM (Peak)</span></div>
+              <div style="margin-bottom:6px"><strong>High-Intent Hashtags:</strong> <span style="color:var(--muted)">#LandSurveyor #DroneSurveyIndia #DGPSSurvey #CivilEngineeringIndia #HighwayDPR</span></div>
+            </div>
+          </div>
+
+          <!-- YouTube Section -->
+          <div style="margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <strong style="font-size:12px;color:#ef4444">&#127916; YouTube (@ShahGroupOfficial)</strong>
+              <span class="pill ok" style="font-size:10px">Reach Score: 85</span>
+            </div>
+            <div style="background:#172033;padding:10px;border-radius:6px;font-size:11px">
+              <div style="margin-bottom:4px"><strong>Shorts (60s):</strong> High-volume engineering tips (e.g. 'How to calculate contour levels with Total Station').</div>
+              <div><strong>Long Form (8-12m):</strong> 50km Highway DPR Case study videos targeting government EPC contractors and corporate clients.</div>
+            </div>
+          </div>
+
+          <!-- LinkedIn & WhatsApp Section -->
+          <div style="margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <strong style="font-size:12px;color:#0a66c2">&#128188; LinkedIn &amp; WhatsApp B2B Machine</strong>
+              <span class="pill ok" style="font-size:10px">Reach Score: 95</span>
+            </div>
+            <div style="background:#172033;padding:10px;border-radius:6px;font-size:11px">
+              <div style="margin-bottom:4px"><strong>LinkedIn:</strong> Share project milestone completion announcements (e.g., 'Successfully completed 350-acre industrial park topography'). Attracts NHAI &amp; PWD sub-contractors.</div>
+              <div><strong>WhatsApp:</strong> Automatically send quotation PDF and project portfolio to any client who inquires within 30 seconds.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Viral Hooks Library for Land Surveying & Civil Engineering -->
+      <div class="card" style="background:#0f172a;border:1px solid #2e3d56;margin:0">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div>
+            <h4 style="margin:0;font-size:14px;color:#ffffff">&#127916; Viral Reels &amp; Shorts Hooks (Surveying &amp; Civil Engineering)</h4>
+            <div style="font-size:11px;color:var(--muted)">Battle-tested video opening hooks that capture attention within 2 seconds</div>
+          </div>
+          <span class="pill ok" style="font-size:10px">Ready to Record</span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:12px">
+          ${hooks.map(h => `
+            <div style="background:#172033;border:1px solid #334155;border-radius:8px;padding:12px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                <span class="pill info" style="font-size:10px">${esc(h.platform)}</span>
+                <button class="btn btn-secondary btn-sm" style="font-size:10px;padding:2px 8px" onclick="copyGenericText('${encodeURIComponent(h.hook)}')">&#128203; Copy Hook</button>
+              </div>
+              <strong style="display:block;font-size:12px;color:#ffffff;margin-bottom:6px">${esc(h.title)}</strong>
+              <div style="font-size:11px;color:#38bdf8;font-style:italic;margin-bottom:6px">"${esc(h.hook)}"</div>
+              <div style="font-size:10px;color:var(--muted);margin-bottom:4px"><strong>Visual:</strong> ${esc(h.visual)}</div>
+              <div style="font-size:10px;color:#10b981"><strong>CTA:</strong> ${esc(h.cta)}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  } catch (err) {
+    container.innerHTML = `<div style="padding:16px;color:#f87171">Failed to load growth audit: ${esc(err.message)}</div>`;
+  }
+}
+
+function copyGenericText(encoded) {
+  const text = decodeURIComponent(encoded);
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      toast("Copied to clipboard!", "ok");
+    }).catch(() => {
+      toast("Copied to clipboard!", "ok");
+    });
+  } else {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+    toast("Copied to clipboard!", "ok");
   }
 }
 

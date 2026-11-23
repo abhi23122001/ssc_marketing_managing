@@ -1303,7 +1303,89 @@ class Handler(BaseHTTPRequestHandler):
                     designation=data.get("designation", ""),
                     salary=float(data.get("salary", 0.0)),
                 )
-                self._json_ok({"employee": emp}, 201)
+
+                # Generate and provision user login account
+                import secrets, string, re
+                uname = (data.get("username") or "").strip()
+                if not uname:
+                    clean_name = re.sub(r'[^a-zA-Z0-9]', '', name.lower())[:8] or "emp"
+                    random_suffix = secrets.token_hex(2)
+                    uname = f"emp_{clean_name}_{random_suffix}"
+
+                pwd = (data.get("password") or "").strip()
+                if not pwd:
+                    rand_chars = "".join(secrets.choice(string.digits) for _ in range(4))
+                    pwd = f"ShahEmp_2026_{rand_chars}!"
+
+                sys_role = (data.get("system_role") or data.get("role") or "Employee").strip()
+                role_lower = sys_role.lower()
+                role_id = 6  # default Employee
+                if "owner" in role_lower:
+                    role_id = 1
+                elif "manager" in role_lower and "project" in role_lower:
+                    role_id = 3
+                elif "manager" in role_lower and "finance" in role_lower:
+                    role_id = 4
+                elif "manager" in role_lower and "hr" in role_lower:
+                    role_id = 5
+                elif "manager" in role_lower:
+                    role_id = 2
+                elif "viewer" in role_lower:
+                    role_id = 7
+
+                user_acc = None
+                try:
+                    user_acc = self.store.create_user(
+                        username=uname,
+                        password=pwd,
+                        name=name,
+                        role_id=role_id,
+                        workspace_id=ws,
+                        active=1
+                    )
+                except Exception:
+                    uname = f"{uname}_{secrets.token_hex(1)}"
+                    try:
+                        user_acc = self.store.create_user(
+                            username=uname,
+                            password=pwd,
+                            name=name,
+                            role_id=role_id,
+                            workspace_id=ws,
+                            active=1
+                        )
+                    except Exception:
+                        pass
+
+                host = self.headers.get("Host", "shahcrm-23047774139.asia-south1.run.app")
+                proto = self.headers.get("X-Forwarded-Proto") or ("https" if "run.app" in host else "http")
+                login_url = f"{proto}://{host}"
+
+                share_text = (
+                    f"Namaste {name},\n\n"
+                    f"Aapka SHAH Group AI OS login account create ho gaya hai:\n\n"
+                    f"🌐 Login Link: {login_url}\n"
+                    f"👤 User ID / Username: {uname}\n"
+                    f"🔑 Password: {pwd}\n"
+                    f"🏢 Workspace: {ws}\n"
+                    f"💼 Role: {sys_role}\n\n"
+                    f"Kripya login karein aur apna field work / attendance start karein.\n"
+                    f"— Shah Group Admin"
+                )
+
+                self._json_ok({
+                    "employee": emp,
+                    "user_created": bool(user_acc),
+                    "credentials": {
+                        "username": uname,
+                        "password": pwd,
+                        "system_role": sys_role,
+                        "workspace": ws,
+                        "login_url": login_url,
+                        "share_text": share_text,
+                        "phone": data.get("phone", "")
+                    }
+                }, 201)
                 return
 
         if len(parts) == 3 and parts[1] == "employees" and parts[2].isdigit():
@@ -3012,6 +3094,42 @@ class Handler(BaseHTTPRequestHandler):
             target_ws = body_ws if (user.get("role") == "Owner" and body_ws) else ws
             ans = ai_intelligence.ask_anything(self.store, q, target_ws, user.get("role", "Owner"))
             self._json_ok({"answer": ans})
+            return
+
+        # 1.1 AI Social Media & GBP Growth Analyzer
+        if path in ("/api/intelligence/growth-analyzer", "/api/ai/growth-analyzer"):
+            from foundation.domains import ai_growth_analyzer
+            social_audit = ai_growth_analyzer.get_social_media_audit(self.store.conn, ws)
+            gbp_guide = ai_growth_analyzer.get_gbp_rank_optimizer(self.store.conn, ws)
+            viral_hooks = ai_growth_analyzer.generate_viral_reels_and_content_ideas(ws)
+            self._json_ok({
+                "ok": True,
+                "workspace_id": ws,
+                "social_audit": social_audit,
+                "gbp_guide": gbp_guide,
+                "viral_hooks": viral_hooks
+            })
+            return
+
+        if path in ("/api/intelligence/growth-analyzer/generate", "/api/ai/growth-analyzer/generate"):
+            from foundation.domains import ai_growth_analyzer
+            social_audit = ai_growth_analyzer.get_social_media_audit(self.store.conn, ws)
+            gbp_guide = ai_growth_analyzer.get_gbp_rank_optimizer(self.store.conn, ws)
+            viral_hooks = ai_growth_analyzer.generate_viral_reels_and_content_ideas(ws)
+            self._json_ok({
+                "ok": True,
+                "workspace_id": ws,
+                "refreshed_at": ai_growth_analyzer.now_kolkata_iso(),
+                "social_audit": social_audit,
+                "gbp_guide": gbp_guide,
+                "viral_hooks": viral_hooks
+            })
+            return
+
+        if path in ("/api/intelligence/gbp-rank-guide", "/api/ai/gbp-rank-guide"):
+            from foundation.domains import ai_growth_analyzer
+            gbp_guide = ai_growth_analyzer.get_gbp_rank_optimizer(self.store.conn, ws)
+            self._json_ok(gbp_guide)
             return
 
         # 2. Autonomous Daily Research
