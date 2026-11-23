@@ -134,7 +134,17 @@ def _get_token(handler) -> str | None:
     auth = handler.headers.get("Authorization") or ""
     if auth.startswith(TOKEN_PREFIX):
         return auth[len(TOKEN_PREFIX):]
-    return handler.headers.get("X-Session-Token") or None
+    token = handler.headers.get("X-Session-Token")
+    if token:
+        return token
+    try:
+        parsed = urllib.parse.urlparse(handler.path)
+        qs = urllib.parse.parse_qs(parsed.query)
+        if "token" in qs and qs["token"]:
+            return qs["token"][0]
+    except Exception:
+        pass
+    return None
 
 
 def _owner_or_manager(store, user) -> bool:
@@ -878,6 +888,11 @@ class Handler(BaseHTTPRequestHandler):
             summary = self.store.get_profit_loss_summary(ws)
             self._json_ok({"profit_loss": summary})
             return
+        if path == "/api/finance/multi-period-analytics":
+            from foundation.domains.finance_analytics import get_multi_period_financial_breakdown
+            res = get_multi_period_financial_breakdown(self.store.conn, ws)
+            self._json_ok(res)
+            return
         parts = [x for x in path.split("/") if x]
         if len(parts) >= 3 and parts[2] == "vendors":
             if user.get("role") not in ("Owner", "Manager", "Finance Manager"):
@@ -1277,6 +1292,12 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/employees/export":
             rows = lifecycle_enhancements.list_employees_filtered(self.store.conn, ws, "all")
             self._send_csv(f"employees_{ws}.csv", ["id", "employee_id", "name", "designation", "employment_status", "email", "phone", "hire_date"], rows)
+            return
+
+        if path == "/api/employees/performance-analytics":
+            from foundation.domains.employee_performance import get_employee_performance_analytics
+            res = get_employee_performance_analytics(self.store.conn, ws)
+            self._json_ok(res)
             return
 
         if len(parts) == 2 and parts[1] == "employees":
@@ -3459,7 +3480,7 @@ class Handler(BaseHTTPRequestHandler):
         if user is None:
             self._json_err("authentication required", 401)
             return
-        if user.get("role") not in ("Owner", "Manager"):
+        if user.get("role") not in ("Owner", "Manager", "Finance Manager", "Project Manager"):
             self._json_err("forbidden: admin/manager access required for integrations", 403)
             return
         ws, err = self._get_request_workspace(user)
@@ -3468,6 +3489,74 @@ class Handler(BaseHTTPRequestHandler):
             return
         data = _read_json(self) if self.command == "POST" else {}
         from foundation.domains import google_sheets_sync, integrations_center
+
+        # Complete Operational History (12 Modules ZIP Export)
+        if path == "/api/integrations/export-complete-history":
+            import io, csv, zipfile
+            from datetime import datetime
+            from foundation.domains.google_sheets_engine import APPROVED_MODULES
+            zip_buf = io.BytesIO()
+            with zipfile.ZipFile(zip_buf, "w", zipfile.ZIP_DEFLATED) as zf:
+                for mkey, mod in APPROVED_MODULES.items():
+                    tbl = mod["table"]
+                    cols = mod["cols"]
+                    headers = mod["display_headers"]
+                    title = mod["title"]
+                    try:
+                        col_info = [r[1] for r in self.store.fetchall(f"PRAGMA table_info({tbl})")]
+                        valid_cols = [c for c in cols if c in col_info]
+                        valid_headers = [headers[i] for i, c in enumerate(cols) if c in col_info]
+                        if not valid_cols:
+                            valid_cols = col_info
+                            valid_headers = col_info
+
+                        sql = f"SELECT {', '.join(valid_cols)} FROM {tbl} WHERE workspace_id=?" if "workspace_id" in valid_cols else f"SELECT {', '.join(valid_cols)} FROM {tbl}"
+                        params = [ws] if "workspace_id" in valid_cols else []
+                        rows = self.store.fetchall(sql, params)
+                    except Exception:
+                        rows = []
+                        valid_cols = cols
+                        valid_headers = headers
+
+                    s_out = io.StringIO()
+                    w = csv.writer(s_out)
+                    w.writerow(valid_headers)
+                    for r in rows:
+                        w.writerow([r[c] if r[c] is not None else "" for c in valid_cols])
+                    zf.writestr(f"{title}_{ws}.csv", s_out.getvalue().encode("utf-8"))
+
+                readme = (
+                    f"SHAH GROUP AI OS — COMPLETE OPERATIONAL AUDIT & DATA HISTORY EXPORT\n"
+                    f"Workspace: {ws}\n"
+                    f"Generated At: {now_iso()}\n"
+                    f"Modules Exported: 12 Core Operations\n\n"
+                    f"Files Included:\n"
+                    f"1. CRM_Leads_{ws}.csv — Prospective clients, inquiries & leads\n"
+                    f"2. Client_Profiles_{ws}.csv — Retained corporate clients & accounts\n"
+                    f"3. Project_Sites_{ws}.csv — Survey locations, geofencing & coordinates\n"
+                    f"4. Employee_Tasks_{ws}.csv — Field assignments, milestones & deadlines\n"
+                    f"5. Staff_Attendance_{ws}.csv — GPS check-in/out stamps & geofence flags\n"
+                    f"6. Commercial_Quotations_{ws}.csv — Formal estimates, rates & GST breakup\n"
+                    f"7. GST_Invoices_{ws}.csv — Tax invoices, billing records & status\n"
+                    f"8. Payment_Receipts_{ws}.csv — Incoming bank settlements & UTRs\n"
+                    f"9. Expense_Claims_{ws}.csv — Equipment, fuel, site labor & office claims\n"
+                    f"10. Content_Calendar_{ws}.csv — Marketing schedules & slot allocations\n"
+                    f"11. Publishing_Logs_{ws}.csv — Multi-channel published posts & live URLs\n"
+                    f"12. AI_Intelligence_Reports_{ws}.csv — Generated audit summaries & growth guides\n\n"
+                    f"Compatible with Google Sheets, Google Drive, Excel, and PowerBI.\n"
+                )
+                zf.writestr(f"README_AUDIT_INFO_{ws}.txt", readme.encode("utf-8"))
+
+            data = zip_buf.getvalue()
+            ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/zip")
+            self.send_header("Content-Disposition", f'attachment; filename="SHAH_GROUP_COMPLETE_HISTORY_{ws}_{ts}.zip"')
+            self.send_header("Content-Length", str(len(data)))
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(data)
+            return
 
         # Central Health Monitor
         if path in ("/api/integrations", "/api/integrations/summary", "/api/integrations/center/health", "/api/integrations/status"):

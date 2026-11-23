@@ -1707,6 +1707,7 @@
         <button class="btn btn-secondary btn-sm" data-sub="vendors">&#127970; Registered Vendors</button>
         <button class="btn btn-secondary btn-sm" data-sub="pl">&#128200; P&amp;L Breakdown</button>
         <button class="btn btn-secondary btn-sm" data-sub="documents">&#128193; Document Archive Vault</button>
+        <button class="btn btn-secondary btn-sm" data-sub="tracker">&#128202; Multi-Period Tracker</button>
       </div>
 
       <!-- Sub 1: Quotations & Estimates -->
@@ -1825,6 +1826,60 @@
         </div>
         <div id="finance-vault-table" style="overflow-x:auto"></div>
       </div>
+
+      <!-- Sub 8: Multi-Period Financial & Expense Tracker -->
+      <div id="sub-fin-tracker" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+          <div>
+            <h3 style="margin:0 0 4px">&#128202; Multi-Period Financial &amp; Expense Tracking Engine</h3>
+            <div style="font-size:12px;color:var(--muted)">Weekly Cashflow, 12-Month P&amp;L Statements, 3-Year Historical Growth, and Operational Expense Shares.</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-primary btn-sm" onclick="renderFinanceTracker()">&#128260; Refresh Analysis</button>
+            <button class="btn btn-secondary btn-sm" onclick="downloadCompleteDataHistoryZip()">&#128229; Download Full History ZIP</button>
+          </div>
+        </div>
+
+        <!-- KPI Cards Summary -->
+        <div class="summary" id="fin-tracker-kpis" style="margin-bottom:16px">
+          <div class="c ok"><div class="l">Total Revenue Inflows</div><div class="v" id="ft-kpi-inflow">₹ 0.00</div></div>
+          <div class="c warn"><div class="l">Total Outflows (Exp + Payroll)</div><div class="v" id="ft-kpi-outflow">₹ 0.00</div></div>
+          <div class="c ok"><div class="l">Net Operating Profit</div><div class="v" id="ft-kpi-profit">₹ 0.00</div></div>
+          <div class="c info"><div class="l">Operating Profit Margin</div><div class="v" id="ft-kpi-margin">0.0%</div></div>
+        </div>
+
+        <!-- Section 1: Monthly P&L -->
+        <div class="card" style="margin-bottom:16px;background:var(--panel-2)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <h4 style="margin:0">&#128197; Monthly Financial Breakdown (Last 12 Months)</h4>
+            <span class="pill info">Invoices, Collections, Expenses &amp; Payroll</span>
+          </div>
+          <div id="fin-monthly-table-container" style="overflow-x:auto"></div>
+        </div>
+
+        <!-- Section 2: Weekly Cashflow Monitor -->
+        <div class="card" style="margin-bottom:16px;background:var(--panel-2)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <h4 style="margin:0">&#128197; Weekly Cashflow &amp; Site Outflows (Last 8 Weeks)</h4>
+            <span class="pill info">Field Expenses &amp; Collections Velocity</span>
+          </div>
+          <div id="fin-weekly-table-container" style="overflow-x:auto"></div>
+        </div>
+
+        <!-- Two Columns: Yearly & Categories -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(360px, 1fr));gap:16px">
+          <!-- Yearly -->
+          <div class="card" style="background:var(--panel-2)">
+            <h4 style="margin:0 0 10px">&#128200; Multi-Year Performance Comparison</h4>
+            <div id="fin-yearly-table-container" style="overflow-x:auto"></div>
+          </div>
+          <!-- Expense Category Shares -->
+          <div class="card" style="background:var(--panel-2)">
+            <h4 style="margin:0 0 10px">&#129534; Operational Expense Category Distribution</h4>
+            <div id="fin-categories-container"></div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- ==================== 5. EMPLOYEES & HRM ==================== -->
@@ -1843,6 +1898,7 @@
         <button data-sub="leaves">Leave Management</button>
         <button data-sub="payroll">Payroll Engine & Payslips</button>
         <button data-sub="tasks">Task Management &amp; Workload</button>
+        <button data-sub="performance">&#127942; Employee Performance &amp; AI KPIs</button>
       </div>
 
       <!-- Sub 1: Staff Directory -->
@@ -1935,6 +1991,40 @@
         <div class="card">
           <h3 style="margin:0 0 10px">Staff Workload &amp; Execution Performance</h3>
           <div id="tasks-employee-performance-container" style="overflow-x:auto"></div>
+        </div>
+      </div>
+
+      <!-- Sub 6: Employee Performance & AI Scorecards -->
+      <div id="sub-hrm-performance" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+          <div>
+            <h3 style="margin:0 0 4px">&#127942; Employee Productivity, Geofence Reliability &amp; AI KPIs</h3>
+            <div style="font-size:12px;color:var(--muted)">Automated grading (A+, A, B, C), punctuality &amp; GPS geofence compliance, task delivery tracking, and tailored AI guidance.</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary btn-sm" onclick="renderEmployeePerformance()">&#128260; Recalculate KPIs</button>
+          </div>
+        </div>
+
+        <!-- Team Summary KPIs -->
+        <div class="summary" id="emp-perf-summary" style="margin-bottom:16px">
+          <div class="c info"><div class="l">Analyzed Personnel</div><div class="v" id="ep-kpi-count">0</div></div>
+          <div class="c ok"><div class="l">Team Average Score</div><div class="v" id="ep-kpi-avg">0 / 100</div></div>
+          <div class="c ok"><div class="l">Geofence Compliance</div><div class="v" id="ep-kpi-geo">0%</div></div>
+          <div class="c warn"><div class="l">Completed Tasks (30d)</div><div class="v" id="ep-kpi-tasks">0</div></div>
+          <div class="c ok"><div class="l">Top Star Performer</div><div class="v" id="ep-kpi-top" style="font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">N/A</div></div>
+        </div>
+
+        <!-- Leaderboard Table -->
+        <div class="card" style="margin-bottom:16px;background:var(--panel-2)">
+          <h4 style="margin:0 0 10px">&#127941; Staff Performance Leaderboard</h4>
+          <div id="emp-leaderboard-table-container" style="overflow-x:auto"></div>
+        </div>
+
+        <!-- Individual Deep Dive Cards Grid -->
+        <div>
+          <h4 style="margin:0 0 12px">&#128100; Individual Employee Performance Scorecards</h4>
+          <div id="emp-scorecards-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(360px, 1fr));gap:16px"></div>
         </div>
       </div>
     </section>
@@ -3042,6 +3132,7 @@
             <button class="btn btn-primary btn-sm" id="btn-google-sheets-connect" onclick="startGoogleOAuth()">&#9889; Connect with Google</button>
             <button class="btn btn-secondary btn-sm" onclick="syncAllIntegrationModules()">&#8635; Sync 12 Modules Now</button>
             <button class="btn btn-secondary btn-sm" onclick="switchIntSub('sheets')">&#128203; View Module Mappings</button>
+            <button class="btn btn-secondary btn-sm" style="background:#1e293b;border-color:#38bdf8;color:#38bdf8;" onclick="downloadCompleteDataHistoryZip()">&#128229; Download Complete History ZIP</button>
             <button class="btn btn-secondary btn-sm" id="btn-google-sheets-disconnect" style="display:none;color:#f87171" onclick="disconnectGoogleAccount()">Disconnect</button>
           </div>
         </div>
@@ -4349,12 +4440,13 @@ function setupFinanceSubnav(){
       nav.querySelectorAll("button").forEach(btn => btn.classList.remove("active", "btn-primary"));
       b.classList.add("active", "btn-primary");
       const targetSub = b.dataset.sub;
-      ["quotations", "invoices", "salary", "claims", "vendors", "pl", "reports", "documents"].forEach(sub => {
+      ["quotations", "invoices", "salary", "claims", "vendors", "pl", "reports", "documents", "tracker"].forEach(sub => {
         const el = $("#sub-fin-" + sub);
         if(el) el.style.display = (sub === targetSub) ? "block" : "none";
       });
       if(targetSub === "vendors") renderRegisteredVendors();
       if(targetSub === "reports") renderReportsArchive();
+      if(targetSub === "tracker") renderFinanceTracker();
     };
   });
 }
@@ -5401,10 +5493,11 @@ function filterDocumentVault(txt){
 // -----------------------------------------------------------------------------
 function setupHrmSubnav(){
   bindSubnav("#subnav-hrm", sub=>{
-    ["directory", "attendance", "leaves", "payroll", "tasks"].forEach(k=>{
+    ["directory", "attendance", "leaves", "payroll", "tasks", "performance"].forEach(k=>{
       const el = $("#sub-hrm-"+k);
       if(el) el.style.display = (k === sub) ? "block" : "none";
     });
+    if(sub === "performance") renderEmployeePerformance();
   });
 }
 
@@ -5415,7 +5508,8 @@ async function renderEmployees(){
     renderAttendance(),
     renderLeaves(),
     renderPayroll(),
-    renderTasksManagement()
+    renderTasksManagement(),
+    renderEmployeePerformance()
   ]);
 }
 
@@ -12665,6 +12759,289 @@ function copyGenericText(encoded) {
   }
 }
 
+// =============================================================================
+// MULTI-PERIOD FINANCE TRACKER, EMPLOYEE PERFORMANCE & COMPLETE HISTORY EXPORT
+// =============================================================================
+
+async function renderFinanceTracker(){
+  try{
+    const ws = (state && state.ws) ? state.ws : "SSC";
+    const data = await api(`/api/finance/multi-period-analytics?workspace=${encodeURIComponent(ws)}`);
+    if(!data || !data.ok) return;
+
+    // 1. KPI cards
+    const sm = data.summary || {};
+    if($("#ft-kpi-inflow")) $("#ft-kpi-inflow").textContent = "₹ " + Number(sm.total_collected||0).toLocaleString('en-IN', {minimumFractionDigits:2});
+    if($("#ft-kpi-outflow")) $("#ft-kpi-outflow").textContent = "₹ " + Number(sm.total_outflows||0).toLocaleString('en-IN', {minimumFractionDigits:2});
+    if($("#ft-kpi-profit")) {
+      const p = Number(sm.net_operating_profit||0);
+      $("#ft-kpi-profit").textContent = "₹ " + p.toLocaleString('en-IN', {minimumFractionDigits:2});
+      $("#ft-kpi-profit").style.color = p >= 0 ? "#10b981" : "#ef4444";
+    }
+    if($("#ft-kpi-margin")) $("#ft-kpi-margin").textContent = (sm.overall_profit_margin_pct||0) + "%";
+
+    // 2. Monthly Table
+    const mBox = $("#fin-monthly-table-container");
+    if(mBox && data.monthly){
+      let mHtml = `<table class="table" style="width:100%;font-size:12px;border-collapse:collapse">
+        <thead>
+          <tr style="border-bottom:1px solid var(--line);text-align:left;color:var(--muted)">
+            <th style="padding:8px">Month</th>
+            <th style="padding:8px">Invoiced (₹)</th>
+            <th style="padding:8px">Collected Inflow (₹)</th>
+            <th style="padding:8px">Site &amp; Claims (₹)</th>
+            <th style="padding:8px">Payroll (₹)</th>
+            <th style="padding:8px">Total Outflow (₹)</th>
+            <th style="padding:8px">Net Margin (₹)</th>
+            <th style="padding:8px">Margin %</th>
+          </tr>
+        </thead>
+        <tbody>`;
+      data.monthly.forEach(m => {
+        const profColor = m.net_profit >= 0 ? "#10b981" : "#ef4444";
+        mHtml += `
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.05)">
+            <td style="padding:8px"><strong>${esc(m.month_label)}</strong></td>
+            <td style="padding:8px">₹ ${Number(m.invoiced).toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
+            <td style="padding:8px;color:#10b981">₹ ${Number(m.collected).toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
+            <td style="padding:8px;color:#f59e0b">₹ ${Number(m.expenses).toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
+            <td style="padding:8px">₹ ${Number(m.payroll).toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
+            <td style="padding:8px;color:#ef4444">₹ ${Number(m.total_outflow).toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
+            <td style="padding:8px;font-weight:bold;color:${profColor}">₹ ${Number(m.net_profit).toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
+            <td style="padding:8px"><span class="pill ${m.margin_pct>=0?'ok':'bad'}" style="font-size:11px">${m.margin_pct}%</span></td>
+          </tr>`;
+      });
+      mHtml += `</tbody></table>`;
+      mBox.innerHTML = mHtml;
+    }
+
+    // 3. Weekly Table
+    const wBox = $("#fin-weekly-table-container");
+    if(wBox && data.weekly){
+      let wHtml = `<table class="table" style="width:100%;font-size:12px;border-collapse:collapse">
+        <thead>
+          <tr style="border-bottom:1px solid var(--line);text-align:left;color:var(--muted)">
+            <th style="padding:8px">Week Period</th>
+            <th style="padding:8px">Collections Inflow (₹)</th>
+            <th style="padding:8px">Site Outflows &amp; Claims (₹)</th>
+            <th style="padding:8px">Net Cashflow Velocity (₹)</th>
+            <th style="padding:8px">Claims Count</th>
+          </tr>
+        </thead>
+        <tbody>`;
+      data.weekly.forEach(w => {
+        const cashColor = w.net_cashflow >= 0 ? "#10b981" : "#ef4444";
+        wHtml += `
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.05)">
+            <td style="padding:8px"><strong>${esc(w.week_label)}</strong></td>
+            <td style="padding:8px;color:#10b981">₹ ${Number(w.inflow_collected).toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
+            <td style="padding:8px;color:#f59e0b">₹ ${Number(w.expenses).toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
+            <td style="padding:8px;font-weight:bold;color:${cashColor}">₹ ${Number(w.net_cashflow).toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
+            <td style="padding:8px"><span class="pill info">${w.claim_count} claims</span></td>
+          </tr>`;
+      });
+      wHtml += `</tbody></table>`;
+      wBox.innerHTML = wHtml;
+    }
+
+    // 4. Yearly Table
+    const yBox = $("#fin-yearly-table-container");
+    if(yBox && data.yearly){
+      let yHtml = `<table class="table" style="width:100%;font-size:12px;border-collapse:collapse">
+        <thead>
+          <tr style="border-bottom:1px solid var(--line);text-align:left;color:var(--muted)">
+            <th style="padding:8px">Financial Year</th>
+            <th style="padding:8px">Collected (₹)</th>
+            <th style="padding:8px">Total Outflow (₹)</th>
+            <th style="padding:8px">Net Margin</th>
+          </tr>
+        </thead>
+        <tbody>`;
+      data.yearly.forEach(y => {
+        const yColor = y.net_profit >= 0 ? "#10b981" : "#ef4444";
+        yHtml += `
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.05)">
+            <td style="padding:8px"><strong>${esc(y.year_label)}</strong></td>
+            <td style="padding:8px;color:#10b981">₹ ${Number(y.total_collected).toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
+            <td style="padding:8px;color:#ef4444">₹ ${Number(y.total_outflow).toLocaleString('en-IN', {minimumFractionDigits:2})}</td>
+            <td style="padding:8px;font-weight:bold;color:${yColor}">₹ ${Number(y.net_profit).toLocaleString('en-IN', {minimumFractionDigits:2})} <small>(${y.profit_margin_pct}%)</small></td>
+          </tr>`;
+      });
+      yHtml += `</tbody></table>`;
+      yBox.innerHTML = yHtml;
+    }
+
+    // 5. Categories Breakdown
+    const cBox = $("#fin-categories-container");
+    if(cBox && data.categories){
+      let cHtml = `<div style="display:flex;flex-direction:column;gap:12px">`;
+      data.categories.forEach(c => {
+        cHtml += `
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+              <span><strong>${esc(c.category)}</strong> <span style="color:var(--muted)">(${c.claim_count} claims)</span></span>
+              <span><strong>₹ ${Number(c.amount).toLocaleString('en-IN', {minimumFractionDigits:2})}</strong> <span class="pill info" style="font-size:10px;padding:2px 6px">${c.share_percentage}%</span></span>
+            </div>
+            <div style="background:rgba(255,255,255,0.08);border-radius:4px;height:6px;overflow:hidden">
+              <div style="background:#38bdf8;height:100%;width:${Math.min(c.share_percentage, 100)}%"></div>
+            </div>
+          </div>`;
+      });
+      cHtml += `</div>`;
+      cBox.innerHTML = cHtml;
+    }
+  }catch(e){
+    console.warn("renderFinanceTracker error:", e);
+  }
+}
+window.renderFinanceTracker = renderFinanceTracker;
+
+async function renderEmployeePerformance(){
+  try{
+    const ws = (state && state.ws) ? state.ws : "SSC";
+    const data = await api(`/api/employees/performance-analytics?workspace=${encodeURIComponent(ws)}`);
+    if(!data || !data.ok) return;
+
+    // 1. Team Summary KPIs
+    const ts = data.team_summary || {};
+    if($("#ep-kpi-count")) $("#ep-kpi-count").textContent = ts.total_staff_analyzed || 0;
+    if($("#ep-kpi-avg")) $("#ep-kpi-avg").textContent = (ts.team_average_performance_score || 0) + " / 100";
+    if($("#ep-kpi-geo")) $("#ep-kpi-geo").textContent = (ts.team_attendance_reliability_pct || 0) + "%";
+    if($("#ep-kpi-tasks")) $("#ep-kpi-tasks").textContent = ts.total_completed_tasks_30d || 0;
+    if($("#ep-kpi-top")) $("#ep-kpi-top").textContent = ts.top_performer || "N/A";
+
+    // 2. Leaderboard Table
+    const lbBox = $("#emp-leaderboard-table-container");
+    if(lbBox && data.leaderboard){
+      let lbHtml = `<table class="table" style="width:100%;font-size:12px;border-collapse:collapse">
+        <thead>
+          <tr style="border-bottom:1px solid var(--line);text-align:left;color:var(--muted)">
+            <th style="padding:8px">Rank</th>
+            <th style="padding:8px">Employee</th>
+            <th style="padding:8px">Designation</th>
+            <th style="padding:8px">Grade</th>
+            <th style="padding:8px">Performance Score</th>
+            <th style="padding:8px">Shifts (30d)</th>
+            <th style="padding:8px">Tasks Completed</th>
+          </tr>
+        </thead>
+        <tbody>`;
+      data.leaderboard.forEach(l => {
+        const medal = l.rank === 1 ? "🥇 " : (l.rank === 2 ? "🥈 " : (l.rank === 3 ? "🥉 " : `#${l.rank}`));
+        const gradeClass = l.grade === 'A+' ? 'ok' : (l.grade === 'A' ? 'info' : (l.grade === 'B' ? 'warn' : 'bad'));
+        lbHtml += `
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.05)">
+            <td style="padding:8px;font-weight:bold">${medal}</td>
+            <td style="padding:8px"><strong>${esc(l.name)}</strong></td>
+            <td style="padding:8px;color:var(--muted)">${esc(l.designation)}</td>
+            <td style="padding:8px"><span class="pill ${gradeClass}" style="font-weight:bold">${esc(l.grade)}</span></td>
+            <td style="padding:8px">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-weight:bold;width:45px">${l.score}/100</span>
+                <div style="background:rgba(255,255,255,0.08);border-radius:4px;height:6px;width:100px;overflow:hidden">
+                  <div style="background:#10b981;height:100%;width:${l.score}%"></div>
+                </div>
+              </div>
+            </td>
+            <td style="padding:8px">${l.shifts} shifts</td>
+            <td style="padding:8px">${l.tasks_completed} done</td>
+          </tr>`;
+      });
+      lbHtml += `</tbody></table>`;
+      lbBox.innerHTML = lbHtml;
+    }
+
+    // 3. Individual Deep Dive Cards Grid
+    const gBox = $("#emp-scorecards-grid");
+    if(gBox && data.scorecards){
+      let gHtml = "";
+      data.scorecards.forEach(sc => {
+        const gradeBadgeBg = sc.grade === 'A+' ? '#065f46' : (sc.grade === 'A' ? '#075985' : (sc.grade === 'B' ? '#92400e' : '#991b1b'));
+        const gradeTextColor = sc.grade === 'A+' ? '#34d399' : (sc.grade === 'A' ? '#38bdf8' : (sc.grade === 'B' ? '#fbbf24' : '#f87171'));
+        gHtml += `
+          <div class="card" style="background:var(--panel-2);border-top:3px solid ${sc.status_color};display:flex;flex-direction:column;justify-content:space-between">
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+                <div>
+                  <h4 style="margin:0 0 2px;font-size:15px">${esc(sc.name)}</h4>
+                  <div style="font-size:11px;color:var(--muted)">${esc(sc.designation)} &bull; <code>${esc(sc.emp_code)}</code></div>
+                </div>
+                <div style="background:${gradeBadgeBg};color:${gradeTextColor};padding:3px 10px;border-radius:12px;font-size:12px;font-weight:bold">
+                  Grade ${esc(sc.grade)}
+                </div>
+              </div>
+
+              <!-- Score Meter -->
+              <div style="background:rgba(255,255,255,0.04);padding:8px 10px;border-radius:6px;margin-bottom:10px">
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+                  <span><strong>Productivity Score:</strong> ${sc.performance_score} / 100</span>
+                  <span style="color:${gradeTextColor};font-size:11px">${esc(sc.grade_label)}</span>
+                </div>
+                <div style="background:rgba(255,255,255,0.08);border-radius:4px;height:8px;overflow:hidden">
+                  <div style="background:${sc.status_color};height:100%;width:${sc.performance_score}%"></div>
+                </div>
+              </div>
+
+              <!-- Two Column Stats (Attendance & Tasks) -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;font-size:11px">
+                <div style="background:rgba(255,255,255,0.03);padding:8px;border-radius:6px">
+                  <div style="color:var(--muted);margin-bottom:2px">📍 Attendance &amp; GPS</div>
+                  <div><strong>${sc.attendance.total_shifts_30d} Shifts</strong> (${sc.attendance.hours_worked} hrs)</div>
+                  <div style="color:${sc.attendance.geofence_accuracy_pct>=90?'#10b981':'#f59e0b'}">Geofence: <strong>${sc.attendance.geofence_accuracy_pct}%</strong></div>
+                  <div>Leaves: ${sc.attendance.leaves_taken} days</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.03);padding:8px;border-radius:6px">
+                  <div style="color:var(--muted);margin-bottom:2px">📋 Task Execution</div>
+                  <div><strong>${sc.tasks.completed}</strong> / ${sc.tasks.total} Delivered</div>
+                  <div>Pending: ${sc.tasks.pending} | In-Prog: ${sc.tasks.in_progress}</div>
+                  <div style="color:#38bdf8">Completion: <strong>${sc.tasks.completion_rate_pct}%</strong></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- AI Recommendation Box -->
+            <div style="background:#0f172a;border-left:3px solid #38bdf8;padding:8px 10px;border-radius:4px;font-size:11px;color:#cbd5e1;line-height:1.4">
+              <strong>💡 AI Recommendation:</strong> ${esc(sc.ai_recommendation)}
+            </div>
+          </div>`;
+      });
+      gBox.innerHTML = gHtml;
+    }
+  }catch(e){
+    console.warn("renderEmployeePerformance error:", e);
+  }
+}
+window.renderEmployeePerformance = renderEmployeePerformance;
+
+async function downloadCompleteDataHistoryZip() {
+  try {
+    toast("Preparing Complete Operational History ZIP...", "ok");
+    const token = (state && state.token) || localStorage.getItem("sgai_token") || "";
+    const ws = (state && state.ws) ? state.ws : "SSC";
+    const res = await fetch(`/api/integrations/export-complete-history?workspace=${encodeURIComponent(ws)}`, {
+      headers: token ? { "Authorization": "Bearer " + token } : {}
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      toast(err.error || "Export failed", "bad");
+      return;
+    }
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `SHAH_GROUP_COMPLETE_HISTORY_${ws}_${new Date().toISOString().slice(0,10)}.zip`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+    toast("Complete History ZIP downloaded successfully!", "ok");
+  } catch (err) {
+    toast("Download failed: " + err.message, "bad");
+  }
+}
+window.downloadCompleteDataHistoryZip = downloadCompleteDataHistoryZip;
+
 // Wire up subnav and listeners when document is ready
 window.addEventListener("DOMContentLoaded", () => {
   if (window.setupFinanceSubnav) {
@@ -12677,6 +13054,7 @@ window.addEventListener("DOMContentLoaded", () => {
           b.addEventListener("click", () => {
             if (b.dataset.sub === "vendors") renderRegisteredVendors();
             if (b.dataset.sub === "reports") renderReportsArchive();
+            if (b.dataset.sub === "tracker") renderFinanceTracker();
           });
         });
       }
