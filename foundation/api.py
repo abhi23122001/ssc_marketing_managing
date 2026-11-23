@@ -3866,7 +3866,8 @@ if __name__ == "__main__":
     from foundation import config as foundation_config
     cfg = foundation_config.load_config()
     port = int(os.getenv("PORT", cfg.get("port", 8899)))
-    host = os.getenv("HOST", "0.0.0.0" if os.getenv("RENDER") else cfg.get("host", "127.0.0.1"))
+    cloud_env = os.getenv("RENDER") or os.getenv("K_SERVICE") or os.getenv("GAE_APPLICATION") or (os.getenv("PORT") is not None)
+    host = os.getenv("HOST", "0.0.0.0" if cloud_env else cfg.get("host", "127.0.0.1"))
     srv = make_server(host, port)
     print(f"SHAI foundation API listening on http://{srv.server_address[0]}:{srv.server_address[1]}")
     try:
