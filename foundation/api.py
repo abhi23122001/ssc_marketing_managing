@@ -3609,7 +3609,8 @@ class Handler(BaseHTTPRequestHandler):
 
         from foundation.domains import google_oauth_service
         host = self.headers.get("Host", "127.0.0.1:8899")
-        redirect_uri = f"http://{host}{parsed.path}"
+        proto = self.headers.get("X-Forwarded-Proto") or ("https" if "run.app" in host else "http")
+        redirect_uri = f"{proto}://{host}{parsed.path}"
         res = google_oauth_service.exchange_google_code_for_tokens(self.store.conn, code, state, redirect_uri)
         if res.get("ok"):
             email = res.get("account_email", "Google Account")
@@ -3642,7 +3643,8 @@ class Handler(BaseHTTPRequestHandler):
         if provider.lower() in ("google", "google_account", "google_sheets", "google_drive"):
             from foundation.domains import google_oauth_service
             host = self.headers.get("Host", "127.0.0.1:8899")
-            redirect_uri = qs.get("redirect_uri", [f"http://{host}/api/oauth/google/callback"])[0]
+            proto = self.headers.get("X-Forwarded-Proto") or ("https" if "run.app" in host else "http")
+            redirect_uri = qs.get("redirect_uri", [f"{proto}://{host}/api/oauth/google/callback"])[0]
             res = google_oauth_service.generate_google_oauth_url(self.store.conn, ws, uid, redirect_uri)
             self._json_ok(res)
             return
@@ -3667,7 +3669,8 @@ class Handler(BaseHTTPRequestHandler):
 
         from foundation.domains import google_oauth_service
         host = self.headers.get("Host", "127.0.0.1:8899")
-        redirect_uri = data.get("redirect_uri") or f"http://{host}/api/oauth/google/callback"
+        proto = self.headers.get("X-Forwarded-Proto") or ("https" if "run.app" in host else "http")
+        redirect_uri = data.get("redirect_uri") or f"{proto}://{host}/api/oauth/google/callback"
 
         # If authorization code is present, execute full token exchange
         if code:
