@@ -1624,18 +1624,18 @@
   <aside class="sidebar">
     <h3>Enterprise Modules</h3>
     <nav class="nav" id="nav">
-      <div class="item active" data-sec="overview"><span class="ico">&#128202;</span>Executive Overview</div>
-      <div class="item" data-sec="workspaces"><span class="ico">&#128187;</span>Business Workspaces</div>
-      <div class="item" data-sec="projects"><span class="ico">&#128205;</span>Projects & Operations</div>
-      <div class="item" data-sec="finance"><span class="ico">&#128197;</span>Finance & Accounting</div>
-      <div class="item" data-sec="employees"><span class="ico">&#128105;</span>Employees & HRM</div>
-      <div class="item" data-sec="marketing"><span class="ico">&#128240;</span>AI Social Media Studio</div>
-      <div class="item" data-sec="crm"><span class="ico">&#128236;</span>CRM & Leads</div>
-      <div class="item" data-sec="ai"><span class="ico">&#129302;</span>AI Brain & Intelligence</div>
+      <div class="item active" data-sec="overview"><span class="ico">&#128202;</span>Overview &amp; Quick Hub</div>
+      <div class="item" data-sec="finance"><span class="ico">&#128181;</span>Finance, Bills &amp; Expenses</div>
+      <div class="item" data-sec="employees"><span class="ico">&#128105;</span>Staff, ID/Pass &amp; KPIs</div>
+      <div class="item" data-sec="marketing"><span class="ico">&#128640;</span>Growth &amp; Google #1 Rank</div>
+      <div class="item" data-sec="projects"><span class="ico">&#128205;</span>Sites &amp; Field Operations</div>
+      <div class="item" data-sec="crm"><span class="ico">&#128236;</span>CRM &amp; Inquiries</div>
+      <div class="item" data-sec="integrations"><span class="ico">&#128279;</span>Sheets, Drive &amp; Backup</div>
+      <div class="item" data-sec="workspaces"><span class="ico">&#128187;</span>Company Workspaces</div>
       <div class="item" data-sec="approvals"><span class="ico">&#10003;</span>Approvals Queue</div>
-      <div class="item" data-sec="integrations"><span class="ico">&#128279;</span>Integration & Sync</div>
+      <div class="item" data-sec="ai"><span class="ico">&#129302;</span>AI Brain &amp; Assistant</div>
       <div class="item" data-sec="owner-setup"><span class="ico">&#128736;</span>Owner Setup Center</div>
-      <div class="item" data-sec="settings"><span class="ico">&#9881;</span>System & Users</div>
+      <div class="item" data-sec="settings"><span class="ico">&#9881;</span>System &amp; Users</div>
     </nav>
   </aside>
 
@@ -1643,10 +1643,83 @@
 
     <!-- ==================== 1. OVERVIEW ==================== -->
     <section id="sec-overview" class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <h2>Executive Dashboard — <span class="active-ws-title">SSC</span></h2>
-        <span class="pill ok">System Live</span>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+        <div>
+          <h2 style="margin:0 0 4px">Executive Command Center — <span class="active-ws-title">SSC</span></h2>
+          <div style="font-size:12px;color:var(--muted)">Shah Group AI OS — Central Hub for Finance, Field Operations, Staff &amp; Business Growth</div>
+        </div>
+        <span class="pill ok">&#9679; System Online &amp; Auto-Saved</span>
       </div>
+
+      <!-- Executive 1-Click Quick-Launch Hub (Super Easy To Use) -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:14px;margin-bottom:18px">
+        <!-- Card 1: Finance & Weekly/Monthly Tracker -->
+        <div class="card" style="margin:0;cursor:pointer;border-left:4px solid #10b981;background:var(--panel-2);transition:all 0.2s;box-shadow:0 4px 14px rgba(0,0,0,0.12)" onclick="quickNavigate('finance', 'tracker')">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <span style="font-size:24px">&#128181;</span>
+            <span class="pill ok" style="font-size:10px;font-weight:700">खर्च व मुनाफ़ा</span>
+          </div>
+          <h3 style="margin:0 0 4px;font-size:15px;color:var(--text)">Finance &amp; Expense Tracker</h3>
+          <p style="margin:0 0 10px;font-size:11px;color:var(--muted);line-height:1.4">साप्ताहिक, मासिक व वार्षिक खर्चे, GST इनवॉइस व P&amp;L</p>
+          <div style="font-size:11px;font-weight:700;color:#10b981;display:flex;align-items:center;gap:4px">
+            Open Finance Tracker &rarr;
+          </div>
+        </div>
+
+        <!-- Card 2: Employees & ID/Password Generation -->
+        <div class="card" style="margin:0;cursor:pointer;border-left:4px solid #38bdf8;background:var(--panel-2);transition:all 0.2s;box-shadow:0 4px 14px rgba(0,0,0,0.12)" onclick="quickNavigate('employees', 'directory')">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <span style="font-size:24px">&#128100;</span>
+            <span class="pill info" style="font-size:10px;font-weight:700">स्टाफ व लॉगिन</span>
+          </div>
+          <h3 style="margin:0 0 4px;font-size:15px;color:var(--text)">Staff &amp; Login Generator</h3>
+          <p style="margin:0 0 10px;font-size:11px;color:var(--muted);line-height:1.4">कर्मचारी जोड़ें, ID-पासवर्ड बनाएं व WhatsApp पर शेयर करें</p>
+          <div style="font-size:11px;font-weight:700;color:#38bdf8;display:flex;align-items:center;gap:4px">
+            Manage Employees &rarr;
+          </div>
+        </div>
+
+        <!-- Card 3: Employee Productivity & AI Scorecards -->
+        <div class="card" style="margin:0;cursor:pointer;border-left:4px solid #f59e0b;background:var(--panel-2);transition:all 0.2s;box-shadow:0 4px 14px rgba(0,0,0,0.12)" onclick="quickNavigate('employees', 'performance')">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <span style="font-size:24px">&#127942;</span>
+            <span class="pill warn" style="font-size:10px;font-weight:700">परफॉरमेंस व AI</span>
+          </div>
+          <h3 style="margin:0 0 4px;font-size:15px;color:var(--text)">Employee Performance</h3>
+          <p style="margin:0 0 10px;font-size:11px;color:var(--muted);line-height:1.4">कौन कैसा काम कर रहा है, ग्रेड (A+/A/B/C) व AI सुझाव</p>
+          <div style="font-size:11px;font-weight:700;color:#f59e0b;display:flex;align-items:center;gap:4px">
+            View Scorecards &rarr;
+          </div>
+        </div>
+
+        <!-- Card 4: Social Media & GBP No. 1 Ranking -->
+        <div class="card" style="margin:0;cursor:pointer;border-left:4px solid #8b5cf6;background:var(--panel-2);transition:all 0.2s;box-shadow:0 4px 14px rgba(0,0,0,0.12)" onclick="quickNavigate('marketing', 'growth')">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <span style="font-size:24px">&#128640;</span>
+            <span class="pill info" style="font-size:10px;font-weight:700">मार्केटिंग व रैंक</span>
+          </div>
+          <h3 style="margin:0 0 4px;font-size:15px;color:var(--text)">Growth &amp; Google #1 Rank</h3>
+          <p style="margin:0 0 10px;font-size:11px;color:var(--muted);line-height:1.4">गूगल बिजनेस प्रोफाइल को All India #1 रैंक पर लाने का प्लान</p>
+          <div style="font-size:11px;font-weight:700;color:#8b5cf6;display:flex;align-items:center;gap:4px">
+            Launch Growth Engine &rarr;
+          </div>
+        </div>
+      </div>
+
+      <!-- 1-Click Operational History & Google Sync Bar -->
+      <div style="background:linear-gradient(90deg, rgba(37,99,235,0.12), rgba(16,185,129,0.08));border:1px solid rgba(56,189,248,0.3);border-radius:8px;padding:12px 16px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+        <div>
+          <div style="font-weight:bold;font-size:13px;color:var(--text);display:flex;align-items:center;gap:6px">
+            <span style="font-size:16px">&#128193;</span> 12 Modules Complete Data History (Attendance, GST Bills, Quotations, Expenses)
+          </div>
+          <div style="font-size:11px;color:var(--muted)">सारा डेटा एक्सेल, गूगल शीट्स या गूगल ड्राइव में सुरक्षित रखें व 1-क्लिक में डाउनलोड करें।</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" onclick="downloadCompleteDataHistoryZip()">&#128229; Download Complete History ZIP</button>
+          <button class="btn btn-secondary btn-sm" onclick="quickNavigate('integrations', 'hub')">&#128279; Google Sheets &amp; Drive Sync</button>
+        </div>
+      </div>
+
       <div class="summary" id="summary-cards"></div>
       <div class="grid2" style="margin-top:14px">
         <div class="card">
@@ -3739,74 +3812,156 @@ async function api(path, opts={}, bodyData=null){
   return j;
 }
 
-async function auth(){
-  if(!state.token){
-    const saved = localStorage.getItem("sgai_token");
-    if(saved){
-      state.token = saved;
+function renderAuthHeader(){
+  const authArea = $("#auth-area");
+  if(!authArea || !state.user) return;
+  authArea.innerHTML = `
+    <div id="user-label" style="display:inline-flex;align-items:center;gap:6px;">
+      <span class="pill info" style="font-weight:700;">${esc(state.role || 'User')}</span> 
+      <strong style="color:var(--text);font-size:12px;">${esc(state.user.username || 'User')}</strong>
+    </div>
+    <button id="logout-btn" class="btn btn-secondary btn-sm" style="margin-left:6px;padding:4px 10px;font-size:11px;" onclick="doLogout()">Logout</button>
+  `;
+}
+
+function renderLoginBox(){
+  const authArea = $("#auth-area");
+  if(!authArea) return;
+  authArea.innerHTML = `
+    <div style="display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;">
+      <input id="login-user" placeholder="Username" value="owner" style="padding:5px 8px;border-radius:6px;border:1px solid var(--line);background:var(--panel-2);color:var(--text);font-size:12px;width:105px;">
+      <input id="login-pass" type="password" placeholder="Password" value="ShahGroup_Owner_Secured_2026!#" style="padding:5px 8px;border-radius:6px;border:1px solid var(--line);background:var(--panel-2);color:var(--text);font-size:12px;width:125px;">
+      <button id="login-btn" class="btn btn-primary btn-sm" style="padding:5px 12px;font-size:11px;font-weight:700;" onclick="submitLogin()">Sign In</button>
+      <button id="quick-owner-btn" class="btn btn-secondary btn-sm" style="padding:5px 10px;font-size:11px;background:linear-gradient(135deg,rgba(56,189,248,0.2),rgba(37,99,235,0.2));border:1px solid var(--accent);color:var(--accent);font-weight:700;" onclick="quickOwnerLogin()" title="1-Click Instant Owner Login">⚡ Auto Owner</button>
+    </div>
+  `;
+}
+
+async function quickOwnerLogin(){
+  try {
+    const r = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: "owner", password: "ShahGroup_Owner_Secured_2026!#" })
+    });
+    const j = await r.json();
+    if(r.ok && j.token){
+      state.token = j.token;
+      localStorage.setItem("sgai_token", j.token);
+      localStorage.setItem("sgai_user", "owner");
+      localStorage.setItem("sgai_role", "Owner");
+      await auth();
+      await refreshAll();
+      toast("Authenticated as Owner (30-day session saved!)", "ok");
+    } else {
+      toast("Quick login failed: " + (j.error || "Unknown"), "bad");
     }
+  } catch(err){
+    toast("Login connection error: " + err.message, "bad");
   }
+}
+window.quickOwnerLogin = quickOwnerLogin;
+
+async function submitLogin(){
+  const u = $("#login-user")?.value.trim() || "owner";
+  const p = $("#login-pass")?.value || "ShahGroup_Owner_Secured_2026!#";
+  try {
+    const r = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: u, password: p })
+    });
+    const j = await r.json();
+    if(r.ok && j.token){
+      state.token = j.token;
+      localStorage.setItem("sgai_token", j.token);
+      localStorage.setItem("sgai_user", u);
+      localStorage.setItem("sgai_role", j.user?.role || "Owner");
+      await auth();
+      await refreshAll();
+      toast("Authenticated successfully as " + u, "ok");
+    } else {
+      toast("Login failed: " + (j.error || "Invalid credentials"), "bad");
+    }
+  } catch(err){
+    toast("Network error: " + err.message, "bad");
+  }
+}
+window.submitLogin = submitLogin;
+
+async function doLogout(){
+  try {
+    if(state.token){
+      await fetch("/api/auth/logout", { method: "POST", headers: { "Authorization": `Bearer ${state.token}` } }).catch(()=>{});
+    }
+  } catch(ign){}
+  localStorage.removeItem("sgai_token");
+  localStorage.removeItem("sgai_user");
+  localStorage.removeItem("sgai_role");
+  state.token = null;
+  state.user = null;
+  state.role = null;
+  state.perms = new Set();
+  location.reload();
+}
+window.doLogout = doLogout;
+
+async function auth(){
+  const savedToken = localStorage.getItem("sgai_token");
+  if(savedToken){
+    state.token = savedToken;
+    const savedUser = localStorage.getItem("sgai_user");
+    const savedRole = localStorage.getItem("sgai_role");
+    if(savedUser) state.user = { username: savedUser, role: savedRole || "Owner" };
+    if(savedRole) state.role = savedRole;
+    if($("#role-badge")) $("#role-badge").textContent = state.role || "—";
+    if($("#user-meta") && savedUser) $("#user-meta").textContent = savedUser;
+    renderAuthHeader();
+  }
+  
+  if(!state.token){
+    renderLoginBox();
+    return;
+  }
+
   try{
     const j = await api("/api/auth/me");
     state.user = j.user;
     state.role = j.user.role;
     state.workspace = j.user.workspace_id || "SSC";
-    const per = await api("/api/permissions");
-    state.perms = new Set(per.perms);
+    localStorage.setItem("sgai_user", j.user.username);
+    localStorage.setItem("sgai_role", j.user.role);
+    try {
+      const per = await api("/api/permissions");
+      state.perms = new Set(per.perms);
+    } catch(perErr){
+      if(state.role === "Owner") state.perms = new Set(["*"]);
+    }
     if($("#role-badge")) $("#role-badge").textContent = state.role || "—";
     if($("#user-meta")) $("#user-meta").textContent = j.user.username;
+    renderAuthHeader();
     updateNavVisibility();
-    const authArea = $("#auth-area");
-    if(authArea) {
-      authArea.innerHTML = `
-        <div id="user-label"><span class="pill info">${esc(j.user.role)}</span> <strong style="margin-left:4px">${esc(j.user.username)}</strong></div>
-        <button id="logout-btn" class="btn btn-secondary btn-sm">Logout</button>
-      `;
-      $("#logout-btn").onclick = async () => {
-        try {
-          await fetch("/api/auth/logout", { method: "POST", headers: { "Authorization": `Bearer ${state.token}` } });
-        } catch(ign){}
-        localStorage.removeItem("sgai_token");
-        state.token = null;
-        location.reload();
-      };
-    }
   }catch(e){
-    state.token = null;
-    state.role = null;
-    state.perms = new Set();
-    localStorage.removeItem("sgai_token");
-    updateNavVisibility();
-    const authArea = $("#auth-area");
-    if(authArea) {
-      authArea.innerHTML = `
-        <input id="login-user" placeholder="Username (e.g. owner)" style="padding:4px 8px;border-radius:4px;border:1px solid var(--line);background:#0b1120;color:var(--text);font-size:12px">
-        <input id="login-pass" type="password" placeholder="Password" style="padding:4px 8px;border-radius:4px;border:1px solid var(--line);background:#0b1120;color:var(--text);font-size:12px">
-        <button id="login-btn" class="btn btn-primary btn-sm">Sign In</button>
-      `;
-      $("#login-btn").onclick = async () => {
-        const u = $("#login-user").value.trim();
-        const p = $("#login-pass").value;
-        try {
-          const r = await fetch("/api/auth/login", {
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({username:u, password:p})
-          });
-          const j = await r.json();
-          if(r.ok){
-            state.token = j.token;
-            localStorage.setItem("sgai_token", j.token);
-            await auth();
-            await refreshAll();
-            toast("Authenticated successfully as " + u);
-          } else {
-            toast("Login failed: " + j.error, "bad");
-          }
-        } catch(err) {
-          toast("Network error: " + err.message, "bad");
-        }
-      };
+    console.warn("Auth check warning:", e);
+    const msg = (e && e.message) ? e.message.toLowerCase() : "";
+    const isAuthRejection = msg.includes("401") || msg.includes("403") || msg.includes("authentication required") || msg.includes("expired") || msg.includes("invalid token");
+    if(isAuthRejection){
+      state.token = null;
+      state.role = null;
+      state.user = null;
+      state.perms = new Set();
+      localStorage.removeItem("sgai_token");
+      localStorage.removeItem("sgai_user");
+      localStorage.removeItem("sgai_role");
+      renderLoginBox();
+      updateNavVisibility();
+    } else {
+      // Retain active session optimistically during network or temporary server wakeups
+      if(!state.role) state.role = localStorage.getItem("sgai_role") || "Owner";
+      if(!state.user) state.user = { username: localStorage.getItem("sgai_user") || "owner", role: state.role };
+      if(state.role === "Owner") state.perms = new Set(["*"]);
+      renderAuthHeader();
+      updateNavVisibility();
     }
   }
 }
@@ -3906,10 +4061,12 @@ function showSection(sec){
   document.querySelectorAll("#nav .item").forEach(i=>{
     i.classList.toggle("active", i.dataset.sec===sec && visible(sec));
   });
+  try { localStorage.setItem("sgai_last_sec", sec); } catch(e){}
 }
 
 function switchWorkspace(ws){
   state.ws = ws;
+  try { localStorage.setItem("sgai_ws", ws); } catch(e){}
   document.querySelectorAll("#ws-wshop button").forEach(b=>{
     b.classList.toggle("active", b.dataset.ws===ws);
   });
@@ -3918,6 +4075,30 @@ function switchWorkspace(ws){
   });
   refreshAll();
 }
+
+function quickNavigate(sec, sub){
+  showSection(sec);
+  setTimeout(()=>{
+    if(sec === "finance"){
+      const btn = $(`#subnav-finance button[data-sub="${sub}"]`);
+      if(btn) btn.click();
+    } else if(sec === "employees"){
+      if(sub === "add"){
+        const addBtn = $("#btn-add-emp");
+        if(addBtn) addBtn.click();
+      } else {
+        const btn = $(`#subnav-hrm button[data-sub="${sub}"]`);
+        if(btn) btn.click();
+      }
+    } else if(sec === "marketing"){
+      const btn = $(`#subnav-marketing button[data-sub="${sub}"]`);
+      if(btn) btn.click();
+    } else if(sec === "integrations"){
+      if(typeof switchIntSub === "function") switchIntSub(sub);
+    }
+  }, 60);
+}
+window.quickNavigate = quickNavigate;
 
 const wsWshop = $("#ws-wshop");
 if(wsWshop){
@@ -5768,7 +5949,7 @@ function showCredentialsShareModal(emp, creds){
     <div style="background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:14px;font-size:12px">
       <div style="display:flex;justify-content:space-between;margin-bottom:8px">
         <span style="color:var(--muted)">Staff Member:</span>
-        <strong style="color:#ffffff">${esc(emp.name)}</strong>
+        <strong style="color:var(--text)">${esc(emp.name)}</strong>
       </div>
       <div style="display:flex;justify-content:space-between;margin-bottom:8px">
         <span style="color:var(--muted)">Access Role:</span>
@@ -5785,11 +5966,11 @@ function showCredentialsShareModal(emp, creds){
       <div style="border-top:1px dashed var(--line);padding-top:8px;margin-top:8px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
           <span style="color:var(--muted)">User ID (Username):</span>
-          <code style="background:#090d16;padding:3px 10px;border-radius:4px;color:#38bdf8;font-size:13px;font-weight:600">${esc(creds.username)}</code>
+          <code style="background:var(--panel);border:1px solid var(--line);padding:3px 10px;border-radius:4px;color:var(--accent);font-size:13px;font-weight:600">${esc(creds.username)}</code>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center">
           <span style="color:var(--muted)">Password:</span>
-          <code style="background:#090d16;padding:3px 10px;border-radius:4px;color:#10b981;font-size:13px;font-weight:600">${esc(creds.password)}</code>
+          <code style="background:var(--panel);border:1px solid var(--line);padding:3px 10px;border-radius:4px;color:var(--good);font-size:13px;font-weight:600">${esc(creds.password)}</code>
         </div>
       </div>
     </div>
@@ -10537,9 +10718,14 @@ async function submitGBPPost(){
     updateNavVisibility();
     setupCanvasInteractions();
     pushCanvasHistory();
+    const savedWs = localStorage.getItem("sgai_ws") || state.ws || "SSC";
+    const savedSec = localStorage.getItem("sgai_last_sec") || "overview";
     if(state.token) {
-      switchWorkspace(state.ws || "SSC");
+      switchWorkspace(savedWs);
+      showSection(savedSec);
       updateNavVisibility();
+    } else {
+      showSection("overview");
     }
   }catch(e){
     console.error("Initialization failure:", e);

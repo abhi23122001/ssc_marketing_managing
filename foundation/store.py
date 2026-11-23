@@ -333,7 +333,7 @@ class Store:
         token = secrets.token_urlsafe(32)
         self.conn.execute(
             "INSERT INTO sessions (token,user_id,expires_at) VALUES (?, ?, ?)",
-            (token, user_id, expires_at or (datetime.now(timezone.utc).timestamp() + 3600)),
+            (token, user_id, expires_at or (datetime.now(timezone.utc).timestamp() + (86400 * 30))),
         )
         self.conn.commit()
         return token

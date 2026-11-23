@@ -27,7 +27,7 @@ def issue_token(store: Store, username: str) -> str:
     u = store.get_user_by_username(username)
     if not u:
         raise KeyError("unknown user")
-    expires_at = time.time() + 3600  # 1 hour local-dev
+    expires_at = time.time() + (86400 * 30)  # 30 days persistent login session
     token = store.create_session(u["id"], str(expires_at))
     return token
 
