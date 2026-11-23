@@ -4085,6 +4085,7 @@ class Handler(BaseHTTPRequestHandler):
 def make_server(host: str = "127.0.0.1", port: int = 8899):
     from foundation.scheduler import start_scheduler
     start_scheduler(get_store())
+    ThreadingHTTPServer.allow_reuse_address = True
     return ThreadingHTTPServer((host, port), Handler)
 
 
