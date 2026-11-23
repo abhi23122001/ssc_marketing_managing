@@ -33,6 +33,8 @@ private-client-data/
 # Backups and archives
 backups/
 backup_*/
+*.zip
+*.tar.gz
 *.bundle
 *.bak*
 *.pre
