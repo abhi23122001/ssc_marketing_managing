@@ -9,6 +9,9 @@ data/oauth_config.json
 **/*.key
 **/*credentials*.json
 **/*token*.json
+**/*secret*.json
+data/oauth_config.json
+data/client_secret.json
 
 # Hermes runtime state (do not commit local sessions/config)
 .hermes/config.yaml

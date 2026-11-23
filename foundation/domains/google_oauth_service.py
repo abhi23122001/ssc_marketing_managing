@@ -46,7 +46,7 @@ GOOGLE_SCOPES = [
 
 
 def get_google_client_credentials() -> Tuple[Optional[str], Optional[str]]:
-    """Retrieves Google Client ID and Secret from environment variables or secure storage."""
+    """Retrieves Google Client ID and Secret from environment variables, secure storage, or client_secret.json."""
     client_id = os.getenv("GOOGLE_CLIENT_ID", "").strip() or None
     client_secret = os.getenv("GOOGLE_CLIENT_SECRET", "").strip() or None
 
@@ -59,6 +59,26 @@ def get_google_client_credentials() -> Tuple[Optional[str], Optional[str]]:
             client_secret = client_secret or creds.get("GOOGLE_CLIENT_SECRET")
         except Exception:
             pass
+
+    # Check client_secret.json files in data/ or project root
+    if not client_id or not client_secret:
+        _project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        possible_paths = [
+            os.path.join(_project_root, "data", "client_secret.json"),
+            os.path.join(_project_root, "client_secret.json"),
+        ]
+        for p in possible_paths:
+            if os.path.exists(p):
+                try:
+                    with open(p, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                        web = data.get("web") or data.get("installed") or {}
+                        if web.get("client_id") and web.get("client_secret"):
+                            client_id = client_id or web["client_id"]
+                            client_secret = client_secret or web["client_secret"]
+                            break
+                except Exception:
+                    pass
 
     return client_id, client_secret
 

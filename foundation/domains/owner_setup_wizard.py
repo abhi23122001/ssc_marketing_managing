@@ -23,8 +23,9 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from ..store import Store
 
+_project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 KOLKATA_TZ = timezone(timedelta(hours=5, minutes=30))
-OAUTH_CONFIG_FILE = os.path.join(os.getcwd(), "data", "oauth_config.json")
+OAUTH_CONFIG_FILE = os.getenv("OAUTH_CONFIG_FILE") or os.path.join(_project_root, "data", "oauth_config.json")
 
 
 def now_kolkata_iso() -> str:
