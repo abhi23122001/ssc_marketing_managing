@@ -1,1 +1,2 @@
-id,client_workspace_id,company_name,service_package,workspace_id,created_at
+Client ID,Client Code,Company Name,Service Scope,Workspace,Created At
+1,CLT-001,Maharashtra Industrial Development Corp (MIDC),Survey & Consultancy,SSC,2026-11-22T19:15:42Z

@@ -1,1 +1,1 @@
-id,workspace_id,invoice_id,amount,payment_method,reference_number,payment_date,created_at
+Payment ID,Workspace,Invoice ID,Amount (INR),Payment Mode,UTR / Reference,Payment Date,Logged At

@@ -216,9 +216,12 @@ class Handler(BaseHTTPRequestHandler):
         parsed = urllib.parse.urlparse(self.path)
         path = urllib.parse.unquote(parsed.path)
         try:
-            user = self._user()
-            if user is None and path not in ("/health", "/healthz", "/api/health", "/"):
-                self._json_err("authentication required", 401)
+            # Public unauthenticated routes
+            if path in ("/api/oauth/google/callback", "/api/oauth/callback"):
+                self._handle_oauth_callback_browser(parsed)
+                return
+            if path in ("/favicon.ico", "/favicon.png"):
+                self._handle_static_favicon()
                 return
             if path in ("/health", "/healthz", "/api/health"):
                 self._json_ok({
@@ -228,17 +231,20 @@ class Handler(BaseHTTPRequestHandler):
                     "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
                 })
                 return
-            elif path in ("/favicon.ico", "/favicon.png"):
-                self._handle_static_favicon()
-                return
-            elif path == "/":
+            if path == "/":
                 data = (Path(__file__).parent / "dashboard" / "dashboard.html").read_bytes()
                 self.send_response(200)
                 self.send_header("Content-Type", "text/html; charset=utf-8")
                 self.send_header("Content-Length", str(len(data)))
                 self.end_headers()
                 self.wfile.write(data)
-            elif path == "/api/workspaces":
+                return
+
+            user = self._user()
+            if user is None:
+                self._json_err("authentication required", 401)
+                return
+            if path == "/api/workspaces":
                 self._json_ok({"workspaces": self.store.list_workspaces()})
             elif path.startswith("/api/workspaces/") and path.endswith("/resources"):
                 code = path.split("/")[-2]
@@ -1756,10 +1762,10 @@ class Handler(BaseHTTPRequestHandler):
                     return
                 self._json_ok({"ok": True, "message": msg})
                 return
-            elif path == "/api/oauth/callback":
+            elif path in ("/api/oauth/callback", "/api/oauth/google/callback"):
                 self._handle_oauth_callback(user)
                 return
-            elif path == "/api/oauth/disconnect":
+            elif path in ("/api/oauth/disconnect", "/api/oauth/google/disconnect"):
                 self._handle_oauth_disconnect(user)
                 return
             elif path == "/api/oauth/diagnostic":
@@ -3354,6 +3360,37 @@ class Handler(BaseHTTPRequestHandler):
             self._json_ok({"mappings": integrations_center.list_sheets_mappings(self.store, ws)})
             return
 
+        # Google Sheets Metadata & Worksheets
+        if path == "/api/integrations/sheets/metadata":
+            from foundation.domains import google_sheets_engine
+            parsed_url = urllib.parse.urlparse(self.path)
+            qs = urllib.parse.parse_qs(parsed_url.query)
+            sp_id = qs.get("spreadsheet_id", [""])[0].strip() or data.get("spreadsheet_id")
+            res = google_sheets_engine.fetch_spreadsheet_metadata(self.store.conn, ws, sp_id)
+            self._json_ok(res)
+            return
+
+        # Select target spreadsheet
+        if path == "/api/integrations/sheets/spreadsheet/select":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            sp_id = data.get("spreadsheet_id", "").strip()
+            sp_name = data.get("spreadsheet_name", "").strip()
+            from foundation.domains import google_sheets_engine
+            res = google_sheets_engine.update_workspace_spreadsheet_selection(self.store.conn, ws, sp_id, sp_name)
+            self._json_ok(res)
+            return
+
+        # Google Sheets Sync History
+        if path == "/api/integrations/sheets/history":
+            rows = self.store.fetchall(
+                "SELECT * FROM google_sheets_sync_history WHERE workspace_id=? ORDER BY id DESC LIMIT 50",
+                (ws,)
+            )
+            self._json_ok({"history": [dict(r) for r in rows]})
+            return
+
         # Google Drive Folders & File Staging
         if path == "/api/integrations/drive/folders":
             self._json_ok(integrations_center.get_drive_folder_tree(self.store, ws))
@@ -3371,6 +3408,15 @@ class Handler(BaseHTTPRequestHandler):
                 return
             res = integrations_center.stage_drive_file_upload(self.store, ws, mkey, fname, fb64)
             self._json_ok(res, 201)
+            return
+
+        if path == "/api/integrations/drive/sync":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            from foundation.domains import google_drive_engine
+            res = google_drive_engine.sync_all_staged_drive_files(self.store, ws)
+            self._json_ok(res)
             return
 
         # Activity Logs
@@ -3393,28 +3439,37 @@ class Handler(BaseHTTPRequestHandler):
             self._json_ok({"status": "setup_required", "provider": prov, "message": f"Setup instructions generated for {prov}."})
             return
 
-        if path == "/api/integrations/center/disconnect":
-            prov = data.get("provider", "google_account")
-            self.store.conn.execute(
-                "INSERT INTO integration_activity_logs (workspace_id, provider, action, status, details) VALUES (?,?,?,?,?)",
-                (ws, prov, "Disconnected", "success", f"{prov} disconnected by user.")
-            )
-            self.store.conn.commit()
-            self._json_ok({"status": "disconnected", "provider": prov})
+        if path in ("/api/integrations/center/disconnect", "/api/integrations/google/disconnect", "/api/oauth/google/disconnect"):
+            from foundation.domains import google_oauth_service
+            res = google_oauth_service.disconnect_google_account(self.store.conn, ws)
+            self._json_ok(res)
             return
 
         if path == "/api/integrations/google/status":
-            self._json_ok(google_sheets_sync.get_google_sheets_status(self.store, ws))
+            from foundation.domains import google_oauth_service
+            acc_info = google_oauth_service.get_google_account_details(self.store.conn, ws)
+            sheets_info = google_sheets_sync.get_google_sheets_status(self.store, ws)
+            self._json_ok({
+                "ok": True,
+                "workspace_id": ws,
+                "google_account": acc_info,
+                "sheets_status": sheets_info
+            })
             return
-        if path == "/api/integrations/google/sync":
+
+        if path in ("/api/integrations/google/sync", "/api/integrations/sheets/sync"):
             if self.command != "POST":
                 self._json_err("method not allowed", 405)
                 return
             ent = data.get("entity", "all")
-            direction = data.get("direction", "bidirectional")
-            res = google_sheets_sync.execute_sheets_sync(self.store, ws, ent, direction)
+            from foundation.domains import google_sheets_engine
+            if ent == "all":
+                res = google_sheets_engine.sync_all_approved_modules(self.store, ws)
+            else:
+                res = google_sheets_engine.sync_approved_report_to_sheet(self.store, ws, ent)
             self._json_ok(res)
             return
+
         if path == "/api/integrations/drive/folder/update":
             if self.command != "POST":
                 self._json_err("method not allowed", 405)
@@ -3429,6 +3484,44 @@ class Handler(BaseHTTPRequestHandler):
             return
         self._json_err("integrations endpoint not found", 404)
 
+    def _handle_oauth_callback_browser(self, parsed: urllib.parse.ParseResult) -> None:
+        """Handles browser OAuth redirect callback from Google."""
+        qs = urllib.parse.parse_qs(parsed.query)
+        code = qs.get("code", [""])[0].strip()
+        state = qs.get("state", [""])[0].strip()
+        error = qs.get("error", [""])[0].strip()
+
+        if error:
+            html = f"""<!DOCTYPE html><html><body style="font-family:sans-serif;background:#090d16;color:#f87171;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;"><div style="background:#131c2e;padding:30px;border-radius:12px;text-align:center;max-width:400px;border:1px solid #7f1d1d;"><h2 style="margin:0 0 10px;">OAuth Denied</h2><p style="color:#cbd5e1;font-size:13px;">Provider error: {error}</p><a href="/#integrations" style="color:#38bdf8;text-decoration:none;">Return to App</a></div></body></html>""".encode("utf-8")
+            self.send_response(400)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(html)))
+            self.end_headers()
+            self.wfile.write(html)
+            return
+
+        from foundation.domains import google_oauth_service
+        host = self.headers.get("Host", "127.0.0.1:8899")
+        redirect_uri = f"http://{host}{parsed.path}"
+        res = google_oauth_service.exchange_google_code_for_tokens(self.store.conn, code, state, redirect_uri)
+        if res.get("ok"):
+            email = res.get("account_email", "Google Account")
+            html = f"""<!DOCTYPE html><html><head><title>Google Integration Connected</title></head><body style="font-family:sans-serif;background:#090d16;color:#e2e8f0;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;"><div style="background:#131c2e;padding:30px;border-radius:12px;border:1px solid #1e293b;text-align:center;max-width:420px;"><div style="font-size:44px;margin-bottom:8px;">✅</div><h2 style="margin:0 0 8px;color:#38bdf8;">Google Connected!</h2><p style="font-size:13px;color:#94a3b8;line-height:1.5;">Account <strong>{email}</strong> authorized successfully for SHAH GROUP AI OS.</p><a href="/#integrations" style="display:inline-block;margin-top:14px;background:#38bdf8;color:#090d16;padding:8px 18px;border-radius:6px;text-decoration:none;font-weight:600;">Return to Dashboard</a></div><script>if(window.opener){{window.opener.postMessage({{type:'google_oauth_success',email:'{email}'}},'*');setTimeout(()=>window.close(),2500);}}</script></body></html>""".encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(html)))
+            self.end_headers()
+            self.wfile.write(html)
+            return
+        else:
+            err = res.get("error", "Failed to complete token exchange")
+            html = f"""<!DOCTYPE html><html><body style="font-family:sans-serif;background:#090d16;color:#f87171;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;"><div style="background:#131c2e;padding:30px;border-radius:12px;text-align:center;max-width:400px;border:1px solid #7f1d1d;"><h2 style="margin:0 0 10px;">Exchange Failed</h2><p style="color:#cbd5e1;font-size:13px;">{err}</p><a href="/#integrations" style="color:#38bdf8;text-decoration:none;">Return to App</a></div></body></html>""".encode("utf-8")
+            self.send_response(400)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(html)))
+            self.end_headers()
+            self.wfile.write(html)
+
     def _handle_oauth_authorize(self, user: dict) -> None:
         """Generates OAuth authorization request with anti-CSRF state token."""
         parsed = urllib.parse.urlparse(self.path)
@@ -3439,6 +3532,13 @@ class Handler(BaseHTTPRequestHandler):
             self._json_err(err, 403)
             return
         uid = int(user.get("id") or user.get("user_id") or 1)
+        if provider.lower() in ("google", "google_account", "google_sheets", "google_drive"):
+            from foundation.domains import google_oauth_service
+            host = self.headers.get("Host", "127.0.0.1:8899")
+            redirect_uri = qs.get("redirect_uri", [f"http://{host}/api/oauth/google/callback"])[0]
+            res = google_oauth_service.generate_google_oauth_url(self.store.conn, ws, uid, redirect_uri)
+            self._json_ok(res)
+            return
         from foundation.domains import oauth_service
         res = oauth_service.create_authorization_request(self.store.conn, provider, ws, uid)
         self._json_ok(res)
@@ -3446,18 +3546,43 @@ class Handler(BaseHTTPRequestHandler):
     def _handle_oauth_callback(self, user: dict) -> None:
         """Handles OAuth callback and validates anti-CSRF state token."""
         data = _read_json(self)
-        state_token = data.get("state", "").strip()
+        state_token = data.get("state", "").strip() or data.get("state_token", "").strip()
         code = data.get("code", "").strip()
         error = data.get("error")
+
+        if error:
+            self._json_err(f"OAuth consent denied by provider: {error}", 400)
+            return
+
+        if not state_token:
+            self._json_err("state parameter required", 400)
+            return
+
+        from foundation.domains import google_oauth_service
+        host = self.headers.get("Host", "127.0.0.1:8899")
+        redirect_uri = data.get("redirect_uri") or f"http://{host}/api/oauth/google/callback"
+
+        # If authorization code is present, execute full token exchange
+        if code:
+            res = google_oauth_service.exchange_google_code_for_tokens(self.store.conn, code, state_token, redirect_uri)
+            if res.get("ok"):
+                self._json_ok(res)
+                return
+            if "GOOGLE_CLIENT_ID" in str(res.get("error", "")):
+                self._json_ok({
+                    "ok": False,
+                    "state_valid": True,
+                    "status": "State Token Verified (Credentials Required)",
+                    "message": res["error"]
+                })
+                return
+            self._json_err(res.get("error", "OAuth exchange failed"), 400)
+            return
 
         from foundation.domains import oauth_service
         valid, state_data, msg = oauth_service.validate_state_token(self.store.conn, state_token)
         if not valid:
             self._json_err(f"OAuth CSRF validation failed: {msg}", 400)
-            return
-
-        if error:
-            self._json_err(f"OAuth consent denied by provider: {error}", 400)
             return
 
         prov = state_data["provider"]
@@ -3477,13 +3602,23 @@ class Handler(BaseHTTPRequestHandler):
         if err:
             self._json_err(err, 403)
             return
+
+        prov = (data.get("provider") or "").lower()
+        account_id = str(data.get("account_id") or "").lower()
+
+        if prov in ("google", "google_account", "google_sheets", "google_drive") or account_id == "google":
+            from foundation.domains import google_oauth_service
+            res = google_oauth_service.disconnect_google_account(self.store.conn, ws)
+            self._json_ok(res)
+            return
+
         aid = data.get("account_id")
         from foundation.domains import social_integrations
         if aid:
             res = social_integrations.disconnect_social_account(self.store, int(aid))
             self._json_ok(res)
             return
-        self._json_err("account_id required", 400)
+        self._json_err("account_id or provider required", 400)
 
     def _handle_oauth_diagnostic(self, user: dict) -> None:
         """Test diagnostic hook for validating all 6 lifecycle statuses."""

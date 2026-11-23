@@ -151,12 +151,17 @@ def get_integration_health_monitor(store: Store, workspace_id: str = "SSC") -> D
     """Generates unified health monitor data across all external providers and local AI."""
     seed_default_mappings(store.conn)
     from .oauth_service import get_account_oauth_status
+    from .google_oauth_service import get_google_account_details
     from .social_integrations import list_social_accounts
 
-    # Live token checks from OAuth service
-    google_oauth = get_account_oauth_status(store.conn, workspace_id, "google", "core_auth")
-    google_drive_oauth = get_account_oauth_status(store.conn, workspace_id, "google", "drive_sync")
-    google_sheets_oauth = get_account_oauth_status(store.conn, workspace_id, "google", "sheets_sync")
+    # Live token checks from OAuth service & Google OAuth Manager
+    google_acc_info = get_google_account_details(store.conn, workspace_id)
+    is_google_connected = google_acc_info.get("is_connected", False)
+    google_email = google_acc_info.get("account_email") or "Google OAuth Consent Required"
+
+    google_oauth = {"is_connected": is_google_connected, "account_identifier": google_email}
+    google_drive_oauth = {"is_connected": is_google_connected}
+    google_sheets_oauth = {"is_connected": is_google_connected}
     gbp_oauth = get_account_oauth_status(store.conn, workspace_id, "google_business_profile", "gbp_manage")
     
     # Official social accounts status
@@ -380,6 +385,7 @@ def get_drive_folder_tree(store: Store, workspace_id: str = "SSC") -> Dict[str, 
         })
 
     return {
+        "ok": True,
         "workspace_id": workspace_id,
         "root_folder": f"SHAH GROUP AI OS / {workspace_id}",
         "folders": folder_details,
@@ -388,44 +394,14 @@ def get_drive_folder_tree(store: Store, workspace_id: str = "SSC") -> Dict[str, 
 
 
 def stage_drive_file_upload(store: Store, workspace_id: str, module_key: str, filename: str, file_b64: str) -> Dict[str, Any]:
-    """Stages a report, invoice, quotation, or media file into the workspace Drive folder."""
+    """Stages a report, invoice, quotation, or media file into the workspace Drive folder and syncs to Drive if connected."""
     seed_default_mappings(store.conn)
-    # Find target folder
-    f_row = store.fetchone(
-        "SELECT folder_name FROM drive_folders WHERE workspace_id=? AND module_key=?",
-        (workspace_id, module_key)
-    )
-    f_name = f_row["folder_name"] if f_row else "Documents"
-    target_dir = os.path.join(DRIVE_SYNC_DIR, workspace_id, f_name)
-    os.makedirs(target_dir, exist_ok=True)
-
-    target_file = os.path.join(target_dir, filename)
-    content = base64.b64decode(file_b64.split(",")[-1]) if "," in file_b64 else base64.b64decode(file_b64)
-    with open(target_file, "wb") as f:
-        f.write(content)
-
-    size = len(content)
-    cur = store.conn.execute("""
-    INSERT INTO drive_synced_files (workspace_id, module_key, file_name, local_path, file_size_bytes, status, synced_at)
-    VALUES (?, ?, ?, ?, ?, 'synced', ?)
-    """, (workspace_id, module_key, filename, target_file, size, now_kolkata_iso()))
-    store.conn.commit()
-
-    # Log activity
-    store.conn.execute(
-        "INSERT INTO integration_activity_logs (workspace_id, provider, action, status, details) VALUES (?,?,?,?,?)",
-        (workspace_id, "google_drive", f"Uploaded: {filename}", "success", f"Folder: {f_name} ({size} bytes)")
-    )
-    store.conn.commit()
-
-    return {
-        "ok": True,
-        "file_id": cur.lastrowid,
-        "filename": filename,
-        "folder": f_name,
-        "size_bytes": size,
-        "status": "synced"
-    }
+    from .google_drive_engine import stage_and_sync_file
+    res = stage_and_sync_file(store, workspace_id, module_key, filename, file_b64)
+    res["file_id"] = res.get("id")
+    res["folder"] = res.get("folder_name")
+    res["size_bytes"] = res.get("file_size_bytes")
+    return res
 
 
 def update_drive_folder(store: Store, workspace_id: str, folder_id: int, drive_folder_id: str) -> Dict[str, Any]:

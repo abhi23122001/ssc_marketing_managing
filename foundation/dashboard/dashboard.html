@@ -2879,14 +2879,15 @@
             <span class="pill info" id="badge-drive-status">&#9679; Local Safe Staging Only (Offline / Zero Cost)</span>
           </div>
           <div style="background:#0b1120;padding:10px 14px;border-radius:6px;font-size:12px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-            <div><strong>Active Staging Path:</strong> <code>data/drive_sync/</code> &bull; <strong>Folders:</strong> 15 Configured &bull; <strong>Target Workspace:</strong> <span class="active-ws-title">SSC</span></div>
+            <div><strong>Active Staging Path:</strong> <code>data/drive_sync/</code> &bull; <strong>Folders:</strong> 15 Configured &bull; <strong>Account:</strong> <span id="label-drive-account">Authorization Required</span></div>
             <div style="font-size:11px;color:var(--muted)">Zero cost &bull; 100% offline staging supported</div>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn btn-primary btn-sm" onclick="openConnectModal('google_drive', 'Google Drive Storage')">&#9889; Connect Google Drive</button>
-            <button class="btn btn-secondary btn-sm" onclick="syncAllIntegrationModules()">&#8635; Sync All Folders</button>
+            <button class="btn btn-primary btn-sm" id="btn-google-drive-connect" onclick="startGoogleOAuth()">&#9889; Connect with Google</button>
+            <button class="btn btn-secondary btn-sm" onclick="syncDriveNow()">&#8635; Sync All Folders</button>
             <button class="btn btn-secondary btn-sm" onclick="switchIntSub('drive')">&#128194; View Folder Tree</button>
             <button class="btn btn-secondary btn-sm" onclick="openDriveUploadModal()">&#11014; Stage &amp; Upload Document</button>
+            <button class="btn btn-secondary btn-sm" id="btn-google-drive-disconnect" style="display:none;color:#f87171" onclick="disconnectGoogleAccount()">Disconnect</button>
           </div>
         </div>
 
@@ -2903,13 +2904,14 @@
             <span class="pill info" id="badge-sheets-status">&#9679; Local Safe Staging (12 CSV Modules)</span>
           </div>
           <div style="background:#0b1120;padding:10px 14px;border-radius:6px;font-size:12px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-            <div><strong>Master Spreadsheet:</strong> <code>SHAH_GROUP_OS_2026_MASTER</code> &bull; <strong>Sync Mode:</strong> Local CSV Two-Way Mirror</div>
+            <div><strong>Master Spreadsheet:</strong> <code id="label-master-spreadsheet">17CpMIB7mMrBalL6juZMmKVFvm2j5IvLXJjYdsbAmU5c</code> &bull; <strong>Sync Mode:</strong> Auto / Manual</div>
             <div style="font-size:11px;color:var(--muted)">Local CSV mirrors active &bull; Cloud export ready upon OAuth</div>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn btn-primary btn-sm" onclick="openConnectModal('google_sheets', 'Google Sheets Sync')">&#9889; Connect Google Sheets</button>
+            <button class="btn btn-primary btn-sm" id="btn-google-sheets-connect" onclick="startGoogleOAuth()">&#9889; Connect with Google</button>
             <button class="btn btn-secondary btn-sm" onclick="syncAllIntegrationModules()">&#8635; Sync 12 Modules Now</button>
             <button class="btn btn-secondary btn-sm" onclick="switchIntSub('sheets')">&#128203; View Module Mappings</button>
+            <button class="btn btn-secondary btn-sm" id="btn-google-sheets-disconnect" style="display:none;color:#f87171" onclick="disconnectGoogleAccount()">Disconnect</button>
           </div>
         </div>
 
@@ -3012,12 +3014,16 @@
       <!-- Subpanel 2: Google Drive Hierarchy -->
       <div id="int-sub-drive" class="int-subpanel" style="display:none">
         <div class="card" style="margin-bottom:14px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px">
             <div>
-              <h3 style="margin:0 0 4px">&#128193; Google Drive Folder Architecture</h3>
-              <div style="font-size:12px;color:var(--muted)">Hierarchical cloud document storage separated by workspace (SSC &amp; INFRA). Staged locally and mirrored to Drive.</div>
+              <h3 style="margin:0 0 4px">&#128193; Google Drive Folder Architecture (15 Folders)</h3>
+              <div style="font-size:12px;color:var(--muted)">Connected Account: <strong id="drive-connected-email">Authorization Required (Local Safe Staging)</strong> &bull; Root: <code>SHAH GROUP AI OS / <span class="active-ws-title">SSC</span></code></div>
             </div>
-            <button class="btn btn-primary btn-sm" onclick="openDriveUploadModal()">+ Upload to Drive Folder</button>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-primary btn-sm" onclick="syncDriveNow()">&#8635; Sync Staged Files to Cloud Drive</button>
+              <button class="btn btn-secondary btn-sm" onclick="openDriveUploadModal()">+ Upload to Drive Folder</button>
+              <button class="btn btn-secondary btn-sm" onclick="startGoogleOAuth()">&#9889; Connect Google</button>
+            </div>
           </div>
           <div class="grid3" id="drive-folders-grid" style="margin-bottom:14px">
             <!-- Populated by JS -->
@@ -3032,13 +3038,34 @@
 
       <!-- Subpanel 3: Google Sheets Module-wise Mapping -->
       <div id="int-sub-sheets" class="int-subpanel" style="display:none">
+        <!-- Target Spreadsheet Configuration -->
+        <div class="card" style="margin-bottom:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px">
+            <div>
+              <h3 style="margin:0 0 4px">&#128202; Google Spreadsheet Configuration</h3>
+              <div style="font-size:12px;color:var(--muted)">Connected Account: <strong id="sheets-connected-email">Authorization Required</strong> &bull; All 12 business modules synchronize to this sheet</div>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-primary btn-sm" onclick="syncAllIntegrationModules()">&#8635; Trigger Full Sync (12 Modules)</button>
+              <button class="btn btn-secondary btn-sm" onclick="startGoogleOAuth()">&#9889; Connect Google Account</button>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;background:#0b1120;padding:12px;border-radius:8px">
+            <div style="flex:2;min-width:280px">
+              <label style="font-size:11px;font-weight:600;display:block;margin-bottom:4px;color:var(--muted)">Target Google Spreadsheet ID or URL</label>
+              <input id="input-target-spreadsheet" value="17CpMIB7mMrBalL6juZMmKVFvm2j5IvLXJjYdsbAmU5c" style="width:100%;padding:6px 10px;font-size:12px;background:var(--panel);border:1px solid var(--line);border-radius:6px;color:var(--text)" placeholder="e.g. 17CpMIB7mMrBalL6juZMmKVFvm2j5IvLXJjYdsbAmU5c or URL">
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="inspectAndSaveSpreadsheet()" style="height:32px">&#128269; Inspect &amp; Save Spreadsheet</button>
+            <a id="link-open-google-sheet" href="https://docs.google.com/spreadsheets/d/17CpMIB7mMrBalL6juZMmKVFvm2j5IvLXJjYdsbAmU5c/edit" target="_blank" class="btn btn-secondary btn-sm" style="height:32px;text-decoration:none;display:inline-flex;align-items:center">&#8599; Open in Google Sheets</a>
+          </div>
+        </div>
+
         <div class="card" style="margin-bottom:14px">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
             <div>
-              <h3 style="margin:0 0 4px">&#128202; 12 Core Operational Module Mappings</h3>
-              <div style="font-size:12px;color:var(--muted)">Map each application module to its destination spreadsheet, tab, and sync mode. SHAH OS database remains the source of truth.</div>
+              <h3 style="margin:0 0 4px">&#128203; 12 Core Operational Module Mappings</h3>
+              <div style="font-size:12px;color:var(--muted)">Map each application module to its destination spreadsheet tab and sync mode. Duplicate prevention with SHA-256 fingerprint active.</div>
             </div>
-            <button class="btn btn-primary btn-sm" onclick="syncAllIntegrationModules()">&#8635; Trigger Full Sync</button>
           </div>
           <div style="overflow-x:auto">
             <table id="sheets-mapping-table">
@@ -3054,6 +3081,24 @@
               </thead>
               <tbody id="sheets-mapping-tbody">
                 <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Live Sync History Table -->
+        <div class="card" style="margin-top:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <h4 style="margin:0">&#128220; Google Sheets Synchronization History</h4>
+            <button class="btn btn-secondary btn-sm" onclick="loadSheetsHistory()">&#8635; Refresh History</button>
+          </div>
+          <div style="overflow-x:auto">
+            <table>
+              <thead>
+                <tr><th>ID</th><th>Module</th><th>Direction</th><th>Pushed</th><th>Duplicates Avoided</th><th>Status</th><th>Tier</th><th>Timestamp</th><th>Audit Note</th></tr>
+              </thead>
+              <tbody id="sheets-history-tbody">
+                <tr><td colspan="9" style="text-align:center;padding:12px;color:var(--muted)">No synchronization runs recorded yet. Click 'Trigger Full Sync' to synchronize.</td></tr>
               </tbody>
             </table>
           </div>
@@ -8655,11 +8700,11 @@ function switchIntSub(sub){
   const target = $(`int-sub-${sub}`);
   if(target) target.style.display = "block";
 
-  if(sub === "hub") loadIntegrationHealth();
+  if(sub === "hub") { loadIntegrationHealth(); loadGoogleAccountStatus(); }
   if(sub === "gbp") loadGBPStatus();
   if(sub === "health") loadIntegrationHealth();
-  if(sub === "drive") loadDriveFolders();
-  if(sub === "sheets") loadSheetsMappings();
+  if(sub === "drive") { loadDriveFolders(); loadGoogleAccountStatus(); }
+  if(sub === "sheets") { loadSheetsMappings(); loadSheetsHistory(); loadGoogleAccountStatus(); }
   if(sub === "social") loadSocialIntegrationChannels();
   if(sub === "logs") loadIntegrationLogs();
   if(sub === "wizard"){
@@ -9005,6 +9050,167 @@ function openDriveUploadModal(){
       toast(`File '${fn}' staged in Google Drive folder!`);
       loadDriveFolders();
     }).catch(e => toast(`Upload error: ${e.message}`, "bad"));
+  }
+}
+
+// GOOGLE SHEETS & DRIVE COMPLETE INTEGRATION CONTROLLERS
+async function loadGoogleAccountStatus(){
+  try{
+    const j = await api(`/api/integrations/google/status?workspace=${state.ws}`);
+    const acc = j.google_account || {};
+    const isConn = acc.is_connected;
+    const email = acc.account_email || "Authorization Required";
+
+    // Update Hub Badges
+    const badgeDrive = $("#badge-drive-status");
+    if(badgeDrive){
+      badgeDrive.className = isConn ? "pill ok" : "pill info";
+      badgeDrive.textContent = isConn ? `● Cloud Synced (${email})` : "● Local Safe Staging Only (Offline / Zero Cost)";
+    }
+    const badgeSheets = $("#badge-sheets-status");
+    if(badgeSheets){
+      badgeSheets.className = isConn ? "pill ok" : "pill info";
+      badgeSheets.textContent = isConn ? `● Cloud Synced (${email})` : "● Local Safe Staging (12 CSV Modules)";
+    }
+
+    // Update labels and buttons
+    const lblDriveAcc = $("#label-drive-account");
+    if(lblDriveAcc) lblDriveAcc.textContent = email;
+    const driveEmail = $("#drive-connected-email");
+    if(driveEmail) driveEmail.textContent = email;
+    const sheetsEmail = $("#sheets-connected-email");
+    if(sheetsEmail) sheetsEmail.textContent = email;
+
+    const btnDriveConn = $("#btn-google-drive-connect");
+    const btnDriveDisc = $("#btn-google-drive-disconnect");
+    if(btnDriveConn) btnDriveConn.style.display = isConn ? "none" : "inline-block";
+    if(btnDriveDisc) btnDriveDisc.style.display = isConn ? "inline-block" : "none";
+
+    const btnSheetsConn = $("#btn-google-sheets-connect");
+    const btnSheetsDisc = $("#btn-google-sheets-disconnect");
+    if(btnSheetsConn) btnSheetsConn.style.display = isConn ? "none" : "inline-block";
+    if(btnSheetsDisc) btnSheetsDisc.style.display = isConn ? "inline-block" : "none";
+
+    // Set spreadsheet ID
+    const spCfg = j.sheets_status || {};
+    const spInput = $("#input-target-spreadsheet");
+    if(spInput && spCfg.spreadsheet_id){
+      spInput.value = spCfg.spreadsheet_id;
+    }
+  }catch(e){
+    console.warn("Failed to load Google account status:", e);
+  }
+}
+
+async function startGoogleOAuth(){
+  try{
+    const j = await api(`/api/oauth/authorize?provider=google&workspace=${state.ws}`);
+    if(j.auth_url && j.auth_url.startsWith("http")){
+      const w = window.open(j.auth_url, "GoogleOAuthPopup", "width=600,height=700,left=200,top=100");
+      if(!w || w.closed){
+        window.location.href = j.auth_url;
+      } else {
+        toast("Google OAuth consent window opened. Complete authorization to connect.");
+      }
+    } else {
+      toast("Google credentials required: set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET", "warn");
+    }
+  }catch(e){
+    toast(`OAuth error: ${e.message}`, "bad");
+  }
+}
+
+window.addEventListener("message", function(event){
+  if(event.data && event.data.type === "google_oauth_success"){
+    toast(`Google Account ${event.data.email || ''} connected successfully!`, "ok");
+    loadGoogleAccountStatus();
+    loadIntegrationHealth();
+    loadDriveFolders();
+    loadSheetsMappings();
+    loadSheetsHistory();
+  }
+});
+
+async function disconnectGoogleAccount(){
+  if(!confirm("Are you sure you want to disconnect your Google Account? Safe local staging will remain active.")) return;
+  try{
+    await api(`/api/oauth/google/disconnect?workspace=${state.ws}`, "POST", { workspace: state.ws, provider: "google" });
+    toast("Google Account disconnected successfully. Local staging active.");
+    loadGoogleAccountStatus();
+    loadIntegrationHealth();
+  }catch(e){
+    toast(`Failed to disconnect: ${e.message}`, "bad");
+  }
+}
+
+async function syncDriveNow(){
+  toast("Synchronizing staged files with Google Drive...");
+  try{
+    const j = await api(`/api/integrations/drive/sync?workspace=${state.ws}`, "POST", {});
+    toast(j.status_summary || "Drive synchronization complete!");
+    loadDriveFolders();
+    loadIntegrationLogs();
+  }catch(e){
+    toast(`Drive sync error: ${e.message}`, "bad");
+  }
+}
+
+async function inspectAndSaveSpreadsheet(){
+  const input = $("#input-target-spreadsheet");
+  const val = (input ? input.value : "").trim();
+  if(!val){
+    toast("Please enter a Google Spreadsheet ID or URL", "warn");
+    return;
+  }
+  toast("Validating and inspecting Google Spreadsheet...");
+  try{
+    await api(`/api/integrations/sheets/spreadsheet/select?workspace=${state.ws}`, "POST", {
+      spreadsheet_id: val,
+      spreadsheet_name: `SHAH GROUP OS — ${state.ws} Master`
+    });
+
+    const meta = await api(`/api/integrations/sheets/metadata?workspace=${state.ws}&spreadsheet_id=${encodeURIComponent(val)}`);
+    if(meta.ok){
+      const count = (meta.worksheets || []).length;
+      toast(`Spreadsheet '${meta.spreadsheet_title}' verified! ${count} worksheets found.`, "ok");
+      const openLink = $("#link-open-google-sheet");
+      if(openLink && meta.spreadsheet_url){
+        openLink.href = meta.spreadsheet_url;
+      }
+    } else {
+      toast(`Inspection notice: ${meta.error || 'Saved for local staging'}`, "warn");
+    }
+    loadSheetsMappings();
+  }catch(e){
+    toast(`Error: ${e.message}`, "bad");
+  }
+}
+
+async function loadSheetsHistory(){
+  const tbody = $("#sheets-history-tbody");
+  if(!tbody) return;
+  try{
+    const j = await api(`/api/integrations/sheets/history?workspace=${state.ws}`);
+    const rows = j.history || [];
+    if(rows.length){
+      tbody.innerHTML = rows.map(r => `
+        <tr>
+          <td>#${r.id}</td>
+          <td><strong>${esc(r.entity_name)}</strong></td>
+          <td><span class="pill info">${esc(r.direction).toUpperCase()}</span></td>
+          <td><strong>${r.records_pushed || 0}</strong></td>
+          <td>${r.conflicts_resolved || 0}</td>
+          <td><span class="pill ${r.status === 'success' ? 'ok' : 'pending'}">${esc(r.status)}</span></td>
+          <td><span class="pill ${r.sync_tier === 'cloud_and_local' ? 'ok' : 'info'}">${esc(r.sync_tier || 'local_staging')}</span></td>
+          <td style="color:var(--muted);font-size:11px">${esc(r.created_at)}</td>
+          <td style="color:var(--muted);font-size:11px">${esc(r.audit_note || '')}</td>
+        </tr>
+      `).join("");
+    } else {
+      tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:12px;color:var(--muted)">No sync runs recorded yet. Click 'Trigger Full Sync' to begin.</td></tr>`;
+    }
+  }catch(e){
+    tbody.innerHTML = `<tr><td colspan="9" class="pill bad">Failed to load history: ${esc(e.message)}</td></tr>`;
   }
 }
 

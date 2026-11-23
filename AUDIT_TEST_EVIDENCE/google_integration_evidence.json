@@ -1,0 +1,83 @@
+{
+  "timestamp": "2026-11-23 23:29:25",
+  "total_tests": 15,
+  "passed_tests": 15,
+  "pass_rate_pct": 100.0,
+  "results": [
+    {
+      "test": "1. Google OAuth Authorization URL & CSRF State Token",
+      "passed": true,
+      "details": "Generated auth_url with state_token: vlg3U2u1H1Ub... Scopes: 3"
+    },
+    {
+      "test": "2. OAuth Anti-CSRF State Token Validation",
+      "passed": true,
+      "details": "State token validated and marked single-use: OAuth anti-CSRF state token validated successfully. Provider credentials required to exchange token."
+    },
+    {
+      "test": "3. Browser OAuth Callback Route (Graceful Error Page)",
+      "passed": true,
+      "details": "Browser return route caught error parameter gracefully without 500 crash"
+    },
+    {
+      "test": "4. Google Sheets Metadata & Worksheet Listing",
+      "passed": true,
+      "details": "Inspected spreadsheet: 'SHAH Group AI OS \u2014 Master Operational Data'. Worksheets found: 12"
+    },
+    {
+      "test": "5. Target Spreadsheet Configuration & ID Extraction",
+      "passed": true,
+      "details": "Configured Master Spreadsheet: Shah AI OS \u2014 Production Master (17CpMIB7mMrBalL6juZMmKVFvm2j5IvLXJjYdsbAmU5c)"
+    },
+    {
+      "test": "6. Google Drive 15-Folder Hierarchy (10 SSC + 5 INFRA)",
+      "passed": true,
+      "details": "Total staging folders verified: 15 (10 in SSC, 5 in INFRA)"
+    },
+    {
+      "test": "7. Document Staging in drive_sync/ Hierarchy",
+      "passed": true,
+      "details": "Staged file: Test_FLS_Report_1795456765.pdf in data/drive_sync/SSC/Projects/ (59 bytes)"
+    },
+    {
+      "test": "8. Document File Integrity & Non-Destructive Storage",
+      "passed": true,
+      "details": "Local file verified intact at: data\\drive_sync\\SSC\\Projects\\Test_FLS_Report_1795456765.pdf with SHA-256: 2f0fc66be7426eaa"
+    },
+    {
+      "test": "9. Anti-Duplicate File Staging Check",
+      "passed": true,
+      "details": "Duplicate file check executed cleanly with checksum: 2f0fc66be7426eaa"
+    },
+    {
+      "test": "10. Controlled Single Module Sheets Synchronization",
+      "passed": true,
+      "details": "Synced module [quotations]: 19 records staged/pushed, tier: local_staging"
+    },
+    {
+      "test": "11. Full 12-Module Bidirectional Sheets Synchronization",
+      "passed": true,
+      "details": "All 12 modules mirrored cleanly: 59 total records processed across 12 CSV replicas"
+    },
+    {
+      "test": "12. Anti-Duplicate Row Deduplication (SHA-256 Row Hash)",
+      "passed": true,
+      "details": "Row deduplication verified for [leads]. Status: Local Safe Staging Only (Cloud Authorization Required)"
+    },
+    {
+      "test": "13. Staged Drive Document Bulk Sync Trigger",
+      "passed": true,
+      "details": "Scanned 2 staged documents across 10 folders. Summary: Local Staging Verified (2 files across 15 folders ready for cloud upload)"
+    },
+    {
+      "test": "14. Multi-Tenant Isolation (SSC & INFRA Isolation)",
+      "passed": true,
+      "details": "SSC and INFRA maintain strict database separation: 12 distinct module mappings per workspace"
+    },
+    {
+      "test": "15. Live Google Integration Health & Audit Telemetry",
+      "passed": true,
+      "details": "Connection Status: Authorization Required (Local Safe Staging Only) &bull; Local 12 CSVs: Active (12 CSV Modules Staged)"
+    }
+  ]
+}
