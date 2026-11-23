@@ -405,3 +405,63 @@ def sync_all_staged_drive_files(store: Store, workspace_id: str = "SSC") -> Dict
         "status_summary": status_summary,
         "latency_ms": latency_ms
     }
+
+
+def bootstrap_drive_cloud_folders(
+    store: Store,
+    workspace_id: str = "SSC"
+) -> Dict[str, Any]:
+    """Ensures all standard hierarchical folders exist on Google Drive and locally.
+
+    Hierarchy:
+      SHAH GROUP AI OS / <workspace_id> / <folder_name>
+    """
+    token, email, _ = get_valid_google_token(store.conn, workspace_id)
+    folders = store.fetchall("SELECT * FROM drive_folders WHERE workspace_id=?", (workspace_id,))
+    if not folders:
+        default_names = ["CRM", "Clients", "Projects", "Quotations", "Invoices", "Finance", "HRM", "Attendance", "Reports", "Social Media"]
+        for fn in default_names:
+            store.conn.execute(
+                "INSERT INTO drive_folders (workspace_id, folder_name, drive_folder_id) VALUES (?, ?, '')",
+                (workspace_id, fn)
+            )
+        store.conn.commit()
+        folders = store.fetchall("SELECT * FROM drive_folders WHERE workspace_id=?", (workspace_id,))
+
+    results = []
+    for f in folders:
+        fn = f["folder_name"]
+        local_dir = os.path.join(DRIVE_SYNC_DIR, workspace_id, fn)
+        os.makedirs(local_dir, exist_ok=True)
+
+        cloud_id = f.get("drive_folder_id") or ""
+        cloud_status = "Local Ready"
+
+        if token:
+            ok, target_id, msg = resolve_cloud_destination_folder(token, workspace_id, fn)
+            if ok and target_id:
+                cloud_id = target_id
+                cloud_status = "Cloud Linked"
+                store.conn.execute(
+                    "UPDATE drive_folders SET drive_folder_id=? WHERE id=?",
+                    (cloud_id, f["id"])
+                )
+                store.conn.commit()
+
+        results.append({
+            "id": f["id"],
+            "folder_name": fn,
+            "drive_folder_id": cloud_id,
+            "status": cloud_status,
+            "local_path": local_dir,
+            "cloud_url": f"https://drive.google.com/drive/folders/{cloud_id}" if cloud_id else None
+        })
+
+    return {
+        "ok": True,
+        "workspace_id": workspace_id,
+        "is_cloud_synced": bool(token),
+        "folders": results,
+        "count": len(results),
+        "message": f"Verified {len(results)} hierarchical folders for workspace {workspace_id}."
+    }

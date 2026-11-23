@@ -205,6 +205,109 @@ def update_workspace_spreadsheet_selection(
     }
 
 
+def create_new_master_spreadsheet(
+    conn: sqlite3.Connection,
+    workspace_id: str = "SSC",
+    title: Optional[str] = None
+) -> Dict[str, Any]:
+    """Creates a brand new Google Spreadsheet on Google Cloud Sheets with all 12 operational tabs pre-created.
+
+    Tabs:
+      1. CRM_Leads
+      2. Client_Profiles
+      3. Project_Sites
+      4. Employee_Tasks
+      5. Staff_Attendance
+      6. Commercial_Quotations
+      7. GST_Invoices
+      8. Payment_Receipts
+      9. Expense_Claims
+      10. Content_Calendar
+      11. Publishing_Logs
+      12. AI_Intelligence_Reports
+    """
+    token, email, _ = get_valid_google_token(conn, workspace_id)
+    sp_title = title or f"SHAH GROUP AI OS — {workspace_id} Master Operations"
+
+    if token:
+        sheets_spec = []
+        for mod_key, mod in APPROVED_MODULES.items():
+            sheets_spec.append({
+                "properties": {
+                    "title": mod["title"],
+                    "gridProperties": {
+                        "rowCount": 1000,
+                        "columnCount": max(len(mod["cols"]), 15)
+                    }
+                }
+            })
+
+        payload = {
+            "properties": {
+                "title": sp_title
+            },
+            "sheets": sheets_spec
+        }
+
+        try:
+            req = urllib.request.Request(
+                SHEETS_API_BASE,
+                data=json.dumps(payload).encode("utf-8"),
+                headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+            )
+            with urllib.request.urlopen(req, timeout=25) as resp:
+                created_data = json.loads(resp.read().decode("utf-8"))
+
+            new_id = created_data.get("spreadsheetId", "")
+            new_url = created_data.get("spreadsheetUrl") or f"https://docs.google.com/spreadsheets/d/{new_id}/edit"
+
+            # Populate header rows in each created tab
+            for mod_key, mod in APPROVED_MODULES.items():
+                headers = [mod["display_headers"]]
+                write_worksheet_rows(token, new_id, mod["title"], headers, "A1")
+
+            # Update workspace configuration with this new spreadsheet
+            update_workspace_spreadsheet_selection(conn, workspace_id, new_id, sp_title)
+
+            return {
+                "ok": True,
+                "is_cloud_synced": True,
+                "spreadsheet_id": new_id,
+                "spreadsheet_url": new_url,
+                "spreadsheet_title": sp_title,
+                "created_tabs": [m["title"] for m in APPROVED_MODULES.values()],
+                "message": f"Brand new Google Spreadsheet '{sp_title}' created successfully on Google Cloud."
+            }
+        except Exception as e:
+            return {
+                "ok": False,
+                "is_cloud_synced": False,
+                "error": f"Failed to create Google Spreadsheet on Cloud: {str(e)}"
+            }
+    else:
+        # Offline / Pre-OAuth fallback: create local staging mirror
+        os.makedirs(SYNC_DATA_DIR, exist_ok=True)
+        local_files = []
+        for mod_key, mod in APPROVED_MODULES.items():
+            fname = f"{workspace_id}_{mod['title']}.csv"
+            fpath = os.path.join(SYNC_DATA_DIR, fname)
+            if not os.path.exists(fpath):
+                with open(fpath, "w", newline="", encoding="utf-8") as f:
+                    writer = csv.writer(f)
+                    writer.writerow(mod["display_headers"])
+            local_files.append(fname)
+
+        return {
+            "ok": True,
+            "is_cloud_synced": False,
+            "connection_status": "Authorization Required",
+            "spreadsheet_title": sp_title,
+            "created_tabs": [m["title"] for m in APPROVED_MODULES.values()],
+            "local_staging_files": local_files,
+            "note": "Local staging initialized with all 12 operational modules. Authorize Google OAuth to deploy directly to your Google Cloud Drive."
+        }
+
+
 def fetch_spreadsheet_metadata(
     conn: sqlite3.Connection,
     workspace_id: str = "SSC",

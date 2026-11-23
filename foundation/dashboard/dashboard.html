@@ -2883,6 +2883,7 @@
             <div style="font-size:11px;color:var(--muted)">Zero cost &bull; 100% offline staging supported</div>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-primary btn-sm" style="background:#059669;border-color:#059669;color:#fff;" onclick="bootstrapGoogleCloud()">&#9889; Create New Drive Folders &amp; Sync</button>
             <button class="btn btn-primary btn-sm" id="btn-google-drive-connect" onclick="startGoogleOAuth()">&#9889; Connect with Google</button>
             <button class="btn btn-secondary btn-sm" onclick="syncDriveNow()">&#8635; Sync All Folders</button>
             <button class="btn btn-secondary btn-sm" onclick="switchIntSub('drive')">&#128194; View Folder Tree</button>
@@ -2908,6 +2909,7 @@
             <div style="font-size:11px;color:var(--muted)">Local CSV mirrors active &bull; Cloud export ready upon OAuth</div>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-primary btn-sm" style="background:#059669;border-color:#059669;color:#fff;" onclick="bootstrapGoogleCloud()">&#9889; Create New Master Sheet &amp; Sync</button>
             <button class="btn btn-primary btn-sm" id="btn-google-sheets-connect" onclick="startGoogleOAuth()">&#9889; Connect with Google</button>
             <button class="btn btn-secondary btn-sm" onclick="syncAllIntegrationModules()">&#8635; Sync 12 Modules Now</button>
             <button class="btn btn-secondary btn-sm" onclick="switchIntSub('sheets')">&#128203; View Module Mappings</button>
@@ -3443,6 +3445,7 @@ async function auth(){
     state.perms = new Set(per.perms);
     if($("#role-badge")) $("#role-badge").textContent = state.role || "—";
     if($("#user-meta")) $("#user-meta").textContent = j.user.username;
+    updateNavVisibility();
     const authArea = $("#auth-area");
     if(authArea) {
       authArea.innerHTML = `
@@ -3463,6 +3466,7 @@ async function auth(){
     state.role = null;
     state.perms = new Set();
     localStorage.removeItem("sgai_token");
+    updateNavVisibility();
     const authArea = $("#auth-area");
     if(authArea) {
       authArea.innerHTML = `
@@ -3498,39 +3502,83 @@ async function auth(){
 }
 
 const SEC_PERM = {
-  overview:["report:list","workspace:list"],
-  workspaces:["workspace:list"],
-  projects:["resource:read","workspace:list","workspace:read"],
-  finance:["approval:list"],
-  employees:["report:list"],
-  marketing:["report:list"],
-  crm:["resource:list"],
-  ai:["ai:brain:query"],
-  approvals:["approval:list"],
-  integrations:["workspace:manage","resource:read"],
-  settings:["workspace:manage"],
+  overview: ["report:list", "workspace:read"],
+  workspaces: ["workspace:manage"],
+  projects: ["tasks:read", "sites:read", "resource:read"],
+  finance: ["finance:read", "finance:manage"],
+  employees: ["attendance:read", "attendance:manage", "employees:read"],
+  marketing: ["social:manage", "social:read"],
+  crm: ["leads:read", "leads:manage", "resource:read"],
+  ai: ["ai:brain:query"],
+  approvals: ["approval:approve"],
+  integrations: ["integrations:manage", "workspace:manage"],
+  "owner-setup": ["security:manage", "workspace:manage"],
+  settings: ["security:manage", "workspace:manage"]
 };
 
 function visible(sec){
   if(state.role === "Owner") return true;
-  const perms = state.perms;
+  // Strict role boundaries: Employees and Viewers are strictly prohibited from admin/finance/setup modules
+  if(state.role === "Employee" || state.role === "Viewer"){
+    const blockedForStaff = ["owner-setup", "settings", "integrations", "finance", "approvals", "workspaces", "marketing"];
+    if(blockedForStaff.includes(sec)) return false;
+  }
+  const perms = state.perms || new Set();
   const req = (SEC_PERM[sec]||[]).map(x=>x.replace(/^[+-]/,""));
+  if(!req.length) return false;
   return req.some(p => perms.has(p));
+}
+
+function updateNavVisibility(){
+  // 1. Sidebar Nav filtering
+  document.querySelectorAll(".sidebar .item").forEach(el=>{
+    const sec = el.dataset.sec;
+    const canSee = visible(sec);
+    el.style.display = canSee ? "flex" : "none";
+  });
+
+  // 2. Workspace switcher filtering: Employees & Viewers locked to assigned workspace
+  const wsWshop = $("#ws-wshop");
+  if(wsWshop){
+    if(state.role === "Employee" || state.role === "Viewer"){
+      wsWshop.style.display = "none";
+    } else {
+      wsWshop.style.display = "inline-flex";
+    }
+  }
+
+  // 3. Fallback active section if current section is disallowed
+  const activeItem = document.querySelector(".sidebar .item.active");
+  const currentSec = activeItem ? activeItem.dataset.sec : "overview";
+  if(!visible(currentSec)){
+    const target = visible("projects") ? "projects" : "overview";
+    showSection(target);
+  }
 }
 
 function bindNav(){
   document.querySelectorAll(".sidebar .item").forEach(el=>{
     el.addEventListener("click", function(e){
       e.stopPropagation();
+      const sec = el.dataset.sec;
+      if(!visible(sec)){
+        toast("Access restricted to authorized personnel.", "bad");
+        return;
+      }
       document.querySelectorAll(".sidebar .item").forEach(ch=>ch.classList.remove("active"));
       el.classList.add("active");
-      showSection(el.dataset.sec);
+      showSection(sec);
     });
   });
+  updateNavVisibility();
 }
 
 function showSection(sec){
-  if(sec === "owner-setup") loadOwnerSetupChecklist();
+  if(!visible(sec)){
+    toast("Access Denied: You do not have permission for " + sec, "bad");
+    sec = visible("projects") ? "projects" : "overview";
+  }
+  if(sec === "owner-setup" && state.role === "Owner") loadOwnerSetupChecklist();
   document.querySelectorAll(".main > section").forEach(c=>c.style.display="none");
   const el = $("#sec-"+sec);
   const show = !!(el && visible(sec));
@@ -8837,6 +8885,25 @@ async function syncSingleSheetModule(modKey){
   }
 }
 
+async function bootstrapGoogleCloud(){
+  if(!confirm("Create a brand new Master Google Spreadsheet (with all 12 operational tabs pre-created) and new Google Drive hierarchical folders, and synchronize all business data now?")) return;
+  toast("Creating new Master Sheet & Drive Folders on Google Cloud...", "info");
+  try{
+    const res = await api(`/api/integrations/google/bootstrap?workspace=${state.ws}`, "POST", {});
+    if(res.ok){
+      toast("Success! Brand new Master Google Sheet & Drive Folders created & synced!", "ok");
+      if(res.sheet && res.sheet.spreadsheet_url){
+        window.open(res.sheet.spreadsheet_url, "_blank");
+      }
+      refreshAll();
+    } else {
+      toast("Creation failed: " + (res.error || "Unknown error"), "bad");
+    }
+  }catch(e){
+    toast("Bootstrap error: " + e.message, "bad");
+  }
+}
+
 async function syncAllIntegrationModules(){
   toast("Executing full bidirectional sync across all 12 modules...");
   try{
@@ -9983,10 +10050,12 @@ async function submitGBPPost(){
     initGlobalSearch();
     await auth();
     bindNav();
+    updateNavVisibility();
     setupCanvasInteractions();
     pushCanvasHistory();
     if(state.token) {
       switchWorkspace(state.ws || "SSC");
+      updateNavVisibility();
     }
   }catch(e){
     console.error("Initialization failure:", e);

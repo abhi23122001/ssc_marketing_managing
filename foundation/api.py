@@ -872,11 +872,17 @@ class Handler(BaseHTTPRequestHandler):
             self._send_csv(f"expenses_{ws}.csv", ["id", "project_id", "category", "amount", "currency", "status", "notes", "created_at"], claims)
             return
         if path == "/api/finance/profit-loss":
+            if user.get("role") not in ("Owner", "Manager", "Finance Manager"):
+                self._json_err("forbidden: finance manager access required", 403)
+                return
             summary = self.store.get_profit_loss_summary(ws)
             self._json_ok({"profit_loss": summary})
             return
         parts = [x for x in path.split("/") if x]
         if len(parts) >= 3 and parts[2] == "vendors":
+            if user.get("role") not in ("Owner", "Manager", "Finance Manager"):
+                self._json_err("forbidden: finance manager access required", 403)
+                return
             if self.command == "GET":
                 vendors = self.store.list_vendors(ws)
                 self._json_ok({"vendors": vendors})
@@ -3335,6 +3341,9 @@ class Handler(BaseHTTPRequestHandler):
         if user is None:
             self._json_err("authentication required", 401)
             return
+        if user.get("role") not in ("Owner", "Manager"):
+            self._json_err("forbidden: admin/manager access required for integrations", 403)
+            return
         ws, err = self._get_request_workspace(user)
         if err:
             self._json_err(err, 403)
@@ -3482,6 +3491,29 @@ class Handler(BaseHTTPRequestHandler):
             res = integrations_center.update_drive_folder(self.store, ws, int(fid), dfid)
             self._json_ok(res)
             return
+
+        # Bootstrap: Create brand new Master Google Sheet + Drive Folders + Sync
+        if path == "/api/integrations/google/bootstrap":
+            if self.command != "POST":
+                self._json_err("method not allowed", 405)
+                return
+            from foundation.domains import google_sheets_engine, google_drive_engine
+            sheet_title = data.get("sheet_title")
+            sheet_res = google_sheets_engine.create_new_master_spreadsheet(self.store.conn, ws, sheet_title)
+            drive_res = google_drive_engine.bootstrap_drive_cloud_folders(self.store, ws)
+            sync_res = google_sheets_engine.sync_all_approved_modules(self.store, ws)
+            drive_sync = google_drive_engine.sync_all_staged_drive_files(self.store, ws)
+            self._json_ok({
+                "ok": True,
+                "workspace_id": ws,
+                "sheet": sheet_res,
+                "drive": drive_res,
+                "sheets_sync": sync_res,
+                "drive_sync": drive_sync,
+                "message": "Brand new Master Google Sheet and Drive hierarchical folders created & synced."
+            })
+            return
+
         self._json_err("integrations endpoint not found", 404)
 
     def _handle_oauth_callback_browser(self, parsed: urllib.parse.ParseResult) -> None:
@@ -3683,6 +3715,9 @@ class Handler(BaseHTTPRequestHandler):
         """Interactive Owner Setup Center & Checklist routes."""
         if user is None:
             self._json_err("authentication required", 401)
+            return
+        if user.get("role") != "Owner":
+            self._json_err("forbidden: Owner role required for Owner Setup Center", 403)
             return
         from foundation.domains import owner_setup_wizard
         parsed = urllib.parse.urlparse(self.path)
