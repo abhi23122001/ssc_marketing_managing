@@ -505,6 +505,7 @@ CREATE TABLE IF NOT EXISTS social_reports (
 
 CREATE TABLE IF NOT EXISTS social_client_profiles (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    workspace_id TEXT DEFAULT 'SSC',
     client_workspace_id TEXT NOT NULL,
     company_name TEXT NOT NULL DEFAULT '',
     brand_voice TEXT NOT NULL DEFAULT '',
@@ -614,13 +615,17 @@ _DEMO_SSC_STRATEGY = {
 }
 
 def create_m19_tables(conn) -> None:
-    """Create M19 tables idempotently."""
+    """Create M19 tables idempotently and ensure column migrations."""
     cur = conn.execute(
         "SELECT 1 FROM sqlite_master WHERE type='table' AND name='social_accounts'"
     ).fetchone()
-    if cur:
-        return
-    conn.executescript(_DOMAIN_SCHEMA)
+    if not cur:
+        conn.executescript(_DOMAIN_SCHEMA)
+    # Ensure workspace_id exists on social_client_profiles
+    try:
+        conn.execute("ALTER TABLE social_client_profiles ADD COLUMN workspace_id TEXT DEFAULT 'SSC'")
+    except Exception:
+        pass
     conn.commit()
 
 

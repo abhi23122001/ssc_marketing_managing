@@ -83,18 +83,38 @@ def get_owner_setup_checklist(store: Store, workspace_id: str = "SSC") -> Dict[s
     insta_oauth = get_account_oauth_status(store.conn, workspace_id, "instagram", "professional")
     yt_oauth = get_account_oauth_status(store.conn, workspace_id, "youtube", "channels")
 
-    # Check business records
-    emp_r = store.fetchone("SELECT COUNT(*) as cnt FROM employees WHERE workspace_id=?", (workspace_id,))
-    emp_count = emp_r.get("cnt", 0) if emp_r else 0
+    # Check business records defensively
+    emp_count = 0
+    try:
+        emp_r = store.fetchone("SELECT COUNT(*) as cnt FROM employees WHERE workspace_id=?", (workspace_id,))
+        emp_count = emp_r.get("cnt", 0) if emp_r else 0
+    except Exception:
+        pass
 
-    site_r = store.fetchone("SELECT COUNT(*) as cnt FROM sites WHERE workspace_id=?", (workspace_id,))
-    site_count = site_r.get("cnt", 0) if site_r else 0
+    site_count = 0
+    try:
+        site_r = store.fetchone("SELECT COUNT(*) as cnt FROM sites WHERE workspace_id=?", (workspace_id,))
+        site_count = site_r.get("cnt", 0) if site_r else 0
+    except Exception:
+        pass
 
-    client_r = store.fetchone("SELECT COUNT(*) as cnt FROM social_client_profiles WHERE workspace_id=?", (workspace_id,))
-    client_count = client_r.get("cnt", 0) if client_r else 0
+    client_count = 0
+    try:
+        client_r = store.fetchone("SELECT COUNT(*) as cnt FROM social_client_profiles WHERE workspace_id=?", (workspace_id,))
+        client_count = client_r.get("cnt", 0) if client_r else 0
+    except Exception:
+        try:
+            client_r = store.fetchone("SELECT COUNT(*) as cnt FROM social_client_profiles")
+            client_count = client_r.get("cnt", 0) if client_r else 0
+        except Exception:
+            pass
 
-    inv_r = store.fetchone("SELECT COUNT(*) as cnt FROM business_invoices WHERE workspace_id=?", (workspace_id,))
-    inv_count = inv_r.get("cnt", 0) if inv_r else 0
+    inv_count = 0
+    try:
+        inv_r = store.fetchone("SELECT COUNT(*) as cnt FROM business_invoices WHERE workspace_id=?", (workspace_id,))
+        inv_count = inv_r.get("cnt", 0) if inv_r else 0
+    except Exception:
+        pass
 
     has_google_creds = bool(creds.get("GOOGLE_CLIENT_ID") and creds.get("GOOGLE_CLIENT_SECRET"))
     has_meta_creds = bool(creds.get("META_APP_ID") and creds.get("META_APP_SECRET"))
