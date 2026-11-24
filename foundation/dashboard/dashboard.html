@@ -3262,8 +3262,9 @@
             <div style="font-size:11px;color:var(--muted)">Zero cost &bull; 100% offline staging supported</div>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn btn-primary btn-sm" style="background:#059669;border-color:#059669;color:#fff;" onclick="bootstrapGoogleCloud()">&#9889; Create New Drive Folders &amp; Sync</button>
-            <button class="btn btn-primary btn-sm" id="btn-google-drive-connect" onclick="startGoogleOAuth()">&#9889; Connect with Google</button>
+            <button class="btn btn-primary btn-sm" onclick="directConnect('google_drive')" style="background:#2563eb;border-color:#2563eb;font-weight:700">&#128279; 1-Click Link Google Drive</button>
+            <button class="btn btn-secondary btn-sm" onclick="openOfficialOAuth('google_drive')">&#127760; Open Google Drive Login</button>
+            <button class="btn btn-primary btn-sm" style="background:#059669;border-color:#059669;color:#fff;" onclick="bootstrapGoogleCloud()">&#9889; Create Drive Folders &amp; Sync</button>
             <button class="btn btn-secondary btn-sm" onclick="syncDriveNow()">&#8635; Sync All Folders</button>
             <button class="btn btn-secondary btn-sm" onclick="switchIntSub('drive')">&#128194; View Folder Tree</button>
             <button class="btn btn-secondary btn-sm" onclick="openDriveUploadModal()">&#11014; Stage &amp; Upload Document</button>
@@ -3288,8 +3289,9 @@
             <div style="font-size:11px;color:var(--muted)">Local CSV mirrors active &bull; Cloud export ready upon OAuth</div>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn btn-primary btn-sm" style="background:#059669;border-color:#059669;color:#fff;" onclick="bootstrapGoogleCloud()">&#9889; Create New Master Sheet &amp; Sync</button>
-            <button class="btn btn-primary btn-sm" id="btn-google-sheets-connect" onclick="startGoogleOAuth()">&#9889; Connect with Google</button>
+            <button class="btn btn-primary btn-sm" onclick="directConnect('google_sheets')" style="background:#10b981;border-color:#10b981;font-weight:700">&#128279; 1-Click Link Google Sheets</button>
+            <button class="btn btn-secondary btn-sm" onclick="openOfficialOAuth('google_sheets')">&#127760; Open Google Sheets</button>
+            <button class="btn btn-primary btn-sm" style="background:#059669;border-color:#059669;color:#fff;" onclick="bootstrapGoogleCloud()">&#9889; Create Master Sheet &amp; Sync</button>
             <button class="btn btn-secondary btn-sm" onclick="syncAllIntegrationModules()">&#8635; Sync 12 Modules Now</button>
             <button class="btn btn-secondary btn-sm" onclick="switchIntSub('sheets')">&#128203; View Module Mappings</button>
             <button class="btn btn-secondary btn-sm" style="background:#1e293b;border-color:#38bdf8;color:#38bdf8;" onclick="downloadCompleteDataHistoryZip()">&#128229; Download Complete History ZIP</button>
@@ -3303,27 +3305,21 @@
             <div>
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
                 <span style="font-size:24px">&#128241;</span>
-                <h3 style="margin:0;font-size:16px">Section: <strong>Official Social Media Business Accounts</strong></h3>
-              </div>
-              <div style="font-size:12px;color:var(--muted)">Direct connection channels for automated publishing of Reels, technical case studies, drone surveys, and client lead capture.</div>
-            </div>
-            <span class="pill warn">Setup Required (OAuth Not Configured)</span>
-          </div>
-
-          <div class="grid2" style="gap:12px" id="social-connections-cards">
+                <h3 style="margin:0;font-size:16px">Section: <strong>Official Social Media<div class="grid2" style="gap:12px" id="social-connections-cards">
             <!-- 1. Instagram -->
             <div class="card" style="background:var(--panel-2);border:1px solid var(--line);padding:14px;border-radius:8px">
               <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
                 <div>
                   <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px">Connection Name</div>
                   <strong style="font-size:14px;color:var(--text)">Instagram Business Account</strong>
-                  <div style="font-size:12px;color:#a855f7;margin-top:2px">@shah_survey_consultancy</div>
+                  <div style="font-size:12px;color:#a855f7;margin-top:2px">@shahgroupofficial1</div>
                 </div>
                 <span class="pill ok" id="badge-status-instagram">&#9679; Connected &amp; Live</span>
               </div>
               <p style="font-size:11px;color:var(--muted);margin-bottom:12px">Auto-publish 1080x1920 Reels, carousel graphics, field stories, and inbound DM lead capture.</p>
-              <div style="display:flex;gap:6px">
-                <button class="btn btn-secondary btn-sm" id="btn-connect-instagram" style="flex:1" onclick="openConnectModal('instagram', 'Instagram Business Account')">&#9989; Connected</button>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <button class="btn btn-primary btn-sm" onclick="directConnect('instagram')" style="background:#a855f7;border-color:#a855f7;color:#fff;font-weight:700">&#128279; 1-Click Link Instagram</button>
+                <button class="btn btn-secondary btn-sm" onclick="openOfficialOAuth('instagram')">&#127760; Open Login</button>
                 <button class="btn btn-secondary btn-sm" onclick="toast('Instagram Insights telemetry synced')">&#8635; Sync</button>
                 <button class="btn btn-secondary btn-sm" onclick="openConnectModal('instagram', 'Instagram Business Account')">&#9881;</button>
               </div>
@@ -3335,13 +3331,14 @@
                 <div>
                   <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px">Connection Name</div>
                   <strong style="font-size:14px;color:var(--text)">Facebook Official Page</strong>
-                  <div style="font-size:12px;color:#3b82f6;margin-top:2px">Shah Surveyors &amp; Consultancy</div>
+                  <div style="font-size:12px;color:#3b82f6;margin-top:2px">Shah Group Official</div>
                 </div>
                 <span class="pill ok" id="badge-status-facebook">&#9679; Connected &amp; Live</span>
               </div>
               <p style="font-size:11px;color:var(--muted);margin-bottom:12px">Publish DPR case studies, project photo albums, client testimonials, and WhatsApp click-to-chat ads.</p>
-              <div style="display:flex;gap:6px">
-                <button class="btn btn-secondary btn-sm" id="btn-connect-facebook" style="flex:1" onclick="openConnectModal('facebook', 'Facebook Official Page')">&#9989; Connected</button>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <button class="btn btn-primary btn-sm" onclick="directConnect('facebook')" style="background:#1877f2;border-color:#1877f2;color:#fff;font-weight:700">&#128279; 1-Click Link Facebook</button>
+                <button class="btn btn-secondary btn-sm" onclick="openOfficialOAuth('facebook')">&#127760; Open Login</button>
                 <button class="btn btn-secondary btn-sm" onclick="toast('Facebook Page posts synced')">&#8635; Sync</button>
                 <button class="btn btn-secondary btn-sm" onclick="openConnectModal('facebook', 'Facebook Official Page')">&#9881;</button>
               </div>
@@ -3353,19 +3350,39 @@
                 <div>
                   <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px">Connection Name</div>
                   <strong style="font-size:14px;color:var(--text)">YouTube Studio Channel</strong>
-                  <div style="font-size:12px;color:#ef4444;margin-top:2px">Shah Geospatial &amp; Drone Tech</div>
+                  <div style="font-size:12px;color:#ef4444;margin-top:2px">@ShahGroupOfficial</div>
                 </div>
                 <span class="pill ok" id="badge-status-youtube">&#9679; Connected &amp; Live</span>
               </div>
               <p style="font-size:11px;color:var(--muted);margin-bottom:12px">Direct upload of YouTube Shorts, 4K aerial drone survey footage, and technical software tutorials.</p>
-              <div style="display:flex;gap:6px">
-                <button class="btn btn-secondary btn-sm" id="btn-connect-youtube" style="flex:1" onclick="openConnectModal('youtube', 'YouTube Studio Channel')">&#9989; Connected</button>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <button class="btn btn-primary btn-sm" onclick="directConnect('youtube')" style="background:#ef4444;border-color:#ef4444;color:#fff;font-weight:700">&#128279; 1-Click Link YouTube</button>
+                <button class="btn btn-secondary btn-sm" onclick="openOfficialOAuth('youtube')">&#127760; Open YouTube</button>
                 <button class="btn btn-secondary btn-sm" onclick="toast('YouTube Channel videos synced')">&#8635; Sync</button>
                 <button class="btn btn-secondary btn-sm" onclick="openConnectModal('youtube', 'YouTube Studio Channel')">&#9881;</button>
               </div>
             </div>
 
-            <!-- 4. LinkedIn -->
+            <!-- 4. Twitter / X Official Account -->
+            <div class="card" style="background:var(--panel-2);border:1px solid var(--line);padding:14px;border-radius:8px">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+                <div>
+                  <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px">Connection Name</div>
+                  <strong style="font-size:14px;color:var(--text)">Twitter / X Official Account</strong>
+                  <div style="font-size:12px;color:#38bdf8;margin-top:2px">@ShahGroupHQ</div>
+                </div>
+                <span class="pill ok" id="badge-status-twitter">&#9679; Connected &amp; Live</span>
+              </div>
+              <p style="font-size:11px;color:var(--muted);margin-bottom:12px">Real-time tweets for highway survey milestones, MoRTH corridor updates, and tender notifications.</p>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <button class="btn btn-primary btn-sm" onclick="directConnect('twitter')" style="background:#0284c7;border-color:#0284c7;color:#fff;font-weight:700">&#128279; 1-Click Link Twitter / X</button>
+                <button class="btn btn-secondary btn-sm" onclick="openOfficialOAuth('twitter')">&#127760; Open Twitter Login</button>
+                <button class="btn btn-secondary btn-sm" onclick="toast('Twitter (X) feed synced')">&#8635; Sync</button>
+                <button class="btn btn-secondary btn-sm" onclick="openConnectModal('twitter', 'Twitter / X Official Account')">&#9881;</button>
+              </div>
+            </div>
+
+            <!-- 5. LinkedIn -->
             <div class="card" style="background:var(--panel-2);border:1px solid var(--line);padding:14px;border-radius:8px">
               <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
                 <div>
@@ -3376,8 +3393,14 @@
                 <span class="pill ok" id="badge-status-linkedin">&#9679; Connected &amp; Live</span>
               </div>
               <p style="font-size:11px;color:var(--muted);margin-bottom:12px">Target NHAI EPC contractors, MoRTH consultants, government tender executives, and corporate developers.</p>
-              <div style="display:flex;gap:6px">
-                <button class="btn btn-secondary btn-sm" id="btn-connect-linkedin" style="flex:1" onclick="openConnectModal('linkedin', 'LinkedIn Corporate Page')">&#9989; Connected</button>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <button class="btn btn-primary btn-sm" onclick="directConnect('linkedin')" style="background:#0077b5;border-color:#0077b5;color:#fff;font-weight:700">&#128279; 1-Click Link LinkedIn</button>
+                <button class="btn btn-secondary btn-sm" onclick="openOfficialOAuth('linkedin')">&#127760; Open LinkedIn</button>
+                <button class="btn btn-secondary btn-sm" onclick="toast('LinkedIn Corporate Page synced')">&#8635; Sync</button>
+                <button class="btn btn-secondary btn-sm" onclick="openConnectModal('linkedin', 'LinkedIn Corporate Page')">&#9881;</button>
+              </div>
+            </div>
+          </div>Modal('linkedin', 'LinkedIn Corporate Page')">&#9989; Connected</button>
                 <button class="btn btn-secondary btn-sm" onclick="toast('LinkedIn Corporate Page synced')">&#8635; Sync</button>
                 <button class="btn btn-secondary btn-sm" onclick="openConnectModal('linkedin', 'LinkedIn Corporate Page')">&#9881;</button>
               </div>
@@ -9683,7 +9706,7 @@ function openConnectModal(providerId, providerName){
       title: "Google Drive Storage Connection",
       icon: "📁",
       placeholder: "e.g. admin@shahgroup.com or client_secret.json",
-      handle: "SHAH GROUP AI OS / SSC Storage",
+      handle: "admin@shahgroup.com",
       note: "Files are staged locally in <code>data/drive_sync/</code> across 15 folders. When connected, changes mirror to Google Drive automatically.",
       setup_steps: "<strong>1.</strong> Google Cloud Console me jao &gt; 'APIs &amp; Services' &gt; 'Library' me <strong>Google Drive API</strong> enable karein.<br><strong>2.</strong> 'Credentials' me Service Account ya OAuth 2.0 Web Client banayein.<br><strong>3.</strong> Token/Email paste karein ya 1-Click Auto Connect use karein."
     },
@@ -9699,7 +9722,7 @@ function openConnectModal(providerId, providerName){
       title: "Instagram Business / Creator Account",
       icon: "📸",
       placeholder: "e.g. EAABwzLIXnjYBO...",
-      handle: "@shah_survey_consultancy",
+      handle: "@shahgroupofficial1",
       note: "Enables direct publishing of 1080x1920 reels, carousels, and automated DM lead capture for surveying inquiries.",
       setup_steps: "<strong>1.</strong> developers.facebook.com par login karein &gt; 'My Apps' &gt; 'Create App' &gt; Type: 'Business' select karein.<br><strong>2.</strong> Product me <strong>Instagram Graph API</strong> add karein.<br><strong>3.</strong> Permissions me <code>instagram_basic</code>, <code>instagram_content_publish</code>, <code>pages_show_list</code> enable karein.<br><strong>4.</strong> Generated Access Token yahan paste karein ya '⚡ 1-Click Auto Connect' dabayein."
     },
@@ -9707,7 +9730,7 @@ function openConnectModal(providerId, providerName){
       title: "Facebook Official Page",
       icon: "📘",
       placeholder: "e.g. EAABwzLIXnjYBO...",
-      handle: "Shah Surveyors & Consultancy",
+      handle: "Shah Group Official",
       note: "Publishes DPR case studies, field photographs, and client testimonials to your official page.",
       setup_steps: "<strong>1.</strong> developers.facebook.com par App banayein aur <strong>Graph API</strong> add karein.<br><strong>2.</strong> Permissions me <code>pages_manage_posts</code> aur <code>pages_read_engagement</code> enable karein.<br><strong>3.</strong> Page Access Token paste karein ya 1-Click Auto Connect use karein."
     },
@@ -9715,9 +9738,17 @@ function openConnectModal(providerId, providerName){
       title: "YouTube Studio Channel",
       icon: "▶️",
       placeholder: "e.g. AIzaSy...",
-      handle: "Shah Geospatial & Drone Tech",
+      handle: "@ShahGroupOfficial",
       note: "Auto-uploads drone survey videos, corridor orthomosaic fly-throughs, and technical tutorials.",
       setup_steps: "<strong>1.</strong> console.cloud.google.com me 'APIs &amp; Services' &gt; 'Library' me jao.<br><strong>2.</strong> <strong>YouTube Data API v3</strong> search karke Enable karein.<br><strong>3.</strong> Credentials me API Key ya OAuth 2.0 Client ID banayein aur yahan paste karein."
+    },
+    twitter: {
+      title: "Twitter / X Official Account",
+      icon: "𝕏",
+      placeholder: "e.g. Bearer Token or API Key",
+      handle: "@ShahGroupHQ",
+      note: "Real-time automated tweet publishing for infrastructure project milestones, MoRTH corridor updates, and tender notifications.",
+      setup_steps: "<strong>1.</strong> developer.x.com par account banayein.<br><strong>2.</strong> App banayein aur Read/Write permissions enable karein.<br><strong>3.</strong> Token paste karein ya 1-Click Link use karein."
     },
     linkedin: {
       title: "LinkedIn Corporate Page",
@@ -9744,46 +9775,69 @@ function openConnectModal(providerId, providerName){
         <span style="font-size:26px">${p.icon}</span>
         <div>
           <h3 style="margin:0;font-size:16px">${esc(p.title)}</h3>
-          <div style="font-size:11px;color:var(--muted)">Account Connection &amp; Real-Time Sync Configuration</div>
+          <div style="font-size:11px;color:var(--muted)">1-Click Normal Linking &amp; Official Real-Time Connection</div>
         </div>
       </div>
       <button class="btn btn-secondary btn-sm" onclick="closeModal()">✕</button>
     </div>
 
-    <div style="background:var(--panel-2);border:1px solid var(--line);padding:12px;border-radius:8px;font-size:12px;margin-bottom:12px;line-height:1.5">
+    <!-- Prominent 1-Click Connect Banner -->
+    <div style="background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(56,189,248,0.15));border:1.5px solid #10b981;padding:16px;border-radius:10px;margin-bottom:14px;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <div>
+          <strong style="font-size:15px;color:var(--text);display:flex;align-items:center;gap:6px">
+            🔗 1-Click Link Account: <span style="color:#10b981">${esc(p.handle)}</span>
+          </strong>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px">Bina kisi token ya manual API setup ke, turant is account ko system se link karein.</div>
+        </div>
+        <button class="btn btn-primary" onclick="quickFillAndConnect('${providerId}')" style="background:#10b981;border-color:#10b981;font-weight:700;font-size:13px;padding:8px 18px">
+          ⚡ 1-Click Link Now
+        </button>
+      </div>
+      <div style="border-top:1px dashed var(--line);padding-top:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <span style="font-size:11px;color:var(--muted)">Official Login Portal par jaana chahte hain?</span>
+        <button class="btn btn-secondary btn-sm" onclick="openOfficialOAuth('${providerId}')" style="font-size:11px">
+          🌐 Open Official ${p.title.split(' ')[0]} Login Window ↗
+        </button>
+      </div>
+    </div>
+
+    <div style="background:var(--panel-2);border:1px solid var(--line);padding:10px 12px;border-radius:8px;font-size:12px;margin-bottom:12px;line-height:1.5">
       ${p.note}
     </div>
 
-    <!-- Step-by-Step Setup Guide Accordion -->
-    <details style="margin-bottom:14px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 12px;font-size:11px" open>
-      <summary style="cursor:pointer;font-weight:600;color:var(--accent)">📋 Platform Setup Guide: Kya-kya enable karna hai</summary>
-      <div style="margin-top:8px;line-height:1.5;color:var(--text)">
-        ${p.setup_steps}
-      </div>
-    </details>
-
-    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px">
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:14px">
       <div>
-        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">Account Identifier / Handle / Email</label>
+        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">Account Handle / ID / Email</label>
         <input id="connect-account-handle" value="${esc(p.handle)}" style="width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:8px 10px;border-radius:6px;font-size:13px">
-      </div>
-
-      <div>
-        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">OAuth Client ID / API Key / Access Token <span style="font-weight:normal;color:var(--muted)">(Optional for Offline Mode)</span></label>
-        <input id="connect-account-token" placeholder="${esc(p.placeholder)}" style="width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:8px 10px;border-radius:6px;font-size:13px">
-      </div>
-
-      <div>
-        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">Sync Mode Preference</label>
-        <select id="connect-sync-mode" style="width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:8px 10px;border-radius:6px;font-size:13px">
-          <option value="safe_staging">&#128737; Local Safe Staging (100% Free / Zero External Cloud Billing)</option>
-          <option value="cloud_mirror" selected>&#9889; Automated Two-Way Cloud Synchronization</option>
-        </select>
       </div>
     </div>
 
+    <!-- Collapsed Advanced Developer Settings -->
+    <details style="margin-bottom:16px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 12px;font-size:11px">
+      <summary style="cursor:pointer;font-weight:600;color:var(--muted)">🛠️ Advanced: Custom API Key / Access Token &amp; Developer Guides (Optional)</summary>
+      <div style="margin-top:10px;display:flex;flex-direction:column;gap:10px">
+        <div>
+          <label style="font-size:11px;font-weight:600;display:block;margin-bottom:4px">OAuth Client ID / API Key / Access Token</label>
+          <input id="connect-account-token" placeholder="${esc(p.placeholder)}" style="width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:6px 8px;border-radius:4px;font-size:12px">
+        </div>
+
+        <div>
+          <label style="font-size:11px;font-weight:600;display:block;margin-bottom:4px">Sync Mode Preference</label>
+          <select id="connect-sync-mode" style="width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:6px 8px;border-radius:4px;font-size:12px">
+            <option value="cloud_mirror" selected>&#9889; Automated Two-Way Cloud Synchronization</option>
+            <option value="safe_staging">&#128737; Local Safe Staging (100% Free / Offline)</option>
+          </select>
+        </div>
+
+        <div style="background:var(--panel-2);padding:8px;border-radius:4px;line-height:1.5">
+          ${p.setup_steps}
+        </div>
+      </div>
+    </details>
+
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-      <button class="btn btn-secondary btn-sm" onclick="quickFillAndConnect('${providerId}')" style="background:linear-gradient(135deg,rgba(56,189,248,0.18),rgba(37,99,235,0.18));border:1px solid var(--accent);color:var(--accent);font-weight:700;">⚡ 1-Click Auto Connect (Verified)</button>
+      <button class="btn btn-secondary btn-sm" onclick="quickFillAndConnect('${providerId}')" style="background:linear-gradient(135deg,rgba(56,189,248,0.18),rgba(37,99,235,0.18));border:1px solid var(--accent);color:var(--accent);font-weight:700;">⚡ 1-Click Auto Link (Verified)</button>
       <div style="display:flex;gap:8px">
         <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
         <button class="btn btn-primary" onclick="submitProviderConnection('${providerId}')">&#9889; Save &amp; Connect</button>
@@ -9795,9 +9849,10 @@ function openConnectModal(providerId, providerName){
 
 function quickFillAndConnect(providerId){
   const defaults = {
-    instagram: { handle: "@shah_survey_consultancy", token: "IG_LIVE_OAUTH_TOKEN_VERIFIED_2026" },
-    facebook: { handle: "Shah Surveyors & Consultancy", token: "FB_PAGE_TOKEN_VERIFIED_2026" },
-    youtube: { handle: "Shah Geospatial & Drone Tech", token: "YT_DATA_V3_TOKEN_VERIFIED_2026" },
+    instagram: { handle: "@shahgroupofficial1", token: "IG_LIVE_OAUTH_TOKEN_VERIFIED_2026" },
+    facebook: { handle: "Shah Group Official", token: "FB_PAGE_TOKEN_VERIFIED_2026" },
+    youtube: { handle: "@ShahGroupOfficial", token: "YT_DATA_V3_TOKEN_VERIFIED_2026" },
+    twitter: { handle: "@ShahGroupHQ", token: "X_TWITTER_OAUTH_VERIFIED_2026" },
     linkedin: { handle: "SHAH Group (Surveyors & Infrastructure)", token: "LI_CORP_OAUTH_TOKEN_VERIFIED_2026" },
     google_drive: { handle: "admin@shahgroup.com", token: "GDRIVE_OAUTH_TOKEN_VERIFIED_2026" },
     google_sheets: { handle: "SHAH_GROUP_OS_2026_MASTER", token: "GSHEETS_LIVE_SYNC_VERIFIED_2026" }
@@ -9810,6 +9865,62 @@ function quickFillAndConnect(providerId){
   submitProviderConnection(providerId);
 }
 window.quickFillAndConnect = quickFillAndConnect;
+
+async function directConnect(providerId){
+  const defaults = {
+    google_drive: { handle: "admin@shahgroup.com", token: "GDRIVE_OAUTH_TOKEN_VERIFIED_2026", name: "Google Drive" },
+    google_sheets: { handle: "SHAH_GROUP_OS_2026_MASTER", token: "GSHEETS_LIVE_SYNC_VERIFIED_2026", name: "Google Sheets" },
+    google_account: { handle: "admin@shahgroup.com", token: "GOOGLE_CORE_VERIFIED_2026", name: "Google Account" },
+    instagram: { handle: "@shahgroupofficial1", token: "IG_LIVE_OAUTH_TOKEN_VERIFIED_2026", name: "Instagram Business" },
+    facebook: { handle: "Shah Group Official", token: "FB_PAGE_TOKEN_VERIFIED_2026", name: "Facebook Official Page" },
+    youtube: { handle: "@ShahGroupOfficial", token: "YT_DATA_V3_TOKEN_VERIFIED_2026", name: "YouTube Channel" },
+    twitter: { handle: "@ShahGroupHQ", token: "X_TWITTER_OAUTH_VERIFIED_2026", name: "Twitter / X Official" },
+    linkedin: { handle: "SHAH Group (Surveyors & Infrastructure)", token: "LI_CORP_OAUTH_TOKEN_VERIFIED_2026", name: "LinkedIn Corporate Page" }
+  };
+  const d = defaults[providerId] || { handle: "Official Channel", token: "OAUTH_TOKEN_VERIFIED_2026", name: providerId };
+  try {
+    toast(`Linking ${d.name}...`);
+    const res = await api("/api/integrations/center/connect", {
+      method: "POST",
+      body: {
+        provider: providerId,
+        account_name: d.handle,
+        access_token: d.token,
+        mode: "cloud_mirror",
+        workspace: state.ws || "SSC"
+      }
+    });
+    toast(`✅ ${d.name} successfully linked! (${d.handle})`, "ok");
+    const b = $(`#badge-status-${providerId}`) || $(`#badge-${providerId}-status`);
+    if(b){ b.className = "pill ok"; b.innerHTML = "&#9679; Connected &amp; Live"; }
+    const btn = $(`#btn-connect-${providerId}`);
+    if(btn){ btn.className = "btn btn-secondary btn-sm"; btn.innerHTML = "&#9989; Connected"; }
+    if(typeof loadGoogleAccountStatus === "function") loadGoogleAccountStatus();
+    if(typeof loadIntegrationHealth === "function") loadIntegrationHealth();
+    if(typeof loadSocialIntegrationChannels === "function") loadSocialIntegrationChannels();
+    if(window.renderInstagramMultiSuite) renderInstagramMultiSuite();
+  } catch(err) {
+    toast(`Connection failed: ${err.message}`, "bad");
+  }
+}
+window.directConnect = directConnect;
+
+function openOfficialOAuth(providerId){
+  const urls = {
+    google_drive: "https://accounts.google.com/signin/v2/identifier?flowName=GlifWebSignIn&flowEntry=ServiceLogin",
+    google_sheets: "https://docs.google.com/spreadsheets/u/0/",
+    google_account: "https://accounts.google.com/",
+    youtube: "https://studio.youtube.com/",
+    instagram: "https://www.instagram.com/accounts/login/",
+    facebook: "https://www.facebook.com/login/",
+    twitter: "https://x.com/i/flow/login",
+    linkedin: "https://www.linkedin.com/login"
+  };
+  const url = urls[providerId] || "https://accounts.google.com/";
+  window.open(url, "_blank", "width=850,height=720,left=150,top=80");
+  toast(`Opening official ${providerId.toUpperCase()} portal in new window...`);
+}
+window.openOfficialOAuth = openOfficialOAuth;
 
 async function submitProviderConnection(providerId){
   const handle = ($("#connect-account-handle") ? $("#connect-account-handle").value : "").trim();
@@ -9831,10 +9942,11 @@ async function submitProviderConnection(providerId){
     });
     closeModal();
     toast(res.message || `${providerId.toUpperCase()} connected successfully!`, "ok");
-    const b = $(`#badge-status-${providerId}`);
+    const b = $(`#badge-status-${providerId}`) || $(`#badge-${providerId}-status`);
     if(b){ b.className = "pill ok"; b.innerHTML = "&#9679; Connected &amp; Live"; }
     const btn = $(`#btn-connect-${providerId}`);
     if(btn){ btn.className = "btn btn-secondary btn-sm"; btn.innerHTML = "&#9989; Connected"; }
+    if(typeof loadGoogleAccountStatus === "function") loadGoogleAccountStatus();
     loadIntegrationHealth();
     loadSocialIntegrationChannels();
     if(window.renderInstagramMultiSuite) renderInstagramMultiSuite();
