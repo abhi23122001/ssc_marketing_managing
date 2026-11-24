@@ -3992,14 +3992,16 @@ const ROLE_MODULE_ACCESS = {
 };
 
 function visible(sec){
-  if(state.role === "Owner") return true;
+  // If Owner or default unassigned session, all modules are accessible
+  if(!state.role || state.role === "Owner") return true;
   const allowed = ROLE_MODULE_ACCESS[state.role];
-  if(allowed && !allowed.includes("*")){
-    if(!allowed.includes(sec)) return false;
+  if(allowed){
+    if(allowed.includes("*") || allowed.includes(sec)) return true;
+    return false;
   }
   const perms = state.perms || new Set();
   const req = (SEC_PERM[sec]||[]).map(x=>x.replace(/^[+-]/,""));
-  if(!req.length) return false;
+  if(!req.length) return true;
   return req.some(p => perms.has(p));
 }
 
@@ -4014,7 +4016,7 @@ function updateNavVisibility(){
   // 2. Workspace switcher filtering: ONLY Owner and Manager can switch workspaces
   const wsWshop = $("#ws-wshop");
   if(wsWshop){
-    if(state.role === "Owner" || state.role === "Manager"){
+    if(!state.role || state.role === "Owner" || state.role === "Manager"){
       wsWshop.style.display = "inline-flex";
     } else {
       wsWshop.style.display = "none";
@@ -4025,43 +4027,63 @@ function updateNavVisibility(){
   const activeItem = document.querySelector(".sidebar .item.active");
   const currentSec = activeItem ? activeItem.dataset.sec : "overview";
   if(!visible(currentSec)){
-    const allowed = ROLE_MODULE_ACCESS[state.role] || ["overview"];
-    const target = allowed.includes("projects") && visible("projects") ? "projects" : "overview";
-    showSection(target);
+    showSection("overview");
   }
 }
 
 function bindNav(){
   document.querySelectorAll(".sidebar .item").forEach(el=>{
-    el.addEventListener("click", function(e){
+    el.onclick = function(e){
       e.stopPropagation();
       const sec = el.dataset.sec;
-      if(!visible(sec)){
-        toast("Access restricted to authorized personnel.", "bad");
-        return;
-      }
       document.querySelectorAll(".sidebar .item").forEach(ch=>ch.classList.remove("active"));
       el.classList.add("active");
       showSection(sec);
-    });
+    };
   });
   updateNavVisibility();
 }
 
 function showSection(sec){
   if(!visible(sec)){
-    toast("Access Denied: You do not have permission for " + sec, "bad");
-    sec = visible("projects") ? "projects" : "overview";
+    sec = "overview";
   }
   if(sec === "owner-setup" && state.role === "Owner") loadOwnerSetupChecklist();
   document.querySelectorAll(".main > section").forEach(c=>c.style.display="none");
   const el = $("#sec-"+sec);
-  const show = !!(el && visible(sec));
-  if(el) el.style.display = show ? "block" : "none";
+  if(el) el.style.display = "block";
   document.querySelectorAll("#nav .item").forEach(i=>{
-    i.classList.toggle("active", i.dataset.sec===sec && visible(sec));
+    i.classList.toggle("active", i.dataset.sec===sec);
   });
   try { localStorage.setItem("sgai_last_sec", sec); } catch(e){}
+
+  // Trigger on-demand rendering for the activated section
+  try {
+    if(sec === "finance"){
+      if(typeof renderFinance === "function") renderFinance();
+      if(typeof renderFinanceTracker === "function") renderFinanceTracker();
+    } else if(sec === "employees"){
+      if(typeof renderEmployees === "function") renderEmployees();
+    } else if(sec === "marketing"){
+      if(typeof renderMarketing === "function") renderMarketing();
+    } else if(sec === "projects"){
+      if(typeof renderProjects === "function") renderProjects();
+    } else if(sec === "crm"){
+      if(typeof renderCrm === "function") renderCrm();
+    } else if(sec === "integrations"){
+      if(typeof switchIntSub === "function") switchIntSub("hub");
+    } else if(sec === "workspaces"){
+      if(typeof renderWorkspaces === "function") renderWorkspaces();
+    } else if(sec === "approvals"){
+      if(typeof renderApprovals === "function") renderApprovals();
+    } else if(sec === "ai"){
+      if(typeof renderAi === "function") renderAi();
+    } else if(sec === "settings"){
+      if(typeof renderSettings === "function") renderSettings();
+    }
+  } catch(renderErr){
+    console.warn("Section render on-demand notice:", renderErr);
+  }
 }
 
 function switchWorkspace(ws){
@@ -9817,10 +9839,6 @@ async function submitProviderConnection(providerId){
     loadSocialIntegrationChannels();
     if(window.renderInstagramMultiSuite) renderInstagramMultiSuite();
   } catch(err) {
-    closeModal();
-    toast(`Connection failed: ${err.message}`, "bad");
-  }
-}
     closeModal();
     toast(`Connection failed: ${err.message}`, "bad");
   }
