@@ -926,49 +926,147 @@
      NEXT-GEN EXECUTIVE THEME SYSTEM (VIBRANT DARK & CRISP LIGHT)
      ------------------------------------------------------------------------- */
   :root {
-    --bg: #0b0f19;
-    --panel: #111827;
-    --panel-2: #162032;
-    --panel-3: #1e293b;
-    --line: #24334a;
-    --text: #f8fafc;
-    --muted: #8e9db3;
+    /* DEFAULT PALETTE: 🌿 EMERALD LAND & PRECISION GOLD */
+    --bg: #03140e;
+    --header-bg: #061c14;
+    --sidebar-bg: #051811;
+    --sidebar-hover: #0c291d;
+    --active-bg: linear-gradient(90deg, rgba(16, 185, 129, 0.25), rgba(16, 185, 129, 0.05));
+    --panel: #072017;
+    --panel-2: #0b2c20;
+    --panel-3: #103829;
+    --line: #184c37;
+    --text: #f0fdf4;
+    --text-2: #bbf7d0;
+    --muted: #6ee7b7;
     --good: #10b981;
     --warn: #f59e0b;
     --bad: #ef4444;
-    --accent: #38bdf8;
-    --primary-btn-bg: linear-gradient(135deg, #2563eb, #0284c7);
-    --ai: #818cf8;
+    --accent: #10b981;
+    --accent-glow: rgba(16, 185, 129, 0.28);
+    --primary-btn-bg: linear-gradient(135deg, #059669, #10b981);
+    --ai: #34d399;
     --topbar-h: 64px;
     --glass-blur: blur(16px);
     --glass-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.6);
-    --card-border: 1px solid #1f2d42;
-    --input-bg: #141c2c;
-    --input-color: #f8fafc;
-    --table-stripe: #0e1624;
+    --card-border: 1px solid #184c37;
+    --input-bg: #072419;
+    --input-color: #f0fdf4;
+    --table-stripe: #051a13;
   }
 
   /* -------------------------------------------------------------------------
-     1. HIGH-CONTRAST TITANIUM OBSIDIAN DARK THEME
+     COLOR PALETTES
+     ------------------------------------------------------------------------- */
+  /* 1. EMERALD LAND & PRECISION GOLD (Default Surveying Theme) */
+  body.palette-emerald:not(.theme-light) {
+    --bg: #03140e !important;
+    --header-bg: #061c14 !important;
+    --sidebar-bg: #051811 !important;
+    --sidebar-hover: #0c291d !important;
+    --active-bg: linear-gradient(90deg, rgba(16, 185, 129, 0.25), rgba(16, 185, 129, 0.05)) !important;
+    --panel: #072017 !important;
+    --panel-2: #0b2c20 !important;
+    --panel-3: #103829 !important;
+    --line: #184c37 !important;
+    --text: #f0fdf4 !important;
+    --text-2: #bbf7d0 !important;
+    --muted: #6ee7b7 !important;
+    --accent: #10b981 !important;
+    --accent-glow: rgba(16, 185, 129, 0.28) !important;
+    --primary-btn-bg: linear-gradient(135deg, #059669, #10b981) !important;
+    --ai: #34d399 !important;
+    --input-bg: #072419 !important;
+    --table-stripe: #051a13 !important;
+  }
+
+  /* 2. ROYAL SAPPHIRE & ELECTRIC CYAN (Enterprise Modern Theme) */
+  body.palette-sapphire:not(.theme-light) {
+    --bg: #050b17 !important;
+    --header-bg: #0a1326 !important;
+    --sidebar-bg: #081021 !important;
+    --sidebar-hover: #101e3b !important;
+    --active-bg: linear-gradient(90deg, rgba(2, 132, 199, 0.25), rgba(2, 132, 199, 0.05)) !important;
+    --panel: #0a162c !important;
+    --panel-2: #0f203f !important;
+    --panel-3: #152b52 !important;
+    --line: #1f3d73 !important;
+    --text: #f0f9ff !important;
+    --text-2: #bae6fd !important;
+    --muted: #7dd3fc !important;
+    --accent: #0284c7 !important;
+    --accent-glow: rgba(2, 132, 199, 0.28) !important;
+    --primary-btn-bg: linear-gradient(135deg, #0284c7, #2563eb) !important;
+    --ai: #38bdf8 !important;
+    --input-bg: #0a1730 !important;
+    --table-stripe: #071124 !important;
+  }
+
+  /* 3. CYBER VIOLET & AI NEON (Futuristic AI Theme) */
+  body.palette-violet:not(.theme-light) {
+    --bg: #090614 !important;
+    --header-bg: #110c26 !important;
+    --sidebar-bg: #0e0921 !important;
+    --sidebar-hover: #1c1340 !important;
+    --active-bg: linear-gradient(90deg, rgba(139, 92, 246, 0.25), rgba(139, 92, 246, 0.05)) !important;
+    --panel: #130e2c !important;
+    --panel-2: #1b143d !important;
+    --panel-3: #241a52 !important;
+    --line: #352675 !important;
+    --text: #f5f3ff !important;
+    --text-2: #ddd6fe !important;
+    --muted: #a78bfa !important;
+    --accent: #8b5cf6 !important;
+    --accent-glow: rgba(139, 92, 246, 0.28) !important;
+    --primary-btn-bg: linear-gradient(135deg, #7c3aed, #8b5cf6) !important;
+    --ai: #c084fc !important;
+    --input-bg: #140e30 !important;
+    --table-stripe: #0c081c !important;
+  }
+
+  /* 4. SUNSET AMBER & CRIMSON (Executive Energy Theme) */
+  body.palette-amber:not(.theme-light) {
+    --bg: #120906 !important;
+    --header-bg: #1c0e09 !important;
+    --sidebar-bg: #170b07 !important;
+    --sidebar-hover: #29140d !important;
+    --active-bg: linear-gradient(90deg, rgba(249, 115, 22, 0.25), rgba(249, 115, 22, 0.05)) !important;
+    --panel: #1e0f0a !important;
+    --panel-2: #2a150e !important;
+    --panel-3: #381c13 !important;
+    --line: #52291c !important;
+    --text: #fff7ed !important;
+    --text-2: #fed7aa !important;
+    --muted: #fdba74 !important;
+    --accent: #f97316 !important;
+    --accent-glow: rgba(249, 115, 22, 0.28) !important;
+    --primary-btn-bg: linear-gradient(135deg, #ea580c, #f97316) !important;
+    --ai: #fb923c !important;
+    --input-bg: #20100a !important;
+    --table-stripe: #150a06 !important;
+  }
+
+  /* -------------------------------------------------------------------------
+     DYNAMIC DARK THEME ENGINE
      ------------------------------------------------------------------------- */
   body:not(.theme-light) {
-    background: #0b0f19 !important;
-    color: #f8fafc !important;
+    background: var(--bg) !important;
+    color: var(--text) !important;
   }
   body:not(.theme-light) header.top {
-    background: #0e1626 !important;
-    border-bottom: 1px solid #1f2d42 !important;
+    background: var(--header-bg, var(--panel)) !important;
+    border-bottom: 1px solid var(--line) !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
   }
   body:not(.theme-light) header.top h1 {
     color: #ffffff !important;
   }
   body:not(.theme-light) .sidebar {
-    background: #0c1220 !important;
-    border-right: 1px solid #1f2d42 !important;
+    background: var(--sidebar-bg, var(--panel)) !important;
+    border-right: 1px solid var(--line) !important;
   }
   body:not(.theme-light) .sidebar .item {
-    color: #94a3b8 !important;
+    color: var(--muted) !important;
     font-weight: 500 !important;
     border-radius: 8px !important;
     margin: 2px 8px !important;
@@ -976,30 +1074,30 @@
   }
   body:not(.theme-light) .sidebar .item:hover {
     color: #ffffff !important;
-    background: #172238 !important;
+    background: var(--sidebar-hover, rgba(255,255,255,0.08)) !important;
   }
   body:not(.theme-light) .sidebar .item.active {
-    background: linear-gradient(90deg, rgba(56, 189, 248, 0.18), rgba(37, 99, 235, 0.08)) !important;
-    color: #38bdf8 !important;
-    border-left: 3px solid #38bdf8 !important;
+    background: var(--active-bg) !important;
+    color: var(--accent) !important;
+    border-left: 3px solid var(--accent) !important;
     font-weight: 700 !important;
   }
   body:not(.theme-light) .card {
-    background: #111827 !important;
-    border: 1px solid #1f2d42 !important;
-    color: #f8fafc !important;
+    background: var(--panel) !important;
+    border: 1px solid var(--line) !important;
+    color: var(--text) !important;
     box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.45) !important;
     border-radius: 10px !important;
   }
   body:not(.theme-light) .card h2,
   body:not(.theme-light) .card h3,
   body:not(.theme-light) .card h4 {
-    color: #38bdf8 !important;
+    color: var(--accent) !important;
     font-weight: 700 !important;
   }
   body:not(.theme-light) .summary .c {
-    background: #141d2e !important;
-    border: 1px solid #22324b !important;
+    background: var(--panel-2) !important;
+    border: 1px solid var(--line) !important;
     border-radius: 8px !important;
   }
   body:not(.theme-light) .summary .c .v {
@@ -1007,68 +1105,67 @@
     font-weight: 800 !important;
   }
   body:not(.theme-light) .summary .c .l {
-    color: #94a3b8 !important;
+    color: var(--muted) !important;
     font-weight: 600 !important;
   }
   body:not(.theme-light) input,
   body:not(.theme-light) select,
   body:not(.theme-light) textarea {
-    background: #141c2c !important;
-    color: #f8fafc !important;
-    border: 1px solid #283952 !important;
+    background: var(--input-bg, var(--panel-2)) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--line) !important;
     border-radius: 6px !important;
   }
   body:not(.theme-light) input:focus,
   body:not(.theme-light) select:focus,
   body:not(.theme-light) textarea:focus {
-    border-color: #38bdf8 !important;
-    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25) !important;
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px var(--accent-glow) !important;
     outline: none !important;
   }
   body:not(.theme-light) input::placeholder,
   body:not(.theme-light) textarea::placeholder {
-    color: #64748b !important;
+    color: rgba(255, 255, 255, 0.4) !important;
   }
   body:not(.theme-light) .btn-primary {
-    background: linear-gradient(135deg, #2563eb, #0284c7) !important;
+    background: var(--primary-btn-bg) !important;
     color: #ffffff !important;
     border: none !important;
-    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35) !important;
+    box-shadow: 0 4px 14px var(--accent-glow) !important;
     font-weight: 600 !important;
     border-radius: 6px !important;
   }
   body:not(.theme-light) .btn-primary:hover {
-    background: linear-gradient(135deg, #1d4ed8, #0369a1) !important;
-    box-shadow: 0 6px 18px rgba(2, 132, 199, 0.45) !important;
+    filter: brightness(1.1) !important;
     transform: translateY(-1px);
   }
   body:not(.theme-light) .btn-secondary {
-    background: #162035 !important;
-    color: #f1f5f9 !important;
-    border: 1px solid #283952 !important;
+    background: var(--panel-2) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--line) !important;
     border-radius: 6px !important;
   }
   body:not(.theme-light) .btn-secondary:hover {
-    background: #1e2c45 !important;
-    border-color: #38bdf8 !important;
-    color: #38bdf8 !important;
+    background: var(--panel-3) !important;
+    border-color: var(--accent) !important;
+    color: var(--accent) !important;
   }
   body:not(.theme-light) table {
-    color: #f8fafc !important;
+    color: var(--text) !important;
     border-collapse: collapse !important;
   }
   body:not(.theme-light) th {
-    background: #141d2e !important;
-    color: #94a3b8 !important;
-    border-bottom: 2px solid #24334a !important;
+    background: var(--panel-2) !important;
+    color: var(--muted) !important;
+    border-bottom: 2px solid var(--line) !important;
     font-weight: 600 !important;
   }
   body:not(.theme-light) td {
-    border-bottom: 1px solid #1a2538 !important;
-    color: #e2e8f0 !important;
+    border-bottom: 1px solid var(--line) !important;
+    color: var(--text) !important;
   }
   body:not(.theme-light) tr:hover td {
-    background: #141f33 !important;
+    background: var(--panel-2) !important;
   }
   body:not(.theme-light) .pill.ok {
     background: rgba(16, 185, 129, 0.16) !important;
@@ -1089,19 +1186,19 @@
   }
   body:not(.theme-light) .pill.info {
     background: rgba(56, 189, 248, 0.16) !important;
-    color: #38bdf8 !important;
-    border: 1px solid rgba(56, 189, 248, 0.35) !important;
+    color: var(--accent) !important;
+    border: 1px solid var(--accent) !important;
   }
   body:not(.theme-light) .subnav button {
-    background: #141d2e !important;
-    color: #94a3b8 !important;
-    border: 1px solid #22324b !important;
+    background: var(--panel-2) !important;
+    color: var(--muted) !important;
+    border: 1px solid var(--line) !important;
   }
   body:not(.theme-light) .subnav button.active {
-    background: #0284c7 !important;
+    background: var(--accent) !important;
     color: #ffffff !important;
-    border-color: #38bdf8 !important;
-    box-shadow: 0 2px 10px rgba(2, 132, 199, 0.3) !important;
+    border-color: var(--accent) !important;
+    box-shadow: 0 2px 10px var(--accent-glow) !important;
   }
 
   /* -------------------------------------------------------------------------
@@ -1587,6 +1684,14 @@
     <div id="global-search-results" class="global-search-results"></div>
   </div>
   
+  <!-- Color Palette Selector -->
+  <div class="palette-selector-group" id="palette-selector" style="display:inline-flex;align-items:center;background:rgba(255,255,255,0.06);border:1px solid var(--line);border-radius:20px;padding:2px 4px;gap:2px">
+    <button class="btn-theme-pill active" id="palette-btn-emerald" title="Emerald Precision & Gold (Land & Surveying)" onclick="setPalette('emerald')" style="font-size:11px;padding:3px 8px;font-weight:600">🌿 Emerald</button>
+    <button class="btn-theme-pill" id="palette-btn-sapphire" title="Royal Sapphire & Electric Cyan" onclick="setPalette('sapphire')" style="font-size:11px;padding:3px 8px;font-weight:600">💎 Sapphire</button>
+    <button class="btn-theme-pill" id="palette-btn-violet" title="Cyber Violet & AI Neon" onclick="setPalette('violet')" style="font-size:11px;padding:3px 8px;font-weight:600">🔮 Violet</button>
+    <button class="btn-theme-pill" id="palette-btn-amber" title="Sunset Amber & Gold" onclick="setPalette('amber')" style="font-size:11px;padding:3px 8px;font-weight:600">🌅 Amber</button>
+  </div>
+
   <!-- 3-Way Dark / Light / System Theme Selector -->
   <div class="theme-selector-group" id="theme-selector">
     <button id="theme-btn-dark" class="btn-theme-pill active" title="Dark Glass Mode" onclick="setAppTheme('dark')">&#127769; Dark</button>
@@ -9393,6 +9498,26 @@ function initGlobalSearch(){
 // -----------------------------------------------------------------------------
 // ADVANCED THEME CONTROLLER (DARK / LIGHT / SYSTEM WCAG AA)
 // -----------------------------------------------------------------------------
+function setPalette(palette, showToast = true){
+  localStorage.setItem("sgai_palette", palette);
+  ["emerald", "sapphire", "violet", "amber"].forEach(p => {
+    document.body.classList.remove("palette-" + p);
+    const b = $("#palette-btn-" + p);
+    if(b) b.classList.toggle("active", p === palette);
+  });
+  document.body.classList.add("palette-" + palette);
+  if(showToast){
+    const names = {
+      emerald: "🌿 Emerald Land Precision & Gold",
+      sapphire: "💎 Royal Sapphire & Electric Cyan",
+      violet: "🔮 Cyber Violet & AI Neon",
+      amber: "🌅 Sunset Amber & Gold"
+    };
+    toast(`Applied ${names[palette] || palette} Theme!`, "ok");
+  }
+}
+window.setPalette = setPalette;
+
 function setAppTheme(theme, showToast = true){
   localStorage.setItem("sgai_theme", theme);
   const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
@@ -9905,8 +10030,20 @@ async function directConnect(providerId){
 }
 window.directConnect = directConnect;
 
-function openOfficialOAuth(providerId){
-  const urls = {
+async function openOfficialOAuth(providerId){
+  const titles = {
+    google_drive: "Google Drive",
+    google_sheets: "Google Sheets",
+    google_account: "Google Account",
+    youtube: "YouTube Studio",
+    instagram: "Instagram Business",
+    facebook: "Facebook Official Page",
+    twitter: "Twitter / X Official",
+    linkedin: "LinkedIn Corporate"
+  };
+  const title = titles[providerId] || providerId.toUpperCase();
+
+  const directUrls = {
     google_drive: "https://accounts.google.com/signin/v2/identifier?flowName=GlifWebSignIn&flowEntry=ServiceLogin",
     google_sheets: "https://docs.google.com/spreadsheets/u/0/",
     google_account: "https://accounts.google.com/",
@@ -9916,9 +10053,39 @@ function openOfficialOAuth(providerId){
     twitter: "https://x.com/i/flow/login",
     linkedin: "https://www.linkedin.com/login"
   };
-  const url = urls[providerId] || "https://accounts.google.com/";
-  window.open(url, "_blank", "width=850,height=720,left=150,top=80");
-  toast(`Opening official ${providerId.toUpperCase()} portal in new window...`);
+
+  let targetUrl = directUrls[providerId] || "https://accounts.google.com/";
+  try {
+    const res = await api(`/api/oauth/authorize?provider=${providerId}&workspace=${state.ws || 'SSC'}`);
+    if(res && res.auth_url && res.auth_url.startsWith("http")){
+      targetUrl = res.auth_url;
+    }
+  } catch(e){}
+
+  const w = window.open(targetUrl, `OAuth_${providerId}`, "width=850,height=720,left=150,top=80");
+  if(!w || w.closed){
+    window.open(targetUrl, "_blank");
+  }
+
+  // Show immediate confirmation action modal so the user just completes official portal login and clicks confirm
+  const confirmHtml = `
+    <div style="text-align:center;padding:12px 0">
+      <div style="font-size:36px;margin-bottom:8px">🌐</div>
+      <h3 style="margin:0 0 6px">${esc(title)} Portal Window Opened</h3>
+      <p style="font-size:13px;color:var(--muted);max-width:440px;margin:0 auto 16px;line-height:1.5">
+        Official <strong>${esc(title)}</strong> portal window open ho gayi hai. Wahan apna official account login/allow karein, aur yahan niche <strong>"⚡ Confirm &amp; Link Account"</strong> par click karein.
+      </p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="directConnect('${providerId}'); closeModal();" style="background:#10b981;border-color:#10b981;font-weight:700;font-size:14px;padding:8px 20px">
+          ⚡ Confirm &amp; Link ${esc(title)}
+        </button>
+        <button class="btn btn-secondary" onclick="closeModal()">
+          Close
+        </button>
+      </div>
+    </div>
+  `;
+  showModal(confirmHtml);
 }
 window.openOfficialOAuth = openOfficialOAuth;
 
