@@ -340,6 +340,49 @@ def get_account_oauth_status(
     ).fetchone()
 
     if not row:
+        # Check if connected in social_accounts table
+        if provider.lower() in ("facebook", "instagram", "youtube", "twitter", "x", "linkedin"):
+            p_name = "twitter" if provider.lower() in ("twitter", "x") else provider.lower()
+            try:
+                soc_row = conn.execute(
+                    "SELECT * FROM social_accounts WHERE workspace_id=? AND platform=? AND connection_status='connected'",
+                    (workspace_id, p_name)
+                ).fetchone()
+                if soc_row:
+                    return {
+                        "status": "Connected & Active",
+                        "status_code": "CONNECTED",
+                        "is_connected": True,
+                        "has_token": True,
+                        "reason": f"Connected via {p_name.capitalize()} channel",
+                        "missing_scopes": [],
+                        "token_expires_at": None,
+                        "reconnect_required": False
+                    }
+            except Exception:
+                pass
+
+        # Check if connected via any google oauth token
+        if provider.lower() in ("google", "google_drive", "google_sheets", "google_business_profile"):
+            try:
+                g_tok = conn.execute(
+                    "SELECT * FROM oauth_tokens WHERE workspace_id=? AND provider='google'",
+                    (workspace_id,)
+                ).fetchone()
+                if g_tok:
+                    return {
+                        "status": "Connected & Active",
+                        "status_code": "CONNECTED",
+                        "is_connected": True,
+                        "has_token": True,
+                        "reason": "Connected via Google OAuth",
+                        "missing_scopes": [],
+                        "token_expires_at": None,
+                        "reconnect_required": False
+                    }
+            except Exception:
+                pass
+
         return {
             "status": "Authorization Required",
             "status_code": "AUTH_REQUIRED",

@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS social_accounts (
     UNIQUE(workspace_id, platform, platform_account_id),
     FOREIGN KEY (workspace_id) REFERENCES social_workspaces(id) ON DELETE CASCADE,
     FOREIGN KEY (client_workspace_id) REFERENCES social_workspaces(id) ON DELETE SET NULL,
-    CHECK (platform IN ('instagram','facebook','linkedin','youtube'))
+    CHECK (platform IN ('instagram','facebook','linkedin','youtube','twitter','x','threads'))
 );
 
 CREATE TABLE IF NOT EXISTS social_account_syncs (
@@ -615,17 +615,73 @@ _DEMO_SSC_STRATEGY = {
 }
 
 def create_m19_tables(conn) -> None:
-    """Create M19 tables idempotently and ensure column migrations."""
+    """Create M19 tables idempotently and ensure column and constraint migrations."""
     cur = conn.execute(
-        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='social_accounts'"
+        "SELECT sql FROM sqlite_master WHERE type='table' AND name='social_accounts'"
     ).fetchone()
     if not cur:
         conn.executescript(_DOMAIN_SCHEMA)
+    else:
+        # Recreate table if twitter/x is missing from platform CHECK constraint
+        table_sql = cur[0] or ""
+        if "twitter" not in table_sql:
+            conn.execute("PRAGMA foreign_keys=OFF")
+            conn.execute("ALTER TABLE social_accounts RENAME TO _social_accounts_old")
+            conn.execute("""
+            CREATE TABLE social_accounts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                workspace_id TEXT NOT NULL,
+                client_workspace_id TEXT,
+                platform TEXT NOT NULL,
+                platform_account_id TEXT NOT NULL DEFAULT '',
+                display_name TEXT NOT NULL DEFAULT '',
+                account_url TEXT NOT NULL DEFAULT '',
+                account_category TEXT NOT NULL DEFAULT '',
+                account_owner TEXT NOT NULL DEFAULT '',
+                connection_status TEXT NOT NULL DEFAULT 'disconnected',
+                granted_permissions TEXT NOT NULL DEFAULT '{}',
+                token_expires_at TEXT,
+                last_sync_at TEXT,
+                last_failed_sync_at TEXT,
+                last_error TEXT,
+                connected_date TEXT NOT NULL DEFAULT (datetime('now')),
+                authorized_user TEXT NOT NULL DEFAULT 'owner',
+                account_metadata TEXT DEFAULT '{}',
+                auth_details TEXT DEFAULT '{}',
+                UNIQUE(workspace_id, platform, platform_account_id),
+                FOREIGN KEY (workspace_id) REFERENCES social_workspaces(id) ON DELETE CASCADE,
+                FOREIGN KEY (client_workspace_id) REFERENCES social_workspaces(id) ON DELETE SET NULL,
+                CHECK (platform IN ('instagram','facebook','linkedin','youtube','twitter','x','threads'))
+            )
+            """)
+            conn.execute("""
+                INSERT INTO social_accounts (
+                    id, workspace_id, client_workspace_id, platform, platform_account_id,
+                    display_name, account_url, account_category, account_owner,
+                    connection_status, granted_permissions, token_expires_at, last_sync_at,
+                    last_failed_sync_at, last_error, connected_date, authorized_user
+                ) SELECT
+                    id, workspace_id, client_workspace_id, platform, platform_account_id,
+                    display_name, account_url, account_category, account_owner,
+                    connection_status, granted_permissions, token_expires_at, last_sync_at,
+                    last_failed_sync_at, last_error, connected_date, authorized_user
+                FROM _social_accounts_old
+            """)
+            conn.execute("DROP TABLE _social_accounts_old")
+            conn.execute("PRAGMA foreign_keys=ON")
+            conn.commit()
+
     # Ensure workspace_id exists on social_client_profiles
     try:
         conn.execute("ALTER TABLE social_client_profiles ADD COLUMN workspace_id TEXT DEFAULT 'SSC'")
     except Exception:
         pass
+    # Ensure account_metadata and auth_details exist on social_accounts
+    for col in ("account_metadata", "auth_details"):
+        try:
+            conn.execute(f"ALTER TABLE social_accounts ADD COLUMN {col} TEXT DEFAULT '{{}}'")
+        except Exception:
+            pass
     conn.commit()
 
 

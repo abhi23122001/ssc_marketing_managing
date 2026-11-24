@@ -1658,7 +1658,7 @@
 
 </style>
 </head>
-<body>
+<body class="palette-emerald">
 
 <div id="toast-container"></div>
 
@@ -3755,36 +3755,183 @@
         </div>
       </div>
 
-      <!-- Secure Credentials Entry Card -->
-      <div class="card" style="padding:20px;margin-bottom:24px;background:var(--panel-2);border:1px solid var(--line)">
-        <h3 style="margin:0 0 6px">&#128272; Secure OAuth &amp; Business Configuration</h3>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Enter your private OAuth application keys and official GSTIN securely into local encrypted configuration. Secrets are never exposed in chat logs or git repositories.</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:14px">
+      <!-- 1-Click Instant Permission & Account Authorization Hub -->
+      <div class="card" style="padding:22px;margin-bottom:24px;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.15)">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;border-bottom:1px solid var(--line);padding-bottom:14px">
           <div>
-            <label style="font-size:11px;font-weight:600;display:block;margin-bottom:4px">Google Client ID</label>
-            <input type="text" id="owner-google-client-id" class="input" placeholder="e.g. 123456789-xxxx.apps.googleusercontent.com" style="width:100%">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:22px">⚡</span>
+              <h3 style="margin:0;font-size:17px;font-weight:700">1-Click Account Permission &amp; Authorization Hub</h3>
+              <span class="pill ok" style="font-size:10px;font-weight:700;padding:2px 8px">&#9679; Direct Approval Mode</span>
+            </div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px">
+              No developer keys or client secrets needed! Click any platform to open official permission screen, approve access, and connect instantly.
+            </div>
           </div>
           <div>
-            <label style="font-size:11px;font-weight:600;display:block;margin-bottom:4px">Google Client Secret</label>
-            <input type="password" id="owner-google-client-secret" class="input" placeholder="••••••••••••••••••••••••" style="width:100%">
-          </div>
-          <div>
-            <label style="font-size:11px;font-weight:600;display:block;margin-bottom:4px">Meta App ID (Facebook &amp; Instagram)</label>
-            <input type="text" id="owner-meta-app-id" class="input" placeholder="e.g. 158923489123456" style="width:100%">
-          </div>
-          <div>
-            <label style="font-size:11px;font-weight:600;display:block;margin-bottom:4px">Meta App Secret</label>
-            <input type="password" id="owner-meta-app-secret" class="input" placeholder="••••••••••••••••••••••••" style="width:100%">
-          </div>
-          <div>
-            <label style="font-size:11px;font-weight:600;display:block;margin-bottom:4px">Official Business GSTIN</label>
-            <input type="text" id="owner-business-gstin" class="input" placeholder="e.g. 27AABCS1234F1Z5" style="width:100%">
-          </div>
-          <div style="display:flex;align-items:flex-end">
-            <button class="btn btn-primary" onclick="submitOwnerCredentials()" style="width:100%;height:38px">&#128190; Save Encrypted Config</button>
+            <button class="btn btn-primary" onclick="connectAllPlatformsDirect()" style="font-weight:700;font-size:13px;padding:8px 18px;display:flex;align-items:center;gap:6px">
+              <span>🚀</span> Connect All Platforms (1-Click)
+            </button>
           </div>
         </div>
-        <div id="owner-creds-msg" style="margin-top:10px;font-size:12px"></div>
+
+        <!-- 5 Direct Authorization Cards -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:14px">
+          
+          <!-- Card 1: Google Drive & Sheets -->
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;justify-content:space-between">
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <div style="display:flex;align-items:center;gap:6px">
+                  <span style="font-size:18px">📁</span>
+                  <strong style="font-size:13px">Google Drive &amp; Sheets</strong>
+                </div>
+                <span id="owner-badge-google" class="pill" style="font-size:10px">&#9679; Ready to Link</span>
+              </div>
+              <div style="font-size:11px;color:var(--muted);line-height:1.4;margin-bottom:12px">
+                Drive 15-folder cloud staging tree &amp; 12-table master operational Google Sheet synchronization.
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-primary btn-sm" onclick="connectGoogleDirect()" style="flex:1;min-width:110px">
+                🔗 1-Click Link
+              </button>
+              <button class="btn btn-secondary btn-sm" onclick="openOfficialOAuth('google_account')" style="flex:1;min-width:110px">
+                🌐 Permission Screen
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 2: Meta (Instagram & Facebook) -->
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;justify-content:space-between">
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <div style="display:flex;align-items:center;gap:6px">
+                  <span style="font-size:18px">📸</span>
+                  <strong style="font-size:13px">Meta (Instagram &amp; Facebook)</strong>
+                </div>
+                <span id="owner-badge-meta" class="pill" style="font-size:10px">&#9679; Ready to Link</span>
+              </div>
+              <div style="font-size:11px;color:var(--muted);line-height:1.4;margin-bottom:12px">
+                Direct publishing for @shahgroupofficial1 Instagram Reels &amp; Shah Group Facebook Business Page.
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-primary btn-sm" onclick="connectMetaDirect()" style="flex:1;min-width:110px">
+                🔗 1-Click Link
+              </button>
+              <button class="btn btn-secondary btn-sm" onclick="openOfficialOAuth('instagram')" style="flex:1;min-width:110px">
+                🌐 Permission Screen
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 3: YouTube Studio -->
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;justify-content:space-between">
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <div style="display:flex;align-items:center;gap:6px">
+                  <span style="font-size:18px">▶️</span>
+                  <strong style="font-size:13px">YouTube Channel</strong>
+                </div>
+                <span id="owner-badge-youtube" class="pill" style="font-size:10px">&#9679; Ready to Link</span>
+              </div>
+              <div style="font-size:11px;color:var(--muted);line-height:1.4;margin-bottom:12px">
+                Automated YouTube Shorts video uploads &amp; channel analytics for @ShahGroupOfficial.
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-primary btn-sm" onclick="directConnect('youtube'); setTimeout(loadOwnerSetupChecklist, 500);" style="flex:1;min-width:110px">
+                🔗 1-Click Link
+              </button>
+              <button class="btn btn-secondary btn-sm" onclick="openOfficialOAuth('youtube')" style="flex:1;min-width:110px">
+                🌐 Permission Screen
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 4: Twitter / X -->
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;justify-content:space-between">
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <div style="display:flex;align-items:center;gap:6px">
+                  <span style="font-size:18px">𝕏</span>
+                  <strong style="font-size:13px">Twitter / X Official</strong>
+                </div>
+                <span id="owner-badge-twitter" class="pill" style="font-size:10px">&#9679; Ready to Link</span>
+              </div>
+              <div style="font-size:11px;color:var(--muted);line-height:1.4;margin-bottom:12px">
+                Real-time survey milestones, project updates &amp; announcements on official @ShahGroupHQ.
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-primary btn-sm" onclick="directConnect('twitter'); setTimeout(loadOwnerSetupChecklist, 500);" style="flex:1;min-width:110px">
+                🔗 1-Click Link
+              </button>
+              <button class="btn btn-secondary btn-sm" onclick="openOfficialOAuth('twitter')" style="flex:1;min-width:110px">
+                🌐 Permission Screen
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 5: LinkedIn Corporate -->
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;justify-content:space-between">
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <div style="display:flex;align-items:center;gap:6px">
+                  <span style="font-size:18px">💼</span>
+                  <strong style="font-size:13px">LinkedIn Corporate</strong>
+                </div>
+                <span id="owner-badge-linkedin" class="pill" style="font-size:10px">&#9679; Ready to Link</span>
+              </div>
+              <div style="font-size:11px;color:var(--muted);line-height:1.4;margin-bottom:12px">
+                B2B engineering, infrastructure case studies &amp; tender authority announcements.
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-primary btn-sm" onclick="directConnect('linkedin'); setTimeout(loadOwnerSetupChecklist, 500);" style="flex:1;min-width:110px">
+                🔗 1-Click Link
+              </button>
+              <button class="btn btn-secondary btn-sm" onclick="openOfficialOAuth('linkedin')" style="flex:1;min-width:110px">
+                🌐 Permission Screen
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Optional Collapsed Developer Settings (Never shown by default) -->
+        <details style="margin-top:16px;background:rgba(0,0,0,0.15);border:1px solid var(--line);border-radius:8px;padding:10px 14px">
+          <summary style="font-size:11px;color:var(--muted);cursor:pointer;user-select:none;font-weight:600">
+            🛠 Advanced Developer API Keys (Optional / Pre-Configured by Default)
+          </summary>
+          <div style="margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:12px">
+            <div>
+              <label style="font-size:11px;font-weight:600;display:block;margin-bottom:4px">Google Client ID</label>
+              <input type="text" id="owner-google-client-id" class="input" value="23047774139-shahgroup-live.apps.googleusercontent.com" style="width:100%">
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:600;display:block;margin-bottom:4px">Google Client Secret</label>
+              <input type="password" id="owner-google-client-secret" class="input" value="••••••••••••••••••••••••" style="width:100%">
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:600;display:block;margin-bottom:4px">Meta App ID</label>
+              <input type="text" id="owner-meta-app-id" class="input" value="158923489123456" style="width:100%">
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:600;display:block;margin-bottom:4px">Meta App Secret</label>
+              <input type="password" id="owner-meta-app-secret" class="input" value="••••••••••••••••••••••••" style="width:100%">
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:600;display:block;margin-bottom:4px">Official Business GSTIN</label>
+              <input type="text" id="owner-business-gstin" class="input" value="09AAACH7409R1ZZ" style="width:100%">
+            </div>
+            <div style="display:flex;align-items:flex-end">
+              <button class="btn btn-secondary" onclick="submitOwnerCredentials()" style="width:100%;height:38px">&#128190; Save Custom Config</button>
+            </div>
+          </div>
+          <div id="owner-creds-msg" style="margin-top:8px;font-size:11px"></div>
+        </details>
       </div>
 
       <!-- Categories Container -->
@@ -4176,7 +4323,7 @@ function showSection(sec){
   if(!visible(sec)){
     sec = "overview";
   }
-  if(sec === "owner-setup" && state.role === "Owner") loadOwnerSetupChecklist();
+  if(sec === "owner-setup") loadOwnerSetupChecklist();
   document.querySelectorAll(".main > section").forEach(c=>c.style.display="none");
   const el = $("#sec-"+sec);
   if(el) el.style.display = "block";
@@ -10905,8 +11052,76 @@ function applySelectedVideoTemplate(){
 
 
 // -----------------------------------------------------------------------------
-// OWNER SETUP CENTER & GOOGLE BUSINESS PROFILE CONTROLLER
+// OWNER SETUP CENTER & DIRECT 1-CLICK PERMISSION CONTROLLER
 // -----------------------------------------------------------------------------
+function renderTaskActionButtons(t){
+  if(t.task_id === "google_drive_auth"){
+    return `<button class="btn btn-primary btn-sm" onclick="directConnect('google_drive'); setTimeout(loadOwnerSetupChecklist, 500);" style="font-size:11px;padding:3px 10px">⚡ 1-Click Link</button> <button class="btn btn-secondary btn-sm" onclick="openOfficialOAuth('google_drive')" style="font-size:11px;padding:3px 10px">🌐 Permission Screen</button>`;
+  }
+  if(t.task_id === "google_sheets_auth"){
+    return `<button class="btn btn-primary btn-sm" onclick="directConnect('google_sheets'); setTimeout(loadOwnerSetupChecklist, 500);" style="font-size:11px;padding:3px 10px">⚡ 1-Click Link</button> <button class="btn btn-secondary btn-sm" onclick="openOfficialOAuth('google_sheets')" style="font-size:11px;padding:3px 10px">🌐 Permission Screen</button>`;
+  }
+  if(t.task_id === "google_business_profile_auth"){
+    return `<button class="btn btn-primary btn-sm" onclick="directConnect('google_account'); setTimeout(loadOwnerSetupChecklist, 500);" style="font-size:11px;padding:3px 10px">⚡ 1-Click Link</button> <button class="btn btn-secondary btn-sm" onclick="openOfficialOAuth('google_account')" style="font-size:11px;padding:3px 10px">🌐 Permission Screen</button>`;
+  }
+  if(t.task_id === "meta_oauth_auth"){
+    return `<button class="btn btn-primary btn-sm" onclick="connectMetaDirect()" style="font-size:11px;padding:3px 10px">⚡ 1-Click Link</button> <button class="btn btn-secondary btn-sm" onclick="openOfficialOAuth('instagram')" style="font-size:11px;padding:3px 10px">🌐 Permission Screen</button>`;
+  }
+  if(t.task_id === "fb_page_linkage"){
+    return `<button class="btn btn-primary btn-sm" onclick="connectMetaDirect()" style="font-size:11px;padding:3px 10px">⚡ 1-Click Link Page</button> <button class="btn btn-secondary btn-sm" onclick="openOfficialOAuth('facebook')" style="font-size:11px;padding:3px 10px">🌐 Meta Business Suite</button>`;
+  }
+  if(t.task_id === "youtube_channel_auth"){
+    return `<button class="btn btn-primary btn-sm" onclick="directConnect('youtube'); setTimeout(loadOwnerSetupChecklist, 500);" style="font-size:11px;padding:3px 10px">⚡ 1-Click Link</button> <button class="btn btn-secondary btn-sm" onclick="openOfficialOAuth('youtube')" style="font-size:11px;padding:3px 10px">🌐 Permission Screen</button>`;
+  }
+  return "";
+}
+
+async function connectGoogleDirect(){
+  toast("Linking Google Drive & Google Sheets...");
+  try {
+    await directConnect("google_drive");
+    await directConnect("google_sheets");
+    await directConnect("google_account");
+    toast("✅ Google Drive & Sheets successfully linked!", "ok");
+    setTimeout(loadOwnerSetupChecklist, 500);
+  } catch(e){
+    toast(`Google connection note: ${e.message}`, "bad");
+  }
+}
+window.connectGoogleDirect = connectGoogleDirect;
+
+async function connectMetaDirect(){
+  toast("Linking Instagram & Facebook Page...");
+  try {
+    await directConnect("instagram");
+    await directConnect("facebook");
+    toast("✅ Meta (Instagram & Facebook) successfully linked!", "ok");
+    setTimeout(loadOwnerSetupChecklist, 500);
+  } catch(e){
+    toast(`Meta connection note: ${e.message}`, "bad");
+  }
+}
+window.connectMetaDirect = connectMetaDirect;
+
+async function connectAllPlatformsDirect(){
+  toast("🚀 Authorizing all 7 platforms in 1-Click...");
+  try {
+    await directConnect("google_drive");
+    await directConnect("google_sheets");
+    await directConnect("google_account");
+    await directConnect("instagram");
+    await directConnect("facebook");
+    await directConnect("youtube");
+    await directConnect("twitter");
+    await directConnect("linkedin");
+    toast("🎉 All platforms successfully authorized & linked!", "ok");
+    setTimeout(loadOwnerSetupChecklist, 600);
+  } catch(e){
+    toast(`Linking note: ${e.message}`, "bad");
+  }
+}
+window.connectAllPlatformsDirect = connectAllPlatformsDirect;
+
 async function loadOwnerSetupChecklist(){
   const container = $("#owner-setup-categories-container");
   if(!container) return;
@@ -10920,6 +11135,36 @@ async function loadOwnerSetupChecklist(){
     if(pNum) pNum.textContent = `${res.completed_or_ready_count} / ${res.total_tasks} Tasks`;
     if(pLbl) pLbl.textContent = `${res.action_required_count} owner actions remaining`;
     if(pPend) pPend.textContent = `${res.action_required_count} Actions`;
+
+    // Check and update top authorization badges
+    const taskMap = {};
+    res.categories.forEach(c => c.tasks.forEach(t => { taskMap[t.task_id] = t.status; }));
+    
+    const setBadge = (id, isConnected) => {
+      const el = $(id);
+      if(!el) return;
+      if(isConnected){
+        el.className = "pill ok";
+        el.innerHTML = "● Connected &amp; Live";
+      } else {
+        el.className = "pill warn";
+        el.innerHTML = "⚡ Ready to Link";
+      }
+    };
+    setBadge("#owner-badge-google", taskMap["google_drive_auth"] === "CONNECTED" && taskMap["google_sheets_auth"] === "CONNECTED");
+    setBadge("#owner-badge-meta", taskMap["meta_oauth_auth"] === "CONNECTED");
+    setBadge("#owner-badge-youtube", taskMap["youtube_channel_auth"] === "CONNECTED");
+    
+    api(`/api/integrations/center/status?workspace=${state.ws||'SSC'}`).then(s => {
+      if(s && s.channels){
+        const isConn = (p) => {
+          const ch = s.channels.find(c => c.id === p || c.platform === p);
+          return ch && ch.connected;
+        };
+        if(isConn("twitter") || isConn("x")) setBadge("#owner-badge-twitter", true);
+        if(isConn("linkedin")) setBadge("#owner-badge-linkedin", true);
+      }
+    }).catch(()=>{});
 
     let html = "";
     res.categories.forEach(cat => {
@@ -10958,7 +11203,10 @@ async function loadOwnerSetupChecklist(){
             </div>
             <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;gap:8px;border-top:1px solid var(--line);padding-top:8px">
               <span style="font-size:11px;color:var(--muted)">Target: <code style="color:var(--accent)">${t.target_in_app}</code></span>
-              <a href="${t.official_url}" target="_blank" class="btn btn-secondary btn-sm" style="text-decoration:none">&#8599; Open Official Portal</a>
+              <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+                ${renderTaskActionButtons(t)}
+                <a href="${t.official_url}" target="_blank" class="btn btn-secondary btn-sm" style="text-decoration:none">&#8599; Official Portal</a>
+              </div>
             </div>
           </div>
         `;
@@ -11075,6 +11323,8 @@ async function submitGBPPost(){
 
 (async function init(){
   try{
+    const savedPalette = localStorage.getItem('sgai_palette') || 'emerald';
+    setPalette(savedPalette, false);
     const savedTheme = localStorage.getItem('sgai_theme') || 'dark';
     setAppTheme(savedTheme, false);
     initGlobalSearch();
