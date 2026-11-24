@@ -574,7 +574,7 @@ class Handler(BaseHTTPRequestHandler):
             elif path.startswith("/api/ai-brain"):
                 self._handle_ai_brain_route(path, user)
                 return
-            elif path.startswith("/api/intelligence") or path.startswith("/api/ai/marketing"):
+            elif path.startswith("/api/intelligence") or path.startswith("/api/ai"):
                 self._handle_intelligence_route(path, user)
                 return
             elif path.startswith("/api/studio"):
@@ -2206,7 +2206,7 @@ class Handler(BaseHTTPRequestHandler):
             elif path.startswith("/api/ai-brain"):
                 self._handle_ai_brain_route(path, user)
                 return
-            elif path.startswith("/api/intelligence") or path.startswith("/api/ai/marketing"):
+            elif path.startswith("/api/intelligence") or path.startswith("/api/ai"):
                 self._handle_intelligence_route(path, user)
                 return
             elif path.startswith("/api/studio"):
