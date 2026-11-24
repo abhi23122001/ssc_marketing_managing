@@ -888,7 +888,7 @@ class Handler(BaseHTTPRequestHandler):
             summary = self.store.get_profit_loss_summary(ws)
             self._json_ok({"profit_loss": summary})
             return
-        if path == "/api/finance/multi-period-analytics":
+        if path in ("/api/finance/multi-period-analytics", "/api/finance/tracker"):
             from foundation.domains.finance_analytics import get_multi_period_financial_breakdown
             res = get_multi_period_financial_breakdown(self.store.conn, ws)
             self._json_ok(res)
@@ -1294,7 +1294,7 @@ class Handler(BaseHTTPRequestHandler):
             self._send_csv(f"employees_{ws}.csv", ["id", "employee_id", "name", "designation", "employment_status", "email", "phone", "hire_date"], rows)
             return
 
-        if path == "/api/employees/performance-analytics":
+        if path in ("/api/employees/performance-analytics", "/api/employees/performance"):
             from foundation.domains.employee_performance import get_employee_performance_analytics
             res = get_employee_performance_analytics(self.store.conn, ws)
             self._json_ok(res)
