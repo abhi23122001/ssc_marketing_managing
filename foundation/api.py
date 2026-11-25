@@ -3673,7 +3673,7 @@ class Handler(BaseHTTPRequestHandler):
                         UPDATE oauth_tokens
                         SET account_identifier=?, access_token_enc=?, updated_at=datetime('now')
                         WHERE id=?
-                    """, (acc_name or "admin@shahgroup.com", token_val or "GDRIVE_OAUTH_TOKEN_VERIFIED_2026", existing_tok["id"]))
+                    """, (acc_name or "shahabhijee789@gmail.com", token_val or "GDRIVE_OAUTH_TOKEN_VERIFIED_2026", existing_tok["id"]))
                 else:
                     self.store.conn.execute("""
                         INSERT INTO oauth_tokens (
@@ -3681,7 +3681,7 @@ class Handler(BaseHTTPRequestHandler):
                         ) VALUES (?, 'google', ?, ?, ?)
                     """, (
                         ws,
-                        acc_name or "admin@shahgroup.com",
+                        acc_name or "shahabhijee789@gmail.com",
                         token_val or "GDRIVE_OAUTH_TOKEN_VERIFIED_2026",
                         json.dumps(["email", "spreadsheets", "drive.file"])
                     ))

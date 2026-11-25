@@ -9977,8 +9977,8 @@ function openConnectModal(providerId, providerName){
     google_drive: {
       title: "Google Drive Storage Connection",
       icon: "📁",
-      placeholder: "e.g. admin@shahgroup.com or client_secret.json",
-      handle: "admin@shahgroup.com",
+      placeholder: "e.g. shahabhijee789@gmail.com or client_secret.json",
+      handle: "shahabhijee789@gmail.com",
       note: "Files are staged locally in <code>data/drive_sync/</code> across 15 folders. When connected, changes mirror to Google Drive automatically.",
       setup_steps: "<strong>1.</strong> Google Cloud Console me jao &gt; 'APIs &amp; Services' &gt; 'Library' me <strong>Google Drive API</strong> enable karein.<br><strong>2.</strong> 'Credentials' me Service Account ya OAuth 2.0 Web Client banayein.<br><strong>3.</strong> Token/Email paste karein ya 1-Click Auto Connect use karein."
     },
@@ -10126,7 +10126,7 @@ function quickFillAndConnect(providerId){
     youtube: { handle: "@ShahGroupOfficial", token: "YT_DATA_V3_TOKEN_VERIFIED_2026" },
     twitter: { handle: "@ShahGroupHQ", token: "X_TWITTER_OAUTH_VERIFIED_2026" },
     linkedin: { handle: "SHAH Group (Surveyors & Infrastructure)", token: "LI_CORP_OAUTH_TOKEN_VERIFIED_2026" },
-    google_drive: { handle: "admin@shahgroup.com", token: "GDRIVE_OAUTH_TOKEN_VERIFIED_2026" },
+    google_drive: { handle: "shahabhijee789@gmail.com", token: "GDRIVE_OAUTH_TOKEN_VERIFIED_2026" },
     google_sheets: { handle: "SHAH_GROUP_OS_2026_MASTER", token: "GSHEETS_LIVE_SYNC_VERIFIED_2026" }
   };
   const d = defaults[providerId] || { handle: "Official Channel", token: "OAUTH_TOKEN_VERIFIED_2026" };
@@ -10140,9 +10140,9 @@ window.quickFillAndConnect = quickFillAndConnect;
 
 async function directConnect(providerId){
   const defaults = {
-    google_drive: { handle: "admin@shahgroup.com", token: "GDRIVE_OAUTH_TOKEN_VERIFIED_2026", name: "Google Drive" },
-    google_sheets: { handle: "SHAH_GROUP_OS_2026_MASTER", token: "GSHEETS_LIVE_SYNC_VERIFIED_2026", name: "Google Sheets" },
-    google_account: { handle: "admin@shahgroup.com", token: "GOOGLE_CORE_VERIFIED_2026", name: "Google Account" },
+    google_drive: { handle: "shahabhijee789@gmail.com", token: "GDRIVE_OAUTH_TOKEN_VERIFIED_2026", name: "Google Drive" },
+    google_sheets: { handle: "SHAH_GROUP_OS_MASTER (shahabhijee789@gmail.com)", token: "GSHEETS_LIVE_SYNC_VERIFIED_2026", name: "Google Sheets" },
+    google_account: { handle: "shahabhijee789@gmail.com", token: "GOOGLE_CORE_VERIFIED_2026", name: "Google Account" },
     instagram: { handle: "@shahgroupofficial1", token: "IG_LIVE_OAUTH_TOKEN_VERIFIED_2026", name: "Instagram Business" },
     facebook: { handle: "Shah Group Official", token: "FB_PAGE_TOKEN_VERIFIED_2026", name: "Facebook Official Page" },
     youtube: { handle: "@ShahGroupOfficial", token: "YT_DATA_V3_TOKEN_VERIFIED_2026", name: "YouTube Channel" },
