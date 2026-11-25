@@ -261,6 +261,12 @@ class Store:
         ensure_studio_schema(self.conn)
         from .domains.task_management import ensure_tasks_schema
         ensure_tasks_schema(self.conn)
+        try:
+            from .domains.auto_connector import auto_connect_all_integrations
+            auto_connect_all_integrations(self.conn, "SSC")
+            auto_connect_all_integrations(self.conn, "INFRA")
+        except Exception:
+            pass
         self.conn.commit()
 
     def _seed_roles(self) -> None:

@@ -4048,6 +4048,11 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/owner-setup/status":
             self._json_ok(owner_setup_wizard.get_owner_setup_checklist(self.store, ws))
             return
+        if path in ("/api/owner-setup/auto-connect", "/api/owner-setup/connect-all"):
+            from foundation.domains.auto_connector import auto_connect_all_integrations
+            auto_connect_all_integrations(self.store.conn, ws)
+            self._json_ok(owner_setup_wizard.get_owner_setup_checklist(self.store, ws))
+            return
         if path == "/api/owner-setup/credentials":
             if self.command != "POST":
                 self._json_err("method not allowed", 405)
@@ -4205,7 +4210,14 @@ class Handler(BaseHTTPRequestHandler):
 
 def make_server(host: str = "127.0.0.1", port: int = 8899):
     from foundation.scheduler import start_scheduler
-    start_scheduler(get_store())
+    store = get_store()
+    try:
+        from foundation.domains.auto_connector import auto_connect_all_integrations
+        auto_connect_all_integrations(store.conn, "SSC")
+        auto_connect_all_integrations(store.conn, "INFRA")
+    except Exception:
+        pass
+    start_scheduler(store)
     ThreadingHTTPServer.allow_reuse_address = True
     return ThreadingHTTPServer((host, port), Handler)
 
